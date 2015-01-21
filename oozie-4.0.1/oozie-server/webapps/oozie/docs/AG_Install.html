@@ -1,0 +1,1011 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Oozie - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Oozie
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2015-01-20
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                                                <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <p></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<a name="Oozie_Installation_and_Configuration"></a>
+<div class="section"><h2> Oozie Installation and Configuration</h2>
+<p><ul><ul><li><a href="#Basic_Setup">Basic Setup</a>
+</li>
+<li><a href="#Environment_Setup">Environment Setup</a>
+</li>
+<li><a href="#Oozie_Server_Setup">Oozie Server Setup</a>
+<ul><li><a href="#Setting_Up_Oozie_with_an_Alternate_Tomcat">Setting Up Oozie with an Alternate Tomcat</a>
+</li>
+</ul>
+</li>
+<li><a href="#Database_Configuration">Database Configuration</a>
+</li>
+<li><a href="#Oozie_Configuration">Oozie Configuration</a>
+<ul><li><a href="#Oozie_Configuration_Properties">Oozie Configuration Properties</a>
+</li>
+<li><a href="#Logging_Configuration">Logging Configuration</a>
+</li>
+<li><a href="#Oozie_User_Authentication_Configuration">Oozie User Authentication Configuration</a>
+</li>
+<li><a href="#Oozie_Hadoop_Authentication_Configuration">Oozie Hadoop Authentication Configuration</a>
+</li>
+<li><a href="#User_ProxyUser_Configuration">User ProxyUser Configuration</a>
+</li>
+<li><a href="#User_Authorization_Configuration">User Authorization Configuration</a>
+</li>
+<li><a href="#Oozie_System_ID_Configuration">Oozie System ID Configuration</a>
+</li>
+<li><a href="#Filesystem_Configuration">Filesystem Configuration</a>
+</li>
+<li><a href="#HCatalog_Configuration">HCatalog Configuration</a>
+</li>
+<li><a href="#Notifications_Configuration">Notifications Configuration</a>
+</li>
+<li><a href="#Setting_Up_Oozie_with_HTTPS_SSL">Setting Up Oozie with HTTPS (SSL)</a>
+<ul><li><a href="#To_use_a_Self-Signed_Certificate">To use a Self-Signed Certificate</a>
+</li>
+<li><a href="#To_use_a_Certificate_from_a_Certificate_Authority">To use a Certificate from a Certificate Authority</a>
+</li>
+<li><a href="#Configure_the_Oozie_Server_to_use_SSL_HTTPS">Configure the Oozie Server to use SSL (HTTPS)</a>
+</li>
+<li><a href="#Configure_the_Oozie_Client_to_connect_using_SSL_HTTPS">Configure the Oozie Client to connect using SSL (HTTPS)</a>
+</li>
+<li><a href="#Connect_to_the_Oozie_Web_UI_using_SSL_HTTPS">Connect to the Oozie Web UI using SSL (HTTPS)</a>
+</li>
+</ul>
+</li>
+<li><a href="#Fine_Tuning_an_Oozie_Server">Fine Tuning an Oozie Server</a>
+</li>
+</ul>
+</li>
+<li><a href="#Starting_and_Stopping_Oozie">Starting and Stopping Oozie</a>
+</li>
+<li><a href="#Oozie_Command_Line_Installation">Oozie Command Line Installation</a>
+</li>
+<li><a href="#Oozie_Share_Lib">Oozie Share Lib</a>
+</li>
+<li><a href="#Oozie_CoordinatorsBundles_Processing_Timezone">Oozie Coordinators/Bundles Processing Timezone</a>
+</li>
+<li><a href="#MapReduce_Workflow_Uber_Jars">MapReduce Workflow Uber Jars</a>
+</li>
+<li><a href="#AdvancedCustom_Environment_Settings">Advanced/Custom Environment Settings</a>
+</li>
+</ul>
+</ul>
+</p>
+<a name="Basic_Setup"></a>
+<div class="section"><h3>Basic Setup</h3>
+<p>Follow the instructions at <a href="./DG_QuickStart.html">Oozie Quick Start</a>
+.</p>
+<a name="Environment_Setup"></a>
+</div>
+<div class="section"><h3>Environment Setup</h3>
+<p><b>IMPORTANT:</b>
+ Oozie ignores any set value for <tt>OOZIE_HOME</tt>
+, Oozie computes its home automatically.</p>
+<p>When running Oozie with its embedded Tomcat server, the <tt>conf/oozie-env.sh</tt>
+ file can be
+used to configure the following environment variables used by Oozie:</p>
+<p><b>CATALINA_OPTS</b>
+ : settings for the Embedded Tomcat that runs Oozie Java System properties
+for Oozie should be specified in this variable. No default value.</p>
+<p><b>OOZIE_CONFIG_FILE</b>
+ : Oozie configuration file to load from Oozie configuration directory.
+Default value <tt>oozie-site.xml</tt>
+.</p>
+<p><b>OOZIE_LOGS</b>
+ : Oozie logs directory. Default value <tt>logs/</tt>
+ directory in the Oozie installation
+directory.</p>
+<p><b>OOZIE_LOG4J_FILE</b>
+ :  Oozie Log4J configuration file to load from Oozie configuration directory.
+Default value <tt>oozie-log4j.properties</tt>
+.</p>
+<p><b>OOZIE_LOG4J_RELOAD</b>
+ : Reload interval of the Log4J configuration file, in seconds.
+Default value <tt>10</tt>
+</p>
+<p><b>OOZIE_HTTP_PORT</b>
+ : The port Oozie server runs. Default value <tt>11000</tt>
+.</p>
+<p><b>OOZIE_ADMIN_PORT</b>
+ : The admin port Oozie server runs. Default value <tt>11001</tt>
+.</p>
+<p><b>OOZIE_HTTP_HOSTNAME</b>
+ : The host name Oozie server runs on. Default value is the output of the
+command <tt>hostname -f</tt>
+.</p>
+<p><b>OOZIE_BASE_URL</b>
+ : The base URL for actions callback URLs to Oozie. The default value
+is <tt><a href="http://${OOZIE_HTTP_HOSTNAME}:${OOZIE_HTTP_PORT}/oozie" class="externalLink">http://${OOZIE_HTTP_HOSTNAME}:${OOZIE_HTTP_PORT}/oozie</a>
+</tt>
+.</p>
+<p><b>OOZIE_CHECK_OWNER</b>
+ : If set to <tt>true</tt>
+, Oozie setup/start/run/stop scripts will check that the
+owner of the Oozie installation directory matches the user invoking the script. The default
+value is undefined and interpreted as a <tt>false</tt>
+.</p>
+<p>If Oozie is configured to use HTTPS (SSL), then the following environment variables are also used:</p>
+<p><b>OOZIE_HTTPS_PORT</b>
+ : The port Oozie server runs when using HTTPS. Default value <tt>11443</tt>
+.</p>
+<p><b>OOZIE_HTTPS_KEYSTORE_FILE</b>
+ : The location of the keystore file containing the certificate information.
+Default value <tt>${HOME}/.keystore</tt>
+ (i.e. the home dir of the Oozie user).</p>
+<p><b>OOZIE_HTTPS_KEYSTORE_PASS</b>
+ : The password of the keystore file. Default value <tt>password</tt>
+.</p>
+<a name="Oozie_Server_Setup"></a>
+</div>
+<div class="section"><h3>Oozie Server Setup</h3>
+<p>The <tt>oozie-setup.sh</tt>
+ script prepares the embedded Tomcat server to run Oozie.</p>
+<p>The <tt>oozie-setup.sh</tt>
+ script options are:</p>
+<p><pre>
+Usage  : oozie-setup.sh &lt;OPTIONS&gt;&quot;
+         prepare-war [-d directory] [-secure] (-d identifies an alternative directory for processing jars&quot;
+                                              -secure will configure the war file to use HTTPS (SSL))&quot;
+         sharelib create -fs FS_URI [-locallib SHARED_LIBRARY] (create sharelib for oozie,&quot;
+                                                               FS_URI is the fs.default.name&quot;
+                                                               for hdfs uri; SHARED_LIBRARY, path to the&quot;
+                                                               Oozie sharelib to install, it can be a tarball&quot;
+                                                               or an expanded version of it. If ommited,&quot;
+                                                               the Oozie sharelib tarball from the Oozie&quot;
+                                                               installation directory will be used)&quot;
+                                                               (action failes if sharelib is already installed&quot;
+                                                               in HDFS)&quot;
+         sharelib upgrade -fs FS_URI [-locallib SHARED_LIBRARY] (upgrade existing sharelib, fails if there&quot;
+                                                                 is no existing sharelib installed in HDFS)&quot;
+         db create|upgrade|postupgrade -run [-sqlfile &lt;FILE&gt;] (create, upgrade or postupgrade oozie db with an&quot;
+                                                               optional sql file)&quot;
+         (without options prints usage information)&quot;
+</pre></p>
+<p>If a directory <tt>libext/</tt>
+ is present in Oozie installation directory, the <tt>oozie-setup.sh</tt>
+ script
+include all JARs in the <tt>libext/</tt>
+ directory in Oozie WAR file.</p>
+<p>If the ExtJS ZIP file is present in the <tt>libext/</tt>
+ directory, it will be added to Oozie WAR as well.
+The ExtJS library file name be <tt>ext-2.2.zip</tt>
+.</p>
+<a name="Setting_Up_Oozie_with_an_Alternate_Tomcat"></a>
+<div class="section"><h4>Setting Up Oozie with an Alternate Tomcat</h4>
+<p>Use the <tt>addtowar.sh</tt>
+ script to prepare the Oozie server only if Oozie will run with a different
+servlet  container than the embedded Tomcat provided with the distribution.</p>
+<p>The <tt>addtowar.sh</tt>
+ script adds Hadoop JARs, JDBC JARs and the ExtJS library to the Oozie WAR file.</p>
+<p>The <tt>addtowar.sh</tt>
+ script options are:</p>
+<p><pre>
+ Usage  : addtowar &lt;OPTIONS&gt;
+ Options: -inputwar INPUT_OOZIE_WAR
+          -outputwar OUTPUT_OOZIE_WAR
+          [-hadoop HADOOP_VERSION HADOOP_PATH]
+          [-extjs EXTJS_PATH]
+          [-jars JARS_PATH] (multiple JAR path separated by ':')
+          [-secureWeb WEB_XML_PATH] (path to secure web.xml)
+</pre></p>
+<p>The original <tt>oozie.war</tt>
+ file is in the Oozie server installation directory.</p>
+<p>After the Hadoop JARs and the ExtJS library has been added to the <tt>oozie.war</tt>
+ file Oozie is ready to run.</p>
+<p>Delete any previous deployment of the <tt>oozie.war</tt>
+ from the servlet container (if using Tomcat, delete
+=oozie.war= and <tt>oozie</tt>
+ directory from Tomcat's <tt>webapps/</tt>
+ directory)</p>
+<p>Deploy the prepared <tt>oozie.war</tt>
+ file (the one that contains the Hadoop JARs adn the ExtJS library) in the
+servlet container (if using Tomcat, copy the prepared <tt>oozie.war</tt>
+ file to Tomcat's <tt>webapps/</tt>
+ directory).</p>
+<p><b>IMPORTANT:</b>
+ Only one Oozie instance can be deployed per Tomcat instance.</p>
+<a name="Database_Configuration"></a>
+</div>
+</div>
+<div class="section"><h3>Database Configuration</h3>
+<p>Oozie works with HSQL, Derby, MySQL, Oracle or PostgreSQL databases.</p>
+<p>By default, Oozie is configured to use Embedded Derby.</p>
+<p>Oozie bundles the JDBC drivers for HSQL, Embedded Derby and PostgreSQL.</p>
+<p>HSQL is normally used for testcases as it is an in-memory database and all data is lost everytime Oozie is stopped.</p>
+<p>If using Derby, MySQL, Oracle or PostgreSQL, the Oozie database schema must be created using the <tt>ooziedb.sh</tt>
+ command
+line tool.</p>
+<p>If using MySQL or Oracle, the corresponding JDBC driver JAR file mut be copied to Oozie's <tt>libext/</tt>
+ directory and
+it must be added to Oozie WAR file using the <tt>bin/addtowar.sh</tt>
+ or the <tt>oozie-setup.sh</tt>
+ scripts using the <tt>-jars</tt>
+ option.</p>
+<p>The SQL database used by Oozie is configured using the following configuration properties (default values shown):</p>
+<p><pre>
+  oozie.db.schema.name=oozie
+  oozie.service.JPAService.create.db.schema=false
+  oozie.service.JPAService.validate.db.connection=false
+  oozie.service.JPAService.jdbc.driver=org.apache.derby.jdbc.EmbeddedDriver
+  oozie.service.JPAService.jdbc.url=jdbc:derby:${oozie.data.dir}/${oozie.db.schema.name}-db;create=true
+  oozie.service.JPAService.jdbc.username=sa
+  oozie.service.JPAService.jdbc.password=
+  oozie.service.JPAService.pool.max.active.conn=10
+</pre></p>
+<p><b>NOTE:</b>
+ If the <tt>oozie.db.schema.create</tt>
+ property is set to <tt>true</tt>
+ (default value is <tt>false</tt>
+) the Oozie tables
+will be created automatically without having to use the <tt>ooziedb</tt>
+ command line tool. Setting this property to
+ <tt>true</tt>
+ it is recommended only for development.</p>
+<p><b>NOTE:</b>
+ If the <tt>oozie.db.schema.create</tt>
+ property is set to true, the <tt>oozie.service.JPAService.validate.db.connection</tt>
+
+property value is ignored and Oozie handles it as set to <tt>false</tt>
+.</p>
+<p>Once <tt>oozie-site.xml</tt>
+ has been configured with the database configuration execute the <tt>ooziedb.sh</tt>
+ command line tool to
+create the database:</p>
+<p><pre>
+$ bin/ooziedb.sh create -sqlfile oozie.sql -runValidate DB Connection.
+DONE
+Check DB schema does not exist
+DONE
+Check OOZIE_SYS table does not exist
+DONE
+Create SQL schema
+DONE
+DONE
+Create OOZIE_SYS table
+DONE
+Oozie DB has been created for Oozie version '3.2.0'
+The SQL commands have been written to: oozie.sql
+$
+</pre>
+</p>
+<p>NOTE: If using MySQL or Oracle, copy the corresponding JDBC driver JAR file to the <tt>libext/</tt>
+ directory before running
+the <tt>ooziedb.sh</tt>
+ command line tool.</p>
+<p>NOTE: If instead using the '-run' option, the '-sqlfile <FILE>' option is used, then all the
+database changes will be written to the specified file and the database won't be modified.</p>
+<p>If using HSQL there is no need to use the <tt>ooziedb</tt>
+ command line tool as HSQL is an im-memory database. Use the
+following configuration properties in the oozie-site.xml:</p>
+<p><pre>
+  oozie.db.schema.name=oozie
+  oozie.service.JPAService.create.db.schema=true
+  oozie.service.JPAService.validate.db.connection=false
+  oozie.service.JPAService.jdbc.driver=org.hsqldb.jdbcDriver
+  oozie.service.JPAService.jdbc.url=jdbc:hsqldb:mem:${oozie.db.schema.name}
+  oozie.service.JPAService.jdbc.username=sa
+  oozie.service.JPAService.jdbc.password=
+  oozie.service.JPAService.pool.max.active.conn=10
+</pre></p>
+<a name="Oozie_Configuration"></a>
+</div>
+<div class="section"><h3>Oozie Configuration</h3>
+<p>By default, Oozie configuration is read from Oozie's <tt>conf/</tt>
+ directory</p>
+<p>The Oozie configuration is distributed in 3 different files:</p>
+<p><ul><li><tt>oozie-site.xml</tt>
+ : Oozie server configuration</li>
+<li><tt>oozie-log4j.properties</tt>
+ : Oozie logging configuration</li>
+<li><tt>adminusers.txt</tt>
+ : Oozie admin users list</li>
+</ul>
+</p>
+<a name="Oozie_Configuration_Properties"></a>
+<div class="section"><h4>Oozie Configuration Properties</h4>
+<p>All Oozie configuration properties and their default values are defined in the <tt>oozie-default.xml</tt>
+ file.</p>
+<p>Oozie resolves configuration property values in the following order:</p>
+<p><ul><li>If a Java System property is defined, it uses its value</li>
+<li>Else, if the Oozie configuration file (=oozie-site.xml=) contains the property, it uses its value</li>
+<li>Else, it uses the default value documented in the <tt>oozie-default.xml</tt>
+ file</li>
+</ul>
+</p>
+<p><b>NOTE:</b>
+ The <tt>oozie-default.xml</tt>
+ file found in Oozie's <tt>conf/</tt>
+ directory is not used by Oozie, it is there
+for reference purposes only.</p>
+<a name="Logging_Configuration"></a>
+</div>
+<div class="section"><h4>Logging Configuration</h4>
+<p>By default, Oozie log configuration is defined in the <tt>oozie-log4j.properties</tt>
+ configuration file.</p>
+<p>If the Oozie log configuration file changes, Oozie reloads the new settings automatically.</p>
+<p>By default, Oozie logs to Oozie's <tt>logs/</tt>
+ directory.</p>
+<p>Oozie logs in 4 different files:</p>
+<p><ul><li>oozie.log: web services log streaming works from this log</li>
+<li>oozie-ops.log: messages for Admin/Operations to monitor</li>
+<li>oozie-instrumentation.log: intrumentation data, every 60 seconds (configurable)</li>
+<li>oozie-audit.log: audit messages, workflow jobs changes</li>
+</ul>
+</p>
+<p>The embedded Tomcat and embedded Derby log files are also written to Oozie's <tt>logs/</tt>
+ directory.</p>
+<a name="Oozie_User_Authentication_Configuration"></a>
+</div>
+<div class="section"><h4>Oozie User Authentication Configuration</h4>
+<p>Oozie supports Kerberos HTTP SPNEGO authentication, pseudo/simple authentication and anonymous access
+for client connections.</p>
+<p>Anonymous access (*default*) does not require the user to authenticate and the user ID is obtained from
+the job properties on job submission operations, other operations are anonymous.</p>
+<p>Pseudo/simple authentication requires the user to specify the user name on the request, this is done by
+the PseudoAuthenticator class by injecting the <tt>user.name</tt>
+ parameter in the query string of all requests.
+The <tt>user.name</tt>
+ parameter value is taken from the client process Java System property <tt>user.name</tt>
+.</p>
+<p>Kerberos HTTP SPNEGO authentication requires the user to perform a Kerberos HTTP SPNEGO authentication sequence.</p>
+<p>If Pseudo/simple or Kerberos HTTP SPNEGO authentication mechanisms are used, Oozie will return the user an
+authentication token HTTP Cookie that can be used in later requests as identy proof.</p>
+<p>Oozie uses Apache Hadoop-Auth (Java HTTP SPENGO) library for authentication.
+This library can be extended to support other authentication mechanisms.</p>
+<p>Oozie user authentication is configured using the following configuration properties (default values shown):</p>
+<p><pre>
+  oozie.authentication.type=simple
+  oozie.authentication.token.validity=36000
+  oozie.authentication.signature.secret=
+  oozie.authentication.cookie.domain=
+  oozie.authentication.simple.anonymous.allowed=true
+  oozie.authentication.kerberos.principal=HTTP/localhost@${local.realm}
+  oozie.authentication.kerberos.keytab=${oozie.service.HadoopAccessorService.keytab.file}
+</pre></p>
+<p>The <tt>type</tt>
+ defines authentication used for Oozie HTTP endpoint, the supported values are:
+simple | kerberos | #AUTHENTICATION_HANDLER_CLASSNAME#.</p>
+<p>The <tt>token.validity</tt>
+ indicates how long (in seconds) an authentication token is valid before it has
+to be renewed.</p>
+<p>The <tt>signature.secret</tt>
+ is the signature secret for signing the authentication tokens. If not set a random
+secret is generated at startup time.</p>
+<p>The <tt>oozie.authentication.cookie.domain</tt>
+ The domain to use for the HTTP cookie that stores the
+authentication token. In order to authentiation to work correctly across all Hadoop nodes web-consoles
+the domain must be correctly set.</p>
+<p>The <tt>simple.anonymous.allowed</tt>
+ indicates if anonymous requests are allowed. This setting is meaningful
+only when using 'simple' authentication.</p>
+<p>The <tt>kerberos.principal</tt>
+ indicates the Kerberos principal to be used for HTTP endpoint.
+The principal MUST start with 'HTTP/' as per Kerberos HTTP SPNEGO specification.</p>
+<p>The <tt>kerberos.keytab</tt>
+ indicates the location of the keytab file with the credentials for the principal.
+It should be the same keytab file Oozie uses for its Kerberos credentials for Hadoop.</p>
+<a name="Oozie_Hadoop_Authentication_Configuration"></a>
+</div>
+<div class="section"><h4>Oozie Hadoop Authentication Configuration</h4>
+<p>Oozie works with Hadoop versions which support Kerberos authentication.</p>
+<p>Oozie Hadoop authentication is configured using the following configuration properties (default values shown):</p>
+<p><pre>
+  oozie.service.HadoopAccessorService.kerberos.enabled=false
+  local.realm=LOCALHOST
+  oozie.service.HadoopAccessorService.keytab.file=${user.home}/oozie.keytab
+  oozie.service.HadoopAccessorService.kerberos.principal=${user.name}/localhost@{local.realm}
+</pre></p>
+<p>The above default values are for a Hadoop 0.20 secure distribution (with support for Kerberos authentication).</p>
+<p>To enable Kerberos authentication, the following property must be set:</p>
+<p><pre>
+  oozie.service.HadoopAccessorService.kerberos.enabled=true
+</pre></p>
+<p>When using Kerberos authentication, the following properties must be set to the correct values (default values shown):</p>
+<p><pre>
+  local.realm=LOCALHOST
+  oozie.service.HadoopAccessorService.keytab.file=${user.home}/oozie.keytab
+  oozie.service.HadoopAccessorService.kerberos.principal=${user.name}/localhost@{local.realm}
+</pre></p>
+<p><b>IMPORTANT:</b>
+ When using Oozie with a Hadoop 20 with Security distribution, the Oozie user in Hadoop must be configured
+as a proxy user.</p>
+<a name="User_ProxyUser_Configuration"></a>
+</div>
+<div class="section"><h4>User ProxyUser Configuration</h4>
+<p>Oozie supports impersonation or proxyuser functionality (identical to Hadoop proxyuser capabilities and conceptually
+similar to Unix 'sudo').</p>
+<p>Proxyuser enables other systems that are Oozie clients to submit jobs on behalf of other users.</p>
+<p>Because proxyuser is a powerful capability, Oozie provides the following restriction capabilities
+(similar to Hadoop):</p>
+<p><ul><li>Proxyuser is an explicit configuration on per proxyuser user basis.</li>
+<li>A proxyuser user can be restricted to impersonate other users from a set of hosts.</li>
+<li>A proxyser user can be restricted to impersonate users belonging to a set of groups.</li>
+</ul>
+</p>
+<p>There are 2 configuration properties needed to set up a proxyuser:</p>
+<p><ul><li>oozie.service.ProxyUserService.proxyuser.#USER#.hosts: hosts from where the user #USER# can impersonate other users.</li>
+<li>oozie.service.ProxyUserService.proxyuser.#USER#.groups: groups the users being impersonated by user #USER# must belong to.</li>
+</ul>
+</p>
+<p>Both properties support the '*' wildcard as value. Although this is recommended only for testing/development.</p>
+<a name="User_Authorization_Configuration"></a>
+</div>
+<div class="section"><h4>User Authorization Configuration</h4>
+<p>Oozie has a basic authorization model:</p>
+<p><ul><li>Users have read access to all jobs</li>
+<li>Users have write access to their own jobs</li>
+<li>Users have write access to jobs based on an Access Control List (list of users and groups)</li>
+<li>Users have read access to admin operations</li>
+<li>Admin users have write access to all jobs</li>
+<li>Admin users have write access to admin operations</li>
+</ul>
+</p>
+<p>If security is disabled all users are admin users.</p>
+<p>Oozie security is set via the following configuration property (default value shown):</p>
+<p><pre>
+  oozie.service.AuthorizationService.security.enabled=false
+</pre></p>
+<p>NOTE: the old ACL model where a group was provided is still supported if the following property is set
+in <tt>oozie-site.xml</tt>
+:</p>
+<p><pre>
+  oozie.service.AuthorizationService.default.group.as.acl=true
+</pre></p>
+<p>Admin users are determined from the list of admin groups, specified in
+ <tt>oozie.service.AuthorizationService.admin.groups</tt>
+ property. Use commas to separate multiple groups, spaces, tabs
+and ENTER characters are trimmed.</p>
+<p>If the above property for admin groups is not set, then the admin users are the users specified in the
+ <tt>conf/adminusers.txt</tt>
+ file. The syntax of this file is:</p>
+<p><ul><li>One user name per line</li>
+<li>Empty lines and lines starting with '#' are ignored</li>
+</ul>
+</p>
+<a name="Oozie_System_ID_Configuration"></a>
+</div>
+<div class="section"><h4>Oozie System ID Configuration</h4>
+<p>Oozie has a system ID that is is used to generate the Oozie temporary runtime directory, the workflow job IDs, and the
+workflow action IDs.</p>
+<p>Two Oozie systems running with the same ID will not have any conflict but in case of troubleshooting it will be easier
+to identify resources created/used by the different Oozie systems if they have different system IDs (default value
+shown):</p>
+<p><pre>
+  oozie.system.id=oozie-${user.name}
+</pre></p>
+<a name="Filesystem_Configuration"></a>
+</div>
+<div class="section"><h4>Filesystem Configuration</h4>
+<p>Oozie lets you to configure the allowed Filesystems by using the following configuration property in oozie-site.xml:
+<pre>
+  &lt;property&gt;
+    &lt;name&gt;oozie.service.HadoopAccessorService.supported.filesystems&lt;/name&gt;
+    &lt;value&gt;hdfs&lt;/value&gt;
+  &lt;/property&gt;
+</pre></p>
+<p>The above value, <tt>hdfs</tt>
+, which is the default, means that Oozie will only allow HDFS filesystems to be used.  Examples of other
+filesystems that Oozie is compatible with are: hdfs, hftp, webhdfs, and viewfs.  Multiple filesystems can be specified as
+comma-separated values.  Putting a * will allow any filesystem type, effectively disabling this check.</p>
+<a name="HCatalog_Configuration"></a>
+</div>
+<div class="section"><h4>HCatalog Configuration</h4>
+<p>Refer to the <a href="./DG_HCatalogIntegration.html">Oozie HCatalog Integration</a>
+ document for a overview of HCatalog and
+integration of Oozie with HCatalog. This section explains the various settings to be configured in oozie-site.xml on
+the Oozie server to enable Oozie to work with HCatalog.</p>
+<p><b>Adding HCatalog jars to Oozie war:</b>
+</p>
+<p>For Oozie server to talk to HCatalog server, HCatalog and hive jars need to be in the server classpath.
+hive-site.xml which has the configuration to talk to the HCatalog server also needs to be in the classpath.</p>
+<p>The oozie-[version]-hcataloglibs.tar.gz in the oozie distribution bundles the required hcatalog and hive jars that
+needs to be placed in the Oozie server classpath. If using a version of HCatalog bundled in
+Oozie hcataloglibs/, copy the corresponding HCatalog jars from hcataloglibs/ to the libext/ directory. If using a
+different version of HCatalog, copy the required HCatalog jars from such version in the libext/ directory.
+This needs to be done before running the <tt>oozie-setup.sh</tt>
+ script so that these jars get added to the Oozie WAR file.</p>
+<p><b>Configure HCatalog URI Handling:</b>
+</p>
+<p><pre>
+  &lt;property&gt;
+    &lt;name&gt;oozie.service.URIHandlerService.uri.handlers&lt;/name&gt;
+    &lt;value&gt;org.apache.oozie.dependency.FSURIHandler,org.apache.oozie.dependency.HCatURIHandler&lt;/value&gt;
+    &lt;description&gt;
+        Enlist the different uri handlers supported for data availability checks.
+    &lt;/description&gt;
+  &lt;/property&gt;
+</pre></p>
+<p>The above configuration defines the different uri handlers which check for existence of data dependencies defined in a
+Coordinator. The default value is <tt>org.apache.oozie.dependency.FSURIHandler</tt>
+. FSURIHandler supports uris with
+schemes defined in the configuration <tt>oozie.service.HadoopAccessorService.supported.filesystems</tt>
+ which are hdfs, hftp
+and webhcat by default. HCatURIHandler supports uris with the scheme as hcat.</p>
+<p><b>Configure HCatalog services:</b>
+</p>
+<p><pre>
+  &lt;property&gt;
+    &lt;name&gt;oozie.services.ext&lt;/name&gt;
+    &lt;value&gt;
+        org.apache.oozie.service.JMSAccessorService,
+        org.apache.oozie.service.PartitionDependencyManagerService,
+        org.apache.oozie.service.HCatAccessorService
+      &lt;/value&gt;
+    &lt;description&gt;
+          To add/replace services defined in 'oozie.services' with custom implementations.
+          Class names must be separated by commas.
+    &lt;/description&gt;
+  &lt;/property&gt;
+</pre></p>
+<p>PartitionDependencyManagerService and HCatAccessorService are required to work with HCatalog and support Coordinators
+having HCatalog uris as data dependency. If the HCatalog server is configured to publish partition availability
+notifications to a JMS compliant messaging provider like ActiveMQ, then JMSAccessorService needs to be added
+to <tt>oozie.services.ext</tt>
+ to handle those notifications.</p>
+<p><b>Configure JMS Provider JNDI connection mapping for HCatalog:</b>
+</p>
+<p><pre>
+  &lt;property&gt;
+    &lt;name&gt;oozie.service.HCatAccessorService.jmsconnections&lt;/name&gt;
+    &lt;value&gt;
+      hcat://hcatserver.colo1.com:8020=java.naming.factory.initial#Dummy.Factory;java.naming.provider.url#tcp://broker.colo1.com:61616,
+      default=java.naming.factory.initial#org.apache.activemq.jndi.ActiveMQInitialContextFactory;java.naming.provider.url#tcp://broker.colo.com:61616;connectionFactoryNames#ConnectionFactory
+    &lt;/value&gt;
+    &lt;description&gt;
+        Specify the map  of endpoints to JMS configuration properties. In general, endpoint
+        identifies the HCatalog server URL. &quot;default&quot; is used if no endpoint is mentioned
+        in the query. If some JMS property is not defined, the system will use the property
+        defined jndi.properties. jndi.properties files is retrieved from the application classpath.
+        Mapping rules can also be provided for mapping Hcatalog servers to corresponding JMS providers.
+        hcat://${1}.${2}.com:8020=java.naming.factory.initial#Dummy.Factory;java.naming.provider.url#tcp://broker.${2}.com:61616
+    &lt;/description&gt;
+  &lt;/property&gt;
+</pre></p>
+<p>Currently HCatalog does not provide APIs to get the connection details to connect to the JMS Provider it publishes
+notifications to. It only has APIs which provide the topic name in the JMS Provider to which the notifications are
+published for a given database table. So the JMS Provider's connection properties needs to be manually configured
+in Oozie using the above setting. You can either provide a <tt>default</tt>
+ JNDI configuration which will be used as the
+JMS Provider for all HCatalog servers, or can specify a configuration per HCatalog server URL or provide a
+configuration based on a rule matching multiple HCatalog server URLs. For example: With the configuration of
+hcat://${1}.${2}.com:8020=java.naming.factory.initial#Dummy.Factory;java.naming.provider.url#tcp://broker.${2}.com:61616,
+request URL of hcat://server1.colo1.com:8020 will map to tcp://broker.colo1.com:61616, hcat://server2.colo2.com:8020
+will map to tcp://broker.colo2.com:61616 and so on.</p>
+<p><b>Configure HCatalog Polling Frequency:</b>
+</p>
+<p><pre>
+  &lt;property&gt;
+    &lt;name&gt;oozie.service.coord.push.check.requeue.interval
+        &lt;/name&gt;
+    &lt;value&gt;600000&lt;/value&gt;
+    &lt;description&gt;Command re-queue interval for push dependencies (in millisecond).
+    &lt;/description&gt;
+  &lt;/property&gt;
+</pre></p>
+<p>If there is no JMS Provider configured for a HCatalog Server, then oozie polls HCatalog based on the frequency defined
+in <tt>oozie.service.coord.input.check.requeue.interval</tt>
+. This config also applies to HDFS polling.
+If there is a JMS provider configured for a HCatalog Server, then oozie polls HCatalog based on the frequency defined
+in <tt>oozie.service.coord.push.check.requeue.interval</tt>
+ as a fallback.
+The defaults for <tt>oozie.service.coord.input.check.requeue.interval</tt>
+ and <tt>oozie.service.coord.push.check.requeue.interval</tt>
+
+are 1 minute and 10 minutes respectively.</p>
+<a name="Notifications_Configuration"></a>
+</div>
+<div class="section"><h4>Notifications Configuration</h4>
+<p>Oozie supports publishing notifications to a JMS Provider for job status changes and SLA met and miss events. For
+more information on the feature, refer <a href="./DG_JMSNotifications.html">JMS Notifications</a>
+ documentation. Oozie can also send email
+notifications on SLA misses.</p>
+<p><ul><li><b>Message Broker Installation</b>
+: <br/></li>
+</ul>
+For Oozie to send/receive messages, a JMS-compliant broker should be installed. Apache ActiveMQ is a popular JMS-compliant
+broker usable for this purpose. See <a href="http://activemq.apache.org/getting-started.html" class="externalLink">here</a>
+ for instructions on
+installing and running ActiveMQ.</p>
+<p><ul><li><b>Services</b>
+: <br/></li>
+</ul>
+Add/modify <tt>oozie.services.ext</tt>
+ property in <tt>oozie-site.xml</tt>
+ to include the following services.
+     <pre>
+     &lt;property&gt;
+        &lt;name&gt;oozie.services.ext&lt;/name&gt;
+        &lt;value&gt;
+            org.apache.oozie.service.JMSAccessorService,
+            org.apache.oozie.service.JMSTopicService,
+            org.apache.oozie.service.EventHandlerService,
+            org.apache.oozie.sla.service.SLAService
+        &lt;/value&gt;
+     &lt;/property&gt;
+     </pre></p>
+<p><ul><li><b>Event Handlers</b>
+: <br/></li>
+</ul>
+<pre>
+     &lt;property&gt;
+        &lt;name&gt;oozie.service.EventHandlerService.event.listeners&lt;/name&gt;
+        &lt;value&gt;
+            org.apache.oozie.jms.JMSJobEventListener,
+            org.apache.oozie.sla.listener.SLAJobEventListener,
+            org.apache.oozie.jms.JMSSLAEventListener,
+            org.apache.oozie.sla.listener.SLAEmailEventListener
+        &lt;/value&gt;
+     &lt;/property&gt;
+     </pre>
+    It is also recommended to increase <tt>oozie.service.SchedulerService.threads</tt>
+ to 15 for faster event processing and sending notifications. The services and their functions are as follows: <br/>
+      JMSJobEventListener - Sends JMS job notifications <br/>
+      JMSSLAEventListener - Sends JMS SLA notifications <br/>
+      SLAEmailEventListener - Sends Email SLA notifications <br/>
+      SLAJobEventListener - Processes job events and calculates SLA. Does not send any notifications<ul><li><b>JMS properties</b>
+:  <br/></li>
+</ul>
+Add <tt>oozie.jms.producer.connection.properties</tt>
+ property in <tt>oozie-site.xml</tt>
+. Its value corresponds to an
+identifier (e.g. default) assigned to a semi-colon separated key#value list of properties from your JMS broker's
+=jndi.properties= file. The important properties are <tt>java.naming.factory.initial</tt>
+ and <tt>java.naming.provider.url</tt>
+.</p>
+<p>As an example, if using ActiveMQ in local env, the property can be set to
+     <pre>
+     &lt;property&gt;
+        &lt;name&gt;oozie.jms.producer.connection.properties&lt;/name&gt;
+        &lt;value&gt;
+            default=java.naming.factory.initial#org.apache.activemq.jndi.ActiveMQInitialContextFactory;java.naming.provider.url#tcp://localhost:61616
+        &lt;/value&gt;
+     &lt;/property&gt;
+     </pre><ul><li><b>JMS Topic name</b>
+: <br/></li>
+</ul>
+JMS consumers listen on a particular &quot;topic&quot;. Hence Oozie needs to define a topic variable with which to publish messages
+about the various jobs.
+     <pre>
+     &lt;property&gt;
+        &lt;name&gt;oozie.service.JMSTopicService.topic.name&lt;/name&gt;
+        &lt;value&gt;
+            default=${username}
+        &lt;/value&gt;
+        &lt;description&gt;
+            Topic options are ${username} or a fixed string which can be specified as default or for a
+            particular job type.
+            For e.g To have a fixed string topic for workflows, coordinators and bundles,
+            specify in the following comma-separated format: {jobtype1}={some_string1}, {jobtype2}={some_string2}
+            where job type can be WORKFLOW, COORDINATOR or BUNDLE.
+            Following example defines topic for workflow job, workflow action, coordinator job, coordinator action,
+            bundle job and bundle action
+            WORKFLOW=workflow,
+            COORDINATOR=coordinator,
+            BUNDLE=bundle
+            For jobs with no defined topic, default topic will be ${username}
+        &lt;/description&gt;
+     &lt;/property&gt;
+     </pre></p>
+<p>Another related property is the topic prefix.
+     <pre>
+     &lt;property&gt;
+        &lt;name&gt;oozie.service.JMSTopicService.topic.prefix&lt;/name&gt;
+        &lt;value&gt;&lt;/value&gt;
+        &lt;description&gt;
+            This can be used to append a prefix to the topic in oozie.service.JMSTopicService.topic.name. For eg: oozie.
+        &lt;/description&gt;
+     &lt;/property&gt;
+     </pre></p>
+<a name="Setting_Up_Oozie_with_HTTPS_SSL"></a>
+</div>
+<div class="section"><h4>Setting Up Oozie with HTTPS (SSL)</h4>
+<p><b>IMPORTANT</b>
+:
+The default HTTPS configuration will cause all Oozie URLs to use HTTPS except for the JobTracker callback URLs. This is to simply
+configuration (no changes needed outside of Oozie), but this is okay because Oozie doesn't inherently trust the callbacks anyway;
+they are used as hints.</p>
+<p>The related environment variables are explained at <a href="./AG_Install.html#Environment_Setup">Environment Setup</a>
+.</p>
+<p>You can use either a certificate from a Certificate Authority or a Self-Signed Certificate.  Using a self-signed certificate
+requires some additional configuration on each Oozie client machine.</p>
+<a name="To_use_a_Self-Signed_Certificate"></a>
+<div class="section"><h5>To use a Self-Signed Certificate</h5>
+<p>There are many ways to create a Self-Signed Certificate, this is just one way.  We will be using the keytool program, which is
+included with your JRE. If its not on your path, you should be able to find it in $JAVA_HOME/bin.</p>
+<p>1. Run the following command (as the Oozie user); you will be asked a series of questions in an interactive prompt.  It will create
+the keystore file, which will be named <tt>.keystore</tt>
+ and located in the Oozie user's home directory.
+<pre>
+keytool -genkey -alias tomcat -keyalg RSA
+</pre>
+The password you enter for &quot;keystore password&quot; and &quot;key password for <tomcat>&quot; must be the same; Oozie is configued to use
+&quot;password&quot; by default. If you want to use a password other than &quot;password&quot;, you will need to change the <tt>OOZIE_HTTPS_KEYSTORE_PASS</tt>
+
+environment variable.
+The answer to &quot;What is your first and last name?&quot; (i.e. &quot;CN&quot;) must be the hostname of the machine where the Oozie Server will be
+running.</p>
+<p>2. Run the following command (as the Oozie user) to export a certificate file from the keystore file:
+<pre>
+keytool -exportcert -alias tomcat -file path/to/where/I/want/my/certificate.cert
+</pre></p>
+<a name="To_use_a_Certificate_from_a_Certificate_Authority"></a>
+</div>
+<div class="section"><h5>To use a Certificate from a Certificate Authority</h5>
+<p>1. You will need to make a request to a Certificate Authority in order to obtain a proper Certificate; please consult a Certificate
+Authority on this procedure.</p>
+<p>2. Once you have your .cert file, run the following command (as the Oozie user) to create a keystore file from your certificate:
+<pre>
+keytool -import -alias tomcat -file path/to/certificate.cert
+</pre>
+The keystore file will be named <tt>.keystore</tt>
+ and located in the Oozie user's home directory.</p>
+<a name="Configure_the_Oozie_Server_to_use_SSL_HTTPS"></a>
+</div>
+<div class="section"><h5>Configure the Oozie Server to use SSL (HTTPS)</h5>
+<p>1. Make sure the Oozie server isn't running</p>
+<p>2. Run the following command (as the Oozie user):
+<pre>
+oozie-setup.sh prepare-war -secure
+</pre>
+This will configure Oozie to use HTTPS instead of HTTP.  To revert back to HTTP, simply rerun the command without <tt>-secure</tt>
+.</p>
+<p>3. Start the Oozie server</p>
+<a name="Configure_the_Oozie_Client_to_connect_using_SSL_HTTPS"></a>
+</div>
+<div class="section"><h5>Configure the Oozie Client to connect using SSL (HTTPS)</h5>
+<p>The first two steps are only necessary if you are using a Self-Signed Certificate; the third is required either way.
+Also, these steps must be done on every machine where you intend to use the Oozie Client.</p>
+<p>1. Copy or download the .cert file onto the client machine</p>
+<p>2. Run the following command (as root) to import the certificate into the JRE's keystore. This will allow any Java program,
+including the Oozie client, to connect to the Oozie Server using your self-signed certificate.
+<pre>
+sudo keytool -import -alias tomcat -file path/to/certificate.cert -keystore ${JRE_cacerts}
+</pre>
+Where ${JRE_cacerts} is the path to the JRE's certs file.  It's location may differ depending on the Operating System, but its
+typically called cacerts and located at ${JAVA_HOME}/lib/security/cacerts but may be under a different directory in ${JAVA_HOME}
+(you may want to create a backup copy of this file first). The default password is <tt>changeit</tt>
+.</p>
+<p>3. When using the Oozie Client, you will need to use <a href="https://oozie.server.hostname:11443/oozie" class="externalLink">https://oozie.server.hostname:11443/oozie</a>
+ instead of
+http://oozie.server.hostname:11000/oozie -- Java will not automatically redirect from the http address to the https address.</p>
+<a name="Connect_to_the_Oozie_Web_UI_using_SSL_HTTPS"></a>
+</div>
+<div class="section"><h5>Connect to the Oozie Web UI using SSL (HTTPS)</h5>
+<p>1. Use https://oozie.server.hostname:11443/oozie
+though most browsers should automatically redirect you if you use http://oozie.server.hostname:11000/oozie</p>
+<p><b>IMPORTANT</b>
+: If using a Self-Signed Certificate, your browser will warn you that it can't verify the certificate or something
+similar. You will probably have to add your certificate as an exception.</p>
+<a name="Fine_Tuning_an_Oozie_Server"></a>
+</div>
+</div>
+<div class="section"><h4>Fine Tuning an Oozie Server</h4>
+<p>Refer to the <a href="./oozie-default.xml">oozie-default.xml</a>
+ for details.</p>
+<a name="Starting_and_Stopping_Oozie"></a>
+</div>
+</div>
+<div class="section"><h3>Starting and Stopping Oozie</h3>
+<p>Use the standard Tomcat commands to start and stop Oozie.</p>
+<a name="Oozie_Command_Line_Installation"></a>
+</div>
+<div class="section"><h3>Oozie Command Line Installation</h3>
+<p>Copy and expand the <tt>oozie-client</tt>
+ TAR.GZ file bundled with the distribution. Add the <tt>bin/</tt>
+ directory to the <tt>PATH</tt>
+.</p>
+<p>Refer to the <a href="./DG_CommandLineTool.html">Command Line Interface Utilities</a>
+ document for a a full reference of the <tt>oozie</tt>
+
+command line tool.</p>
+<a name="Oozie_Share_Lib"></a>
+</div>
+<div class="section"><h3>Oozie Share Lib</h3>
+<p>The Oozie sharelib TAR.GZ file bundled with the distribution contains the necessary files to run Oozie map-reduce streaming, pig,
+hive, sqooop, and distcp actions.  There is also a sharelib for HCatalog.  The sharelib is required for these actions to work; any
+other actions (mapreduce, shell, ssh, and java) do not require the sharelib to be installed.</p>
+<p>As of Oozie 4.0, the following property is included.  If true, Oozie will create and ship a &quot;launcher jar&quot; that contains classes
+necessary for the launcher job.  If false, Oozie will not do this, and it is assumed that the necessary classes are in their
+respective sharelib jars or the &quot;oozie&quot; sharelib instead.  When false, the sharelib is required for ALL actions; when true, the
+sharelib is only required for actions that need additional jars (the original list from above).  The main advantage of setting this
+to false is that launching jobs should be slightly faster.</p>
+<p><pre>
+&lt;property&gt;
+    &lt;name&gt;oozie.action.ship.launcher.jar&lt;/name&gt;
+    &lt;value&gt;true&lt;/value&gt;
+&lt;/property&gt;
+</pre></p>
+<a name="Oozie_CoordinatorsBundles_Processing_Timezone"></a>
+</div>
+<div class="section"><h3>Oozie Coordinators/Bundles Processing Timezone</h3>
+<p>By default Oozie runs coordinator and bundle jobs using <tt>UTC</tt>
+ timezone for datetime values specified in the application
+XML and in the job parameter properties. This includes coordinator applications start and end times of jobs, coordinator
+datasets initial-instance, bundle applications kick-offtimes. In addition, coordinator dataset instance URI templates
+will be resolved using datetime values of the Oozie processing timezone.</p>
+<p>It is possible to set the Oozie processing timezone to a timezone that is an offset of UTC, alternate timezones must
+expressed in using a GMT offset ( <tt>GMT+/-####</tt>
+ ). For example: <tt>GMT+0530</tt>
+ (India timezone).</p>
+<p>To change the default <tt>UTC</tt>
+ timezone, use the <tt>oozie.processing.timezone</tt>
+ property in the <tt>oozie-site.xml</tt>
+. For example:</p>
+<p><pre>
+&lt;configuration&gt;
+    &lt;property&gt;
+        &lt;name&gt;oozie.processing.timezone&lt;/name&gt;
+        &lt;value&gt;GMT+0530&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</pre></p>
+<p><b>IMPORTANT:</b>
+ If using a processing timezone other than <tt>UTC</tt>
+, all datetime values in coordinator and bundle jobs must
+be expressed in the corresponding timezone, for example <tt>2012-08-08T12:42+0530</tt>
+.</p>
+<p><b>NOTE:</b>
+ It is strongly encouraged to use <tt>UTC</tt>
+, the default Oozie processing timezone.</p>
+<p>For more details on using an alternate Oozie processing timezone, please reffer to the
+<a href="./CoordinatorFunctionalSpec.html#datetime">Coordinator Fuctional Specification, section '4. Datetime'</a>
+</p>
+<p><a name="UberJar"></a>
+</p>
+<a name="MapReduce_Workflow_Uber_Jars"></a>
+</div>
+<div class="section"><h3>MapReduce Workflow Uber Jars</h3>
+<p>For Map-Reduce jobs (not including streaming or pipes), additional jar files can also be included via an uber jar. An uber jar is a
+jar file that contains additional jar files within a &quot;lib&quot; folder (see
+<a href="./WorkflowFunctionalSpec.html#AppDeployment">Workflow Functional Specification</a>
+ for more information). Submitting a workflow with an uber jar
+requires at least Hadoop 2.2.0 or 1.2.0. As such, using uber jars in a workflow is disabled by default. To enable this feature, use
+the <tt>oozie.action.mapreduce.uber.jar.enable</tt>
+ property in the <tt>oozie-site.xml</tt>
+ (and make sure to use a supported version of Hadoop).</p>
+<p><pre>
+&lt;configuration&gt;
+    &lt;property&gt;
+        &lt;name&gt;oozie.action.mapreduce.uber.jar.enable&lt;/name&gt;
+        &lt;value&gt;true&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</pre></p>
+<a name="AdvancedCustom_Environment_Settings"></a>
+</div>
+<div class="section"><h3>Advanced/Custom Environment Settings</h3>
+<p>Oozie can be configured to use Unix standard filesystem hierarchy for its different files
+(configuration, logs, data and temporary files).</p>
+<p>These settings must be done in the <tt>bin/oozie-env.sh</tt>
+ script.</p>
+<p>This script is sourced before the configuration <tt>oozie-env.sh</tt>
+ and supports additional
+environment variables (shown with their default values):</p>
+<p><pre>
+export OOZIE_CONFIG=${OOZIE_HOME}/conf
+export OOZIE_DATA={OOZIE_HOME}/data
+export OOZIE_LOG={OOZIE_HOME}/logs
+export CATALINA_BASE=${OOZIE_HOME}/oozie-server
+export CATALINA_TMPDIR=${OOZIE_HOME}/oozie-server/temp
+export CATALINA_OUT=${OOZIE_LOGS}/catalina.out
+export CATALINA_PID=/tmp/oozie.pid
+</pre></p>
+<p>Sample values to make Oozie follow Unix standard filesystem hierarchy:</p>
+<p><pre>
+export OOZIE_CONFIG=/etc/oozie
+export OOZIE_DATA=/var/lib/oozie
+export OOZIE_LOG=/var/log/oozie
+export CATALINA_BASE=${OOZIE_DATA}/oozie-server
+export CATALINA_TMPDIR=/tmp
+export CATALINA_PID=/tmp/oozie.pid
+</pre></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<p></p>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2015
+    
+          Apache Software Foundation
+          
+  
+
+  
+    
+  
+  
+    
+   - <a href="http://maven.apache.org/privacy-policy.html">Privacy Policy</a></div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

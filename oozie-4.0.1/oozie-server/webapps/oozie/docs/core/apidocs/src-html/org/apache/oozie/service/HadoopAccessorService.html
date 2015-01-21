@@ -1,0 +1,616 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * or more contributor license agreements.  See the NOTICE file<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * distributed with this work for additional information<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * regarding copyright ownership.  The ASF licenses this file<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * to you under the Apache License, Version 2.0 (the<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * "License"); you may not use this file except in compliance<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * with the License.  You may obtain a copy of the License at<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.10"></a>
+<span class="sourceLineNo">011</span> *<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * Unless required by applicable law or agreed to in writing, software<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * See the License for the specific language governing permissions and<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * limitations under the License.<a name="line.16"></a>
+<span class="sourceLineNo">017</span> */<a name="line.17"></a>
+<span class="sourceLineNo">018</span>package org.apache.oozie.service;<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>import org.apache.hadoop.io.Text;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import org.apache.hadoop.mapred.JobClient;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import org.apache.hadoop.mapred.JobConf;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import org.apache.hadoop.fs.FileSystem;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.apache.hadoop.fs.Path;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.apache.hadoop.conf.Configuration;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.apache.hadoop.mapreduce.security.token.delegation.DelegationTokenIdentifier;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.apache.hadoop.net.NetUtils;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.hadoop.security.SecurityUtil;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.apache.hadoop.security.UserGroupInformation;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.hadoop.filecache.DistributedCache;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.apache.hadoop.security.token.Token;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.apache.oozie.ErrorCode;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.apache.oozie.action.hadoop.JavaActionExecutor;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.apache.oozie.util.ParamChecker;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.apache.oozie.util.XConfiguration;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.apache.oozie.util.XLog;<a name="line.36"></a>
+<span class="sourceLineNo">037</span><a name="line.37"></a>
+<span class="sourceLineNo">038</span>import java.io.File;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import java.io.FileInputStream;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import java.io.IOException;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import java.io.InputStream;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import java.net.URI;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import java.net.URISyntaxException;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import java.security.PrivilegedExceptionAction;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import java.util.HashMap;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import java.util.Map;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>import java.util.Set;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>import java.util.HashSet;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>import java.util.concurrent.ConcurrentHashMap;<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>/**<a name="line.51"></a>
+<span class="sourceLineNo">052</span> * The HadoopAccessorService returns HadoopAccessor instances configured to work on behalf of a user-group. &lt;p/&gt; The<a name="line.52"></a>
+<span class="sourceLineNo">053</span> * default accessor used is the base accessor which just injects the UGI into the configuration instance used to<a name="line.53"></a>
+<span class="sourceLineNo">054</span> * create/obtain JobClient and FileSystem instances.<a name="line.54"></a>
+<span class="sourceLineNo">055</span> */<a name="line.55"></a>
+<span class="sourceLineNo">056</span>public class HadoopAccessorService implements Service {<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>    private static XLog LOG = XLog.getLog(HadoopAccessorService.class);<a name="line.58"></a>
+<span class="sourceLineNo">059</span><a name="line.59"></a>
+<span class="sourceLineNo">060</span>    public static final String CONF_PREFIX = Service.CONF_PREFIX + "HadoopAccessorService.";<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    public static final String JOB_TRACKER_WHITELIST = CONF_PREFIX + "jobTracker.whitelist";<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    public static final String NAME_NODE_WHITELIST = CONF_PREFIX + "nameNode.whitelist";<a name="line.62"></a>
+<span class="sourceLineNo">063</span>    public static final String HADOOP_CONFS = CONF_PREFIX + "hadoop.configurations";<a name="line.63"></a>
+<span class="sourceLineNo">064</span>    public static final String ACTION_CONFS = CONF_PREFIX + "action.configurations";<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    public static final String KERBEROS_AUTH_ENABLED = CONF_PREFIX + "kerberos.enabled";<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    public static final String KERBEROS_KEYTAB = CONF_PREFIX + "keytab.file";<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    public static final String KERBEROS_PRINCIPAL = CONF_PREFIX + "kerberos.principal";<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    public static final Text MR_TOKEN_ALIAS = new Text("oozie mr token");<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>    protected static final String OOZIE_HADOOP_ACCESSOR_SERVICE_CREATED = "oozie.HadoopAccessorService.created";<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    /** The Kerberos principal for the job tracker.*/<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    protected static final String JT_PRINCIPAL = "mapreduce.jobtracker.kerberos.principal";<a name="line.72"></a>
+<span class="sourceLineNo">073</span>    /** The Kerberos principal for the resource manager.*/<a name="line.73"></a>
+<span class="sourceLineNo">074</span>    protected static final String RM_PRINCIPAL = "yarn.resourcemanager.principal";<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    protected static final String HADOOP_JOB_TRACKER = "mapred.job.tracker";<a name="line.75"></a>
+<span class="sourceLineNo">076</span>    protected static final String HADOOP_JOB_TRACKER_2 = "mapreduce.jobtracker.address";<a name="line.76"></a>
+<span class="sourceLineNo">077</span>    protected static final String HADOOP_YARN_RM = "yarn.resourcemanager.address";<a name="line.77"></a>
+<span class="sourceLineNo">078</span>    private static final Map&lt;String, Text&gt; mrTokenRenewers = new HashMap&lt;String, Text&gt;();<a name="line.78"></a>
+<span class="sourceLineNo">079</span><a name="line.79"></a>
+<span class="sourceLineNo">080</span>    private Set&lt;String&gt; jobTrackerWhitelist = new HashSet&lt;String&gt;();<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    private Set&lt;String&gt; nameNodeWhitelist = new HashSet&lt;String&gt;();<a name="line.81"></a>
+<span class="sourceLineNo">082</span>    private Map&lt;String, Configuration&gt; hadoopConfigs = new HashMap&lt;String, Configuration&gt;();<a name="line.82"></a>
+<span class="sourceLineNo">083</span>    private Map&lt;String, File&gt; actionConfigDirs = new HashMap&lt;String, File&gt;();<a name="line.83"></a>
+<span class="sourceLineNo">084</span>    private Map&lt;String, Map&lt;String, XConfiguration&gt;&gt; actionConfigs = new HashMap&lt;String, Map&lt;String, XConfiguration&gt;&gt;();<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>    private UserGroupInformationService ugiService;<a name="line.86"></a>
+<span class="sourceLineNo">087</span><a name="line.87"></a>
+<span class="sourceLineNo">088</span>    /**<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     * Supported filesystem schemes for namespace federation<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     */<a name="line.90"></a>
+<span class="sourceLineNo">091</span>    public static final String SUPPORTED_FILESYSTEMS = CONF_PREFIX + "supported.filesystems";<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    public static final String[] DEFAULT_SUPPORTED_SCHEMES = new String[]{"hdfs","hftp","webhdfs"};<a name="line.92"></a>
+<span class="sourceLineNo">093</span>    private Set&lt;String&gt; supportedSchemes;<a name="line.93"></a>
+<span class="sourceLineNo">094</span>    private boolean allSchemesSupported;<a name="line.94"></a>
+<span class="sourceLineNo">095</span><a name="line.95"></a>
+<span class="sourceLineNo">096</span>    public void init(Services services) throws ServiceException {<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        this.ugiService = services.get(UserGroupInformationService.class);<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        init(services.getConf());<a name="line.98"></a>
+<span class="sourceLineNo">099</span>    }<a name="line.99"></a>
+<span class="sourceLineNo">100</span><a name="line.100"></a>
+<span class="sourceLineNo">101</span>    //for testing purposes, see XFsTestCase<a name="line.101"></a>
+<span class="sourceLineNo">102</span>    public void init(Configuration conf) throws ServiceException {<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        for (String name : conf.getStringCollection(JOB_TRACKER_WHITELIST)) {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>            String tmp = name.toLowerCase().trim();<a name="line.104"></a>
+<span class="sourceLineNo">105</span>            if (tmp.length() == 0) {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                continue;<a name="line.106"></a>
+<span class="sourceLineNo">107</span>            }<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            jobTrackerWhitelist.add(tmp);<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        XLog.getLog(getClass()).info(<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                "JOB_TRACKER_WHITELIST :" + conf.getStringCollection(JOB_TRACKER_WHITELIST)<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                        + ", Total entries :" + jobTrackerWhitelist.size());<a name="line.112"></a>
+<span class="sourceLineNo">113</span>        for (String name : conf.getStringCollection(NAME_NODE_WHITELIST)) {<a name="line.113"></a>
+<span class="sourceLineNo">114</span>            String tmp = name.toLowerCase().trim();<a name="line.114"></a>
+<span class="sourceLineNo">115</span>            if (tmp.length() == 0) {<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                continue;<a name="line.116"></a>
+<span class="sourceLineNo">117</span>            }<a name="line.117"></a>
+<span class="sourceLineNo">118</span>            nameNodeWhitelist.add(tmp);<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        }<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        XLog.getLog(getClass()).info(<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                "NAME_NODE_WHITELIST :" + conf.getStringCollection(NAME_NODE_WHITELIST)<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                        + ", Total entries :" + nameNodeWhitelist.size());<a name="line.122"></a>
+<span class="sourceLineNo">123</span><a name="line.123"></a>
+<span class="sourceLineNo">124</span>        boolean kerberosAuthOn = conf.getBoolean(KERBEROS_AUTH_ENABLED, true);<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        XLog.getLog(getClass()).info("Oozie Kerberos Authentication [{0}]", (kerberosAuthOn) ? "enabled" : "disabled");<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        if (kerberosAuthOn) {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>            kerberosInit(conf);<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        }<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        else {<a name="line.129"></a>
+<span class="sourceLineNo">130</span>            Configuration ugiConf = new Configuration();<a name="line.130"></a>
+<span class="sourceLineNo">131</span>            ugiConf.set("hadoop.security.authentication", "simple");<a name="line.131"></a>
+<span class="sourceLineNo">132</span>            UserGroupInformation.setConfiguration(ugiConf);<a name="line.132"></a>
+<span class="sourceLineNo">133</span>        }<a name="line.133"></a>
+<span class="sourceLineNo">134</span><a name="line.134"></a>
+<span class="sourceLineNo">135</span>        if (ugiService == null) { //for testing purposes, see XFsTestCase<a name="line.135"></a>
+<span class="sourceLineNo">136</span>            this.ugiService = new UserGroupInformationService();<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        }<a name="line.137"></a>
+<span class="sourceLineNo">138</span><a name="line.138"></a>
+<span class="sourceLineNo">139</span>        loadHadoopConfigs(conf);<a name="line.139"></a>
+<span class="sourceLineNo">140</span>        preLoadActionConfigs(conf);<a name="line.140"></a>
+<span class="sourceLineNo">141</span><a name="line.141"></a>
+<span class="sourceLineNo">142</span>        supportedSchemes = new HashSet&lt;String&gt;();<a name="line.142"></a>
+<span class="sourceLineNo">143</span>        String[] schemesFromConf = conf.getStrings(SUPPORTED_FILESYSTEMS, DEFAULT_SUPPORTED_SCHEMES);<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        if(schemesFromConf != null) {<a name="line.144"></a>
+<span class="sourceLineNo">145</span>            for (String scheme: schemesFromConf) {<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                scheme = scheme.trim();<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                // If user gives "*", supportedSchemes will be empty, so that checking is not done i.e. all schemes allowed<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                if(scheme.equals("*")) {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                    if(schemesFromConf.length &gt; 1) {<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                        throw new ServiceException(ErrorCode.E0100, getClass().getName(),<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                            SUPPORTED_FILESYSTEMS + " should contain either only wildcard or explicit list, not both");<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                    }<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                    allSchemesSupported = true;<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                }<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                supportedSchemes.add(scheme);<a name="line.155"></a>
+<span class="sourceLineNo">156</span>            }<a name="line.156"></a>
+<span class="sourceLineNo">157</span>        }<a name="line.157"></a>
+<span class="sourceLineNo">158</span>    }<a name="line.158"></a>
+<span class="sourceLineNo">159</span><a name="line.159"></a>
+<span class="sourceLineNo">160</span>    private void kerberosInit(Configuration serviceConf) throws ServiceException {<a name="line.160"></a>
+<span class="sourceLineNo">161</span>            try {<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                String keytabFile = serviceConf.get(KERBEROS_KEYTAB,<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                                                    System.getProperty("user.home") + "/oozie.keytab").trim();<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                if (keytabFile.length() == 0) {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                    throw new ServiceException(ErrorCode.E0026, KERBEROS_KEYTAB);<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                }<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                String principal = serviceConf.get(KERBEROS_PRINCIPAL, "oozie/localhost@LOCALHOST");<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                if (principal.length() == 0) {<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                    throw new ServiceException(ErrorCode.E0026, KERBEROS_PRINCIPAL);<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                }<a name="line.170"></a>
+<span class="sourceLineNo">171</span>                Configuration conf = new Configuration();<a name="line.171"></a>
+<span class="sourceLineNo">172</span>                conf.set("hadoop.security.authentication", "kerberos");<a name="line.172"></a>
+<span class="sourceLineNo">173</span>                UserGroupInformation.setConfiguration(conf);<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                UserGroupInformation.loginUserFromKeytab(principal, keytabFile);<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                XLog.getLog(getClass()).info("Got Kerberos ticket, keytab [{0}], Oozie principal principal [{1}]",<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                                             keytabFile, principal);<a name="line.176"></a>
+<span class="sourceLineNo">177</span>            }<a name="line.177"></a>
+<span class="sourceLineNo">178</span>            catch (ServiceException ex) {<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                throw ex;<a name="line.179"></a>
+<span class="sourceLineNo">180</span>            }<a name="line.180"></a>
+<span class="sourceLineNo">181</span>            catch (Exception ex) {<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                throw new ServiceException(ErrorCode.E0100, getClass().getName(), ex.getMessage(), ex);<a name="line.182"></a>
+<span class="sourceLineNo">183</span>            }<a name="line.183"></a>
+<span class="sourceLineNo">184</span>    }<a name="line.184"></a>
+<span class="sourceLineNo">185</span><a name="line.185"></a>
+<span class="sourceLineNo">186</span>    private static final String[] HADOOP_CONF_FILES =<a name="line.186"></a>
+<span class="sourceLineNo">187</span>        {"core-site.xml", "hdfs-site.xml", "mapred-site.xml", "yarn-site.xml", "hadoop-site.xml"};<a name="line.187"></a>
+<span class="sourceLineNo">188</span><a name="line.188"></a>
+<span class="sourceLineNo">189</span><a name="line.189"></a>
+<span class="sourceLineNo">190</span>    private Configuration loadHadoopConf(File dir) throws IOException {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        Configuration hadoopConf = new XConfiguration();<a name="line.191"></a>
+<span class="sourceLineNo">192</span>        for (String file : HADOOP_CONF_FILES) {<a name="line.192"></a>
+<span class="sourceLineNo">193</span>            File f = new File(dir, file);<a name="line.193"></a>
+<span class="sourceLineNo">194</span>            if (f.exists()) {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                InputStream is = new FileInputStream(f);<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                Configuration conf = new XConfiguration(is);<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                is.close();<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                XConfiguration.copy(conf, hadoopConf);<a name="line.198"></a>
+<span class="sourceLineNo">199</span>            }<a name="line.199"></a>
+<span class="sourceLineNo">200</span>        }<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        return hadoopConf;<a name="line.201"></a>
+<span class="sourceLineNo">202</span>    }<a name="line.202"></a>
+<span class="sourceLineNo">203</span><a name="line.203"></a>
+<span class="sourceLineNo">204</span>    private Map&lt;String, File&gt; parseConfigDirs(String[] confDefs, String type) throws ServiceException, IOException {<a name="line.204"></a>
+<span class="sourceLineNo">205</span>        Map&lt;String, File&gt; map = new HashMap&lt;String, File&gt;();<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        File configDir = new File(ConfigurationService.getConfigurationDirectory());<a name="line.206"></a>
+<span class="sourceLineNo">207</span>        for (String confDef : confDefs) {<a name="line.207"></a>
+<span class="sourceLineNo">208</span>            if (confDef.trim().length() &gt; 0) {<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                String[] parts = confDef.split("=");<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                if (parts.length == 2) {<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                    String hostPort = parts[0];<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                    String confDir = parts[1];<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                    File dir = new File(confDir);<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                    if (!dir.isAbsolute()) {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                        dir = new File(configDir, confDir);<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                    }<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                    if (dir.exists()) {<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                        map.put(hostPort.toLowerCase(), dir);<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                    }<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                    else {<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                        throw new ServiceException(ErrorCode.E0100, getClass().getName(),<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                                                   "could not find " + type + " configuration directory: " +<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                                                   dir.getAbsolutePath());<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                    }<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                }<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                else {<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                    throw new ServiceException(ErrorCode.E0100, getClass().getName(),<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                                               "Incorrect " + type + " configuration definition: " + confDef);<a name="line.228"></a>
+<span class="sourceLineNo">229</span>                }<a name="line.229"></a>
+<span class="sourceLineNo">230</span>            }<a name="line.230"></a>
+<span class="sourceLineNo">231</span>        }<a name="line.231"></a>
+<span class="sourceLineNo">232</span>        return map;<a name="line.232"></a>
+<span class="sourceLineNo">233</span>    }<a name="line.233"></a>
+<span class="sourceLineNo">234</span><a name="line.234"></a>
+<span class="sourceLineNo">235</span>    private void loadHadoopConfigs(Configuration serviceConf) throws ServiceException {<a name="line.235"></a>
+<span class="sourceLineNo">236</span>        try {<a name="line.236"></a>
+<span class="sourceLineNo">237</span>            Map&lt;String, File&gt; map = parseConfigDirs(serviceConf.getStrings(HADOOP_CONFS, "*=hadoop-conf"), "hadoop");<a name="line.237"></a>
+<span class="sourceLineNo">238</span>            for (Map.Entry&lt;String, File&gt; entry : map.entrySet()) {<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                hadoopConfigs.put(entry.getKey(), loadHadoopConf(entry.getValue()));<a name="line.239"></a>
+<span class="sourceLineNo">240</span>            }<a name="line.240"></a>
+<span class="sourceLineNo">241</span>        }<a name="line.241"></a>
+<span class="sourceLineNo">242</span>        catch (ServiceException ex) {<a name="line.242"></a>
+<span class="sourceLineNo">243</span>            throw ex;<a name="line.243"></a>
+<span class="sourceLineNo">244</span>        }<a name="line.244"></a>
+<span class="sourceLineNo">245</span>        catch (Exception ex) {<a name="line.245"></a>
+<span class="sourceLineNo">246</span>            throw new ServiceException(ErrorCode.E0100, getClass().getName(), ex.getMessage(), ex);<a name="line.246"></a>
+<span class="sourceLineNo">247</span>        }<a name="line.247"></a>
+<span class="sourceLineNo">248</span>    }<a name="line.248"></a>
+<span class="sourceLineNo">249</span><a name="line.249"></a>
+<span class="sourceLineNo">250</span>    private void preLoadActionConfigs(Configuration serviceConf) throws ServiceException {<a name="line.250"></a>
+<span class="sourceLineNo">251</span>        try {<a name="line.251"></a>
+<span class="sourceLineNo">252</span>            actionConfigDirs = parseConfigDirs(serviceConf.getStrings(ACTION_CONFS, "*=hadoop-conf"), "action");<a name="line.252"></a>
+<span class="sourceLineNo">253</span>            for (String hostport : actionConfigDirs.keySet()) {<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                actionConfigs.put(hostport, new ConcurrentHashMap&lt;String, XConfiguration&gt;());<a name="line.254"></a>
+<span class="sourceLineNo">255</span>            }<a name="line.255"></a>
+<span class="sourceLineNo">256</span>        }<a name="line.256"></a>
+<span class="sourceLineNo">257</span>        catch (ServiceException ex) {<a name="line.257"></a>
+<span class="sourceLineNo">258</span>            throw ex;<a name="line.258"></a>
+<span class="sourceLineNo">259</span>        }<a name="line.259"></a>
+<span class="sourceLineNo">260</span>        catch (Exception ex) {<a name="line.260"></a>
+<span class="sourceLineNo">261</span>            throw new ServiceException(ErrorCode.E0100, getClass().getName(), ex.getMessage(), ex);<a name="line.261"></a>
+<span class="sourceLineNo">262</span>        }<a name="line.262"></a>
+<span class="sourceLineNo">263</span>    }<a name="line.263"></a>
+<span class="sourceLineNo">264</span><a name="line.264"></a>
+<span class="sourceLineNo">265</span>    public void destroy() {<a name="line.265"></a>
+<span class="sourceLineNo">266</span>    }<a name="line.266"></a>
+<span class="sourceLineNo">267</span><a name="line.267"></a>
+<span class="sourceLineNo">268</span>    public Class&lt;? extends Service&gt; getInterface() {<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        return HadoopAccessorService.class;<a name="line.269"></a>
+<span class="sourceLineNo">270</span>    }<a name="line.270"></a>
+<span class="sourceLineNo">271</span><a name="line.271"></a>
+<span class="sourceLineNo">272</span>    private UserGroupInformation getUGI(String user) throws IOException {<a name="line.272"></a>
+<span class="sourceLineNo">273</span>        return ugiService.getProxyUser(user);<a name="line.273"></a>
+<span class="sourceLineNo">274</span>    }<a name="line.274"></a>
+<span class="sourceLineNo">275</span><a name="line.275"></a>
+<span class="sourceLineNo">276</span>    /**<a name="line.276"></a>
+<span class="sourceLineNo">277</span>     * Creates a JobConf using the site configuration for the specified hostname:port.<a name="line.277"></a>
+<span class="sourceLineNo">278</span>     * &lt;p/&gt;<a name="line.278"></a>
+<span class="sourceLineNo">279</span>     * If the specified hostname:port is not defined it falls back to the '*' site<a name="line.279"></a>
+<span class="sourceLineNo">280</span>     * configuration if available. If the '*' site configuration is not available,<a name="line.280"></a>
+<span class="sourceLineNo">281</span>     * the JobConf has all Hadoop defaults.<a name="line.281"></a>
+<span class="sourceLineNo">282</span>     *<a name="line.282"></a>
+<span class="sourceLineNo">283</span>     * @param hostPort hostname:port to lookup Hadoop site configuration.<a name="line.283"></a>
+<span class="sourceLineNo">284</span>     * @return a JobConf with the corresponding site configuration for hostPort.<a name="line.284"></a>
+<span class="sourceLineNo">285</span>     */<a name="line.285"></a>
+<span class="sourceLineNo">286</span>    public JobConf createJobConf(String hostPort) {<a name="line.286"></a>
+<span class="sourceLineNo">287</span>        JobConf jobConf = new JobConf();<a name="line.287"></a>
+<span class="sourceLineNo">288</span>        XConfiguration.copy(getConfiguration(hostPort), jobConf);<a name="line.288"></a>
+<span class="sourceLineNo">289</span>        jobConf.setBoolean(OOZIE_HADOOP_ACCESSOR_SERVICE_CREATED, true);<a name="line.289"></a>
+<span class="sourceLineNo">290</span>        return jobConf;<a name="line.290"></a>
+<span class="sourceLineNo">291</span>    }<a name="line.291"></a>
+<span class="sourceLineNo">292</span><a name="line.292"></a>
+<span class="sourceLineNo">293</span>    private XConfiguration loadActionConf(String hostPort, String action) {<a name="line.293"></a>
+<span class="sourceLineNo">294</span>        File dir = actionConfigDirs.get(hostPort);<a name="line.294"></a>
+<span class="sourceLineNo">295</span>        XConfiguration actionConf = new XConfiguration();<a name="line.295"></a>
+<span class="sourceLineNo">296</span>        if (dir != null) {<a name="line.296"></a>
+<span class="sourceLineNo">297</span>            File actionConfFile = new File(dir, action + ".xml");<a name="line.297"></a>
+<span class="sourceLineNo">298</span>            if (actionConfFile.exists()) {<a name="line.298"></a>
+<span class="sourceLineNo">299</span>                try {<a name="line.299"></a>
+<span class="sourceLineNo">300</span>                    actionConf = new XConfiguration(new FileInputStream(actionConfFile));<a name="line.300"></a>
+<span class="sourceLineNo">301</span>                }<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                catch (IOException ex) {<a name="line.302"></a>
+<span class="sourceLineNo">303</span>                    XLog.getLog(getClass()).warn("Could not read file [{0}] for action [{1}] configuration for hostPort [{2}]",<a name="line.303"></a>
+<span class="sourceLineNo">304</span>                                                 actionConfFile.getAbsolutePath(), action, hostPort);<a name="line.304"></a>
+<span class="sourceLineNo">305</span>                }<a name="line.305"></a>
+<span class="sourceLineNo">306</span>            }<a name="line.306"></a>
+<span class="sourceLineNo">307</span>        }<a name="line.307"></a>
+<span class="sourceLineNo">308</span>        return actionConf;<a name="line.308"></a>
+<span class="sourceLineNo">309</span>    }<a name="line.309"></a>
+<span class="sourceLineNo">310</span><a name="line.310"></a>
+<span class="sourceLineNo">311</span>    /**<a name="line.311"></a>
+<span class="sourceLineNo">312</span>     * Returns a Configuration containing any defaults for an action for a particular cluster.<a name="line.312"></a>
+<span class="sourceLineNo">313</span>     * &lt;p/&gt;<a name="line.313"></a>
+<span class="sourceLineNo">314</span>     * This configuration is used as default for the action configuration and enables cluster<a name="line.314"></a>
+<span class="sourceLineNo">315</span>     * level default values per action.<a name="line.315"></a>
+<span class="sourceLineNo">316</span>     *<a name="line.316"></a>
+<span class="sourceLineNo">317</span>     * @param hostPort hostname"port to lookup the action default confiugration.<a name="line.317"></a>
+<span class="sourceLineNo">318</span>     * @param action action name.<a name="line.318"></a>
+<span class="sourceLineNo">319</span>     * @return the default configuration for the action for the specified cluster.<a name="line.319"></a>
+<span class="sourceLineNo">320</span>     */<a name="line.320"></a>
+<span class="sourceLineNo">321</span>    public XConfiguration createActionDefaultConf(String hostPort, String action) {<a name="line.321"></a>
+<span class="sourceLineNo">322</span>        hostPort = (hostPort != null) ? hostPort.toLowerCase() : null;<a name="line.322"></a>
+<span class="sourceLineNo">323</span>        Map&lt;String, XConfiguration&gt; hostPortActionConfigs = actionConfigs.get(hostPort);<a name="line.323"></a>
+<span class="sourceLineNo">324</span>        if (hostPortActionConfigs == null) {<a name="line.324"></a>
+<span class="sourceLineNo">325</span>            hostPortActionConfigs = actionConfigs.get("*");<a name="line.325"></a>
+<span class="sourceLineNo">326</span>            hostPort = "*";<a name="line.326"></a>
+<span class="sourceLineNo">327</span>        }<a name="line.327"></a>
+<span class="sourceLineNo">328</span>        XConfiguration actionConf = hostPortActionConfigs.get(action);<a name="line.328"></a>
+<span class="sourceLineNo">329</span>        if (actionConf == null) {<a name="line.329"></a>
+<span class="sourceLineNo">330</span>            // doing lazy loading as we don't know upfront all actions, no need to synchronize<a name="line.330"></a>
+<span class="sourceLineNo">331</span>            // as it is a read operation an in case of a race condition loading and inserting<a name="line.331"></a>
+<span class="sourceLineNo">332</span>            // into the Map is idempotent and the action-config Map is a ConcurrentHashMap<a name="line.332"></a>
+<span class="sourceLineNo">333</span>            actionConf = loadActionConf(hostPort, action);<a name="line.333"></a>
+<span class="sourceLineNo">334</span>            hostPortActionConfigs.put(action, actionConf);<a name="line.334"></a>
+<span class="sourceLineNo">335</span>        }<a name="line.335"></a>
+<span class="sourceLineNo">336</span>        return new XConfiguration(actionConf.toProperties());<a name="line.336"></a>
+<span class="sourceLineNo">337</span>    }<a name="line.337"></a>
+<span class="sourceLineNo">338</span><a name="line.338"></a>
+<span class="sourceLineNo">339</span>    private Configuration getConfiguration(String hostPort) {<a name="line.339"></a>
+<span class="sourceLineNo">340</span>        hostPort = (hostPort != null) ? hostPort.toLowerCase() : null;<a name="line.340"></a>
+<span class="sourceLineNo">341</span>        Configuration conf = hadoopConfigs.get(hostPort);<a name="line.341"></a>
+<span class="sourceLineNo">342</span>        if (conf == null) {<a name="line.342"></a>
+<span class="sourceLineNo">343</span>            conf = hadoopConfigs.get("*");<a name="line.343"></a>
+<span class="sourceLineNo">344</span>            if (conf == null) {<a name="line.344"></a>
+<span class="sourceLineNo">345</span>                conf = new XConfiguration();<a name="line.345"></a>
+<span class="sourceLineNo">346</span>            }<a name="line.346"></a>
+<span class="sourceLineNo">347</span>        }<a name="line.347"></a>
+<span class="sourceLineNo">348</span>        return conf;<a name="line.348"></a>
+<span class="sourceLineNo">349</span>    }<a name="line.349"></a>
+<span class="sourceLineNo">350</span><a name="line.350"></a>
+<span class="sourceLineNo">351</span>    /**<a name="line.351"></a>
+<span class="sourceLineNo">352</span>     * Return a JobClient created with the provided user/group.<a name="line.352"></a>
+<span class="sourceLineNo">353</span>     *<a name="line.353"></a>
+<span class="sourceLineNo">354</span>     *<a name="line.354"></a>
+<span class="sourceLineNo">355</span>     * @param conf JobConf with all necessary information to create the<a name="line.355"></a>
+<span class="sourceLineNo">356</span>     *        JobClient.<a name="line.356"></a>
+<span class="sourceLineNo">357</span>     * @return JobClient created with the provided user/group.<a name="line.357"></a>
+<span class="sourceLineNo">358</span>     * @throws HadoopAccessorException if the client could not be created.<a name="line.358"></a>
+<span class="sourceLineNo">359</span>     */<a name="line.359"></a>
+<span class="sourceLineNo">360</span>    public JobClient createJobClient(String user, final JobConf conf) throws HadoopAccessorException {<a name="line.360"></a>
+<span class="sourceLineNo">361</span>        ParamChecker.notEmpty(user, "user");<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        if (!conf.getBoolean(OOZIE_HADOOP_ACCESSOR_SERVICE_CREATED, false)) {<a name="line.362"></a>
+<span class="sourceLineNo">363</span>            throw new HadoopAccessorException(ErrorCode.E0903);<a name="line.363"></a>
+<span class="sourceLineNo">364</span>        }<a name="line.364"></a>
+<span class="sourceLineNo">365</span>        String jobTracker = conf.get(JavaActionExecutor.HADOOP_JOB_TRACKER);<a name="line.365"></a>
+<span class="sourceLineNo">366</span>        validateJobTracker(jobTracker);<a name="line.366"></a>
+<span class="sourceLineNo">367</span>        try {<a name="line.367"></a>
+<span class="sourceLineNo">368</span>            UserGroupInformation ugi = getUGI(user);<a name="line.368"></a>
+<span class="sourceLineNo">369</span>            JobClient jobClient = ugi.doAs(new PrivilegedExceptionAction&lt;JobClient&gt;() {<a name="line.369"></a>
+<span class="sourceLineNo">370</span>                public JobClient run() throws Exception {<a name="line.370"></a>
+<span class="sourceLineNo">371</span>                    return new JobClient(conf);<a name="line.371"></a>
+<span class="sourceLineNo">372</span>                }<a name="line.372"></a>
+<span class="sourceLineNo">373</span>            });<a name="line.373"></a>
+<span class="sourceLineNo">374</span>            Token&lt;DelegationTokenIdentifier&gt; mrdt = jobClient.getDelegationToken(getMRDelegationTokenRenewer(conf));<a name="line.374"></a>
+<span class="sourceLineNo">375</span>            conf.getCredentials().addToken(MR_TOKEN_ALIAS, mrdt);<a name="line.375"></a>
+<span class="sourceLineNo">376</span>            return jobClient;<a name="line.376"></a>
+<span class="sourceLineNo">377</span>        }<a name="line.377"></a>
+<span class="sourceLineNo">378</span>        catch (InterruptedException ex) {<a name="line.378"></a>
+<span class="sourceLineNo">379</span>            throw new HadoopAccessorException(ErrorCode.E0902, ex.getMessage(), ex);<a name="line.379"></a>
+<span class="sourceLineNo">380</span>        }<a name="line.380"></a>
+<span class="sourceLineNo">381</span>        catch (IOException ex) {<a name="line.381"></a>
+<span class="sourceLineNo">382</span>            throw new HadoopAccessorException(ErrorCode.E0902, ex.getMessage(), ex);<a name="line.382"></a>
+<span class="sourceLineNo">383</span>        }<a name="line.383"></a>
+<span class="sourceLineNo">384</span>    }<a name="line.384"></a>
+<span class="sourceLineNo">385</span><a name="line.385"></a>
+<span class="sourceLineNo">386</span>    /**<a name="line.386"></a>
+<span class="sourceLineNo">387</span>     * Return a FileSystem created with the provided user for the specified URI.<a name="line.387"></a>
+<span class="sourceLineNo">388</span>     *<a name="line.388"></a>
+<span class="sourceLineNo">389</span>     *<a name="line.389"></a>
+<span class="sourceLineNo">390</span>     * @param uri file system URI.<a name="line.390"></a>
+<span class="sourceLineNo">391</span>     * @param conf Configuration with all necessary information to create the FileSystem.<a name="line.391"></a>
+<span class="sourceLineNo">392</span>     * @return FileSystem created with the provided user/group.<a name="line.392"></a>
+<span class="sourceLineNo">393</span>     * @throws HadoopAccessorException if the filesystem could not be created.<a name="line.393"></a>
+<span class="sourceLineNo">394</span>     */<a name="line.394"></a>
+<span class="sourceLineNo">395</span>    public FileSystem createFileSystem(String user, final URI uri, final Configuration conf)<a name="line.395"></a>
+<span class="sourceLineNo">396</span>            throws HadoopAccessorException {<a name="line.396"></a>
+<span class="sourceLineNo">397</span>        ParamChecker.notEmpty(user, "user");<a name="line.397"></a>
+<span class="sourceLineNo">398</span>        if (!conf.getBoolean(OOZIE_HADOOP_ACCESSOR_SERVICE_CREATED, false)) {<a name="line.398"></a>
+<span class="sourceLineNo">399</span>            throw new HadoopAccessorException(ErrorCode.E0903);<a name="line.399"></a>
+<span class="sourceLineNo">400</span>        }<a name="line.400"></a>
+<span class="sourceLineNo">401</span><a name="line.401"></a>
+<span class="sourceLineNo">402</span>        checkSupportedFilesystem(uri);<a name="line.402"></a>
+<span class="sourceLineNo">403</span><a name="line.403"></a>
+<span class="sourceLineNo">404</span>        String nameNode = uri.getAuthority();<a name="line.404"></a>
+<span class="sourceLineNo">405</span>        if (nameNode == null) {<a name="line.405"></a>
+<span class="sourceLineNo">406</span>            nameNode = conf.get("fs.default.name");<a name="line.406"></a>
+<span class="sourceLineNo">407</span>            if (nameNode != null) {<a name="line.407"></a>
+<span class="sourceLineNo">408</span>                try {<a name="line.408"></a>
+<span class="sourceLineNo">409</span>                    nameNode = new URI(nameNode).getAuthority();<a name="line.409"></a>
+<span class="sourceLineNo">410</span>                }<a name="line.410"></a>
+<span class="sourceLineNo">411</span>                catch (URISyntaxException ex) {<a name="line.411"></a>
+<span class="sourceLineNo">412</span>                    throw new HadoopAccessorException(ErrorCode.E0902, ex.getMessage(), ex);<a name="line.412"></a>
+<span class="sourceLineNo">413</span>                }<a name="line.413"></a>
+<span class="sourceLineNo">414</span>            }<a name="line.414"></a>
+<span class="sourceLineNo">415</span>        }<a name="line.415"></a>
+<span class="sourceLineNo">416</span>        validateNameNode(nameNode);<a name="line.416"></a>
+<span class="sourceLineNo">417</span><a name="line.417"></a>
+<span class="sourceLineNo">418</span>        try {<a name="line.418"></a>
+<span class="sourceLineNo">419</span>            UserGroupInformation ugi = getUGI(user);<a name="line.419"></a>
+<span class="sourceLineNo">420</span>            return ugi.doAs(new PrivilegedExceptionAction&lt;FileSystem&gt;() {<a name="line.420"></a>
+<span class="sourceLineNo">421</span>                public FileSystem run() throws Exception {<a name="line.421"></a>
+<span class="sourceLineNo">422</span>                    return FileSystem.get(uri, conf);<a name="line.422"></a>
+<span class="sourceLineNo">423</span>                }<a name="line.423"></a>
+<span class="sourceLineNo">424</span>            });<a name="line.424"></a>
+<span class="sourceLineNo">425</span>        }<a name="line.425"></a>
+<span class="sourceLineNo">426</span>        catch (InterruptedException ex) {<a name="line.426"></a>
+<span class="sourceLineNo">427</span>            throw new HadoopAccessorException(ErrorCode.E0902, ex.getMessage(), ex);<a name="line.427"></a>
+<span class="sourceLineNo">428</span>        }<a name="line.428"></a>
+<span class="sourceLineNo">429</span>        catch (IOException ex) {<a name="line.429"></a>
+<span class="sourceLineNo">430</span>            throw new HadoopAccessorException(ErrorCode.E0902, ex.getMessage(), ex);<a name="line.430"></a>
+<span class="sourceLineNo">431</span>        }<a name="line.431"></a>
+<span class="sourceLineNo">432</span>    }<a name="line.432"></a>
+<span class="sourceLineNo">433</span><a name="line.433"></a>
+<span class="sourceLineNo">434</span>    /**<a name="line.434"></a>
+<span class="sourceLineNo">435</span>     * Validate Job tracker<a name="line.435"></a>
+<span class="sourceLineNo">436</span>     * @param jobTrackerUri<a name="line.436"></a>
+<span class="sourceLineNo">437</span>     * @throws HadoopAccessorException<a name="line.437"></a>
+<span class="sourceLineNo">438</span>     */<a name="line.438"></a>
+<span class="sourceLineNo">439</span>    protected void validateJobTracker(String jobTrackerUri) throws HadoopAccessorException {<a name="line.439"></a>
+<span class="sourceLineNo">440</span>        validate(jobTrackerUri, jobTrackerWhitelist, ErrorCode.E0900);<a name="line.440"></a>
+<span class="sourceLineNo">441</span>    }<a name="line.441"></a>
+<span class="sourceLineNo">442</span><a name="line.442"></a>
+<span class="sourceLineNo">443</span>    /**<a name="line.443"></a>
+<span class="sourceLineNo">444</span>     * Validate Namenode list<a name="line.444"></a>
+<span class="sourceLineNo">445</span>     * @param nameNodeUri<a name="line.445"></a>
+<span class="sourceLineNo">446</span>     * @throws HadoopAccessorException<a name="line.446"></a>
+<span class="sourceLineNo">447</span>     */<a name="line.447"></a>
+<span class="sourceLineNo">448</span>    protected void validateNameNode(String nameNodeUri) throws HadoopAccessorException {<a name="line.448"></a>
+<span class="sourceLineNo">449</span>        validate(nameNodeUri, nameNodeWhitelist, ErrorCode.E0901);<a name="line.449"></a>
+<span class="sourceLineNo">450</span>    }<a name="line.450"></a>
+<span class="sourceLineNo">451</span><a name="line.451"></a>
+<span class="sourceLineNo">452</span>    private void validate(String uri, Set&lt;String&gt; whitelist, ErrorCode error) throws HadoopAccessorException {<a name="line.452"></a>
+<span class="sourceLineNo">453</span>        if (uri != null) {<a name="line.453"></a>
+<span class="sourceLineNo">454</span>            uri = uri.toLowerCase().trim();<a name="line.454"></a>
+<span class="sourceLineNo">455</span>            if (whitelist.size() &gt; 0 &amp;&amp; !whitelist.contains(uri)) {<a name="line.455"></a>
+<span class="sourceLineNo">456</span>                throw new HadoopAccessorException(error, uri);<a name="line.456"></a>
+<span class="sourceLineNo">457</span>            }<a name="line.457"></a>
+<span class="sourceLineNo">458</span>        }<a name="line.458"></a>
+<span class="sourceLineNo">459</span>    }<a name="line.459"></a>
+<span class="sourceLineNo">460</span><a name="line.460"></a>
+<span class="sourceLineNo">461</span>    public Text getMRDelegationTokenRenewer(JobConf jobConf) throws IOException {<a name="line.461"></a>
+<span class="sourceLineNo">462</span>        if (UserGroupInformation.isSecurityEnabled()) { // secure cluster<a name="line.462"></a>
+<span class="sourceLineNo">463</span>            return getMRTokenRenewerInternal(jobConf);<a name="line.463"></a>
+<span class="sourceLineNo">464</span>        }<a name="line.464"></a>
+<span class="sourceLineNo">465</span>        else {<a name="line.465"></a>
+<span class="sourceLineNo">466</span>            return MR_TOKEN_ALIAS; //Doesn't matter what we pass as renewer<a name="line.466"></a>
+<span class="sourceLineNo">467</span>        }<a name="line.467"></a>
+<span class="sourceLineNo">468</span>    }<a name="line.468"></a>
+<span class="sourceLineNo">469</span><a name="line.469"></a>
+<span class="sourceLineNo">470</span>    // Package private for unit test purposes<a name="line.470"></a>
+<span class="sourceLineNo">471</span>    Text getMRTokenRenewerInternal(JobConf jobConf) throws IOException {<a name="line.471"></a>
+<span class="sourceLineNo">472</span>        // Getting renewer correctly for JT principal also though JT in hadoop 1.x does not have<a name="line.472"></a>
+<span class="sourceLineNo">473</span>        // support for renewing/cancelling tokens<a name="line.473"></a>
+<span class="sourceLineNo">474</span>        String servicePrincipal = jobConf.get(RM_PRINCIPAL, jobConf.get(JT_PRINCIPAL));<a name="line.474"></a>
+<span class="sourceLineNo">475</span>        Text renewer;<a name="line.475"></a>
+<span class="sourceLineNo">476</span>        if (servicePrincipal != null) { // secure cluster<a name="line.476"></a>
+<span class="sourceLineNo">477</span>            renewer = mrTokenRenewers.get(servicePrincipal);<a name="line.477"></a>
+<span class="sourceLineNo">478</span>            if (renewer == null) {<a name="line.478"></a>
+<span class="sourceLineNo">479</span>                // Mimic org.apache.hadoop.mapred.Master.getMasterPrincipal()<a name="line.479"></a>
+<span class="sourceLineNo">480</span>                String target = jobConf.get(HADOOP_YARN_RM, jobConf.get(HADOOP_JOB_TRACKER_2));<a name="line.480"></a>
+<span class="sourceLineNo">481</span>                if (target == null) {<a name="line.481"></a>
+<span class="sourceLineNo">482</span>                    target = jobConf.get(HADOOP_JOB_TRACKER);<a name="line.482"></a>
+<span class="sourceLineNo">483</span>                }<a name="line.483"></a>
+<span class="sourceLineNo">484</span>                String addr = NetUtils.createSocketAddr(target).getHostName();<a name="line.484"></a>
+<span class="sourceLineNo">485</span>                renewer = new Text(SecurityUtil.getServerPrincipal(servicePrincipal, addr));<a name="line.485"></a>
+<span class="sourceLineNo">486</span>                LOG.info("Delegation Token Renewer details: Principal=" + servicePrincipal + ",Target=" + target<a name="line.486"></a>
+<span class="sourceLineNo">487</span>                        + ",Renewer=" + renewer);<a name="line.487"></a>
+<span class="sourceLineNo">488</span>                mrTokenRenewers.put(servicePrincipal, renewer);<a name="line.488"></a>
+<span class="sourceLineNo">489</span>            }<a name="line.489"></a>
+<span class="sourceLineNo">490</span>        }<a name="line.490"></a>
+<span class="sourceLineNo">491</span>        else {<a name="line.491"></a>
+<span class="sourceLineNo">492</span>            renewer = MR_TOKEN_ALIAS; //Doesn't matter what we pass as renewer<a name="line.492"></a>
+<span class="sourceLineNo">493</span>        }<a name="line.493"></a>
+<span class="sourceLineNo">494</span>        return renewer;<a name="line.494"></a>
+<span class="sourceLineNo">495</span>    }<a name="line.495"></a>
+<span class="sourceLineNo">496</span><a name="line.496"></a>
+<span class="sourceLineNo">497</span>    public void addFileToClassPath(String user, final Path file, final Configuration conf)<a name="line.497"></a>
+<span class="sourceLineNo">498</span>            throws IOException {<a name="line.498"></a>
+<span class="sourceLineNo">499</span>        ParamChecker.notEmpty(user, "user");<a name="line.499"></a>
+<span class="sourceLineNo">500</span>        try {<a name="line.500"></a>
+<span class="sourceLineNo">501</span>            UserGroupInformation ugi = getUGI(user);<a name="line.501"></a>
+<span class="sourceLineNo">502</span>            ugi.doAs(new PrivilegedExceptionAction&lt;Void&gt;() {<a name="line.502"></a>
+<span class="sourceLineNo">503</span>                public Void run() throws Exception {<a name="line.503"></a>
+<span class="sourceLineNo">504</span>                    Configuration defaultConf = new Configuration();<a name="line.504"></a>
+<span class="sourceLineNo">505</span>                    XConfiguration.copy(conf, defaultConf);<a name="line.505"></a>
+<span class="sourceLineNo">506</span>                    //Doing this NOP add first to have the FS created and cached<a name="line.506"></a>
+<span class="sourceLineNo">507</span>                    DistributedCache.addFileToClassPath(file, defaultConf);<a name="line.507"></a>
+<span class="sourceLineNo">508</span><a name="line.508"></a>
+<span class="sourceLineNo">509</span>                    DistributedCache.addFileToClassPath(file, conf);<a name="line.509"></a>
+<span class="sourceLineNo">510</span>                    return null;<a name="line.510"></a>
+<span class="sourceLineNo">511</span>                }<a name="line.511"></a>
+<span class="sourceLineNo">512</span>            });<a name="line.512"></a>
+<span class="sourceLineNo">513</span><a name="line.513"></a>
+<span class="sourceLineNo">514</span>        }<a name="line.514"></a>
+<span class="sourceLineNo">515</span>        catch (InterruptedException ex) {<a name="line.515"></a>
+<span class="sourceLineNo">516</span>            throw new IOException(ex);<a name="line.516"></a>
+<span class="sourceLineNo">517</span>        }<a name="line.517"></a>
+<span class="sourceLineNo">518</span><a name="line.518"></a>
+<span class="sourceLineNo">519</span>    }<a name="line.519"></a>
+<span class="sourceLineNo">520</span><a name="line.520"></a>
+<span class="sourceLineNo">521</span>    /**<a name="line.521"></a>
+<span class="sourceLineNo">522</span>     * checks configuration parameter if filesystem scheme is among the list of supported ones<a name="line.522"></a>
+<span class="sourceLineNo">523</span>     * this makes system robust to filesystems other than HDFS also<a name="line.523"></a>
+<span class="sourceLineNo">524</span>     */<a name="line.524"></a>
+<span class="sourceLineNo">525</span><a name="line.525"></a>
+<span class="sourceLineNo">526</span>    public void checkSupportedFilesystem(URI uri) throws HadoopAccessorException {<a name="line.526"></a>
+<span class="sourceLineNo">527</span>        if (allSchemesSupported)<a name="line.527"></a>
+<span class="sourceLineNo">528</span>            return;<a name="line.528"></a>
+<span class="sourceLineNo">529</span>        String uriScheme = uri.getScheme();<a name="line.529"></a>
+<span class="sourceLineNo">530</span>        if (uriScheme != null) {    // skip the check if no scheme is given<a name="line.530"></a>
+<span class="sourceLineNo">531</span>            if(!supportedSchemes.isEmpty()) {<a name="line.531"></a>
+<span class="sourceLineNo">532</span>                XLog.getLog(this.getClass()).debug("Checking if filesystem " + uriScheme + " is supported");<a name="line.532"></a>
+<span class="sourceLineNo">533</span>                if (!supportedSchemes.contains(uriScheme)) {<a name="line.533"></a>
+<span class="sourceLineNo">534</span>                    throw new HadoopAccessorException(ErrorCode.E0904, uriScheme, uri.toString());<a name="line.534"></a>
+<span class="sourceLineNo">535</span>                }<a name="line.535"></a>
+<span class="sourceLineNo">536</span>             }<a name="line.536"></a>
+<span class="sourceLineNo">537</span>         }<a name="line.537"></a>
+<span class="sourceLineNo">538</span>    }<a name="line.538"></a>
+<span class="sourceLineNo">539</span><a name="line.539"></a>
+<span class="sourceLineNo">540</span>    public Set&lt;String&gt; getSupportedSchemes() {<a name="line.540"></a>
+<span class="sourceLineNo">541</span>        return supportedSchemes;<a name="line.541"></a>
+<span class="sourceLineNo">542</span>    }<a name="line.542"></a>
+<span class="sourceLineNo">543</span><a name="line.543"></a>
+<span class="sourceLineNo">544</span>}<a name="line.544"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

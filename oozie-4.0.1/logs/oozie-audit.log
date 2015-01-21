@@ -1,0 +1,1 @@
+2015-01-20 15:34:06,748  INFO oozieaudit:539 - USER [hduser], GROUP [null], APP [map-reduce-wf], JOBID [0000000-150120152819942-oozie-hdus-W], OPERATION [start], PARAMETER [null], STATUS [SUCCESS], HTTPCODE [200], ERRORCODE [null], ERRORMESSAGE [null]

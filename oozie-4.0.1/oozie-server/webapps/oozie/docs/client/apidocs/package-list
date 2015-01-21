@@ -1,0 +1,7 @@
+org.apache.oozie
+org.apache.oozie.cli
+org.apache.oozie.client
+org.apache.oozie.client.event
+org.apache.oozie.client.event.jms
+org.apache.oozie.client.event.message
+org.apache.oozie.client.rest

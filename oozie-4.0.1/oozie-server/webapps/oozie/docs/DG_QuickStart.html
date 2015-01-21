@@ -1,0 +1,383 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Oozie - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Oozie
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2015-01-20
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                                                <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <p></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<a name="Oozie_Quick_Start"></a>
+<div class="section"><h2> Oozie Quick Start</h2>
+<p>These instructions install and run Oozie using an embedded Tomcat server and an embedded Derby database.</p>
+<p>For detailed install and configuration instructions refer to <a href="./AG_Install.html">Oozie Install</a>
+.</p>
+<p><ul><ul><li><a href="#Building_Oozie">Building Oozie</a>
+<ul><li><a href="#System_Requirements:">System Requirements:</a>
+</li>
+<li><a href="#Building_Oozie_">Building Oozie</a>
+</li>
+</ul>
+</li>
+<li><a href="#Server_Installation">Server Installation</a>
+<ul><li><a href="#System_Requirements">System Requirements</a>
+</li>
+<li><a href="#Server_Installation_">Server Installation</a>
+</li>
+</ul>
+</li>
+<li><a href="#Client_Installation">Client Installation</a>
+<ul><li><a href="#System_Requirements_">System Requirements</a>
+</li>
+<li><a href="#Client_Installation_">Client Installation</a>
+</li>
+</ul>
+</li>
+<li><a href="#Oozie_Share_Lib_Installation">Oozie Share Lib Installation</a>
+</li>
+</ul>
+</ul>
+</p>
+<a name="Building_Oozie"></a>
+<div class="section"><h3>Building Oozie</h3>
+<a name="System_Requirements:"></a>
+<div class="section"><h4>System Requirements:</h4>
+<p><ul><li>Unix box (tested on Mac OS X and Linux)</li>
+<li>Java JDK 1.6+</li>
+<li>Maven 3.0.1+</li>
+<li>Hadoop 0.20.2+</li>
+<li>Pig 0.7+</li>
+</ul>
+</p>
+<p>JDK commands (java, javac) must be in the command path.</p>
+<p>The Maven command (mvn) must be in the command path.</p>
+<a name="Building_Oozie_"></a>
+</div>
+<div class="section"><h4>Building Oozie</h4>
+<p>Download a source distribution of Oozie from the &quot;Releases&quot; drop down menu on the <a href="http://oozie.apache.org" class="externalLink">Oozie site</a>
+.</p>
+<p>Expand the source distribution <tt>tar.gz</tt>
+ and change directories into it.</p>
+<p>The simplest way to build Oozie is to run the <tt>mkdistro.sh</tt>
+ script:
+<pre>
+$ bin/mkdistro.sh
+</pre></p>
+<p>If you'd like to skip all of the tests, which can take some time:
+<pre>
+$ bin/mkdistro.sh -DskipTests
+</pre>
+Running <tt>mkdistro.sh</tt>
+ will create the binary distribution of Oozie.</p>
+<p><b>IMPORTANT:</b>
+ By default it builds against Hadoop 1.1.1. It's possible to build against Hadoop 2.x versions as well, but it is
+strongly recommend to use a <a href="http://bigtop.apache.org" class="externalLink">Bigtop</a>
+ distribution if using Hadoop 2.x because the Oozie sharelibs built
+from the tarball distribution will not work with it.</p>
+<p>More details on building Oozie can be found on the <a href="./ENG_Building.html">Building Oozie</a>
+ page.</p>
+<a name="Server_Installation"></a>
+</div>
+</div>
+<div class="section"><h3>Server Installation</h3>
+<a name="System_Requirements"></a>
+<div class="section"><h4>System Requirements</h4>
+<p><ul><li>Unix (tested in Linux and Mac OS X)</li>
+<li>Java 1.6+</li>
+<li>Hadoop<ul><li><a href="http://hadoop.apache.org" class="externalLink">Apache Hadoop</a>
+ (tested with 1.0.0 &amp; 0.23.1)</li>
+</ul>
+</li>
+<li>ExtJS library (optional, to enable Oozie webconsole)<ul><li><a href="http://extjs.com/deploy/ext-2.2.zip" class="externalLink">ExtJS 2.2</a>
+</li>
+</ul>
+</li>
+</ul>
+</p>
+<p>The Java 1.6+ <tt>bin</tt>
+ directory should be in the command path.</p>
+<a name="Server_Installation_"></a>
+</div>
+<div class="section"><h4>Server Installation</h4>
+<p><b>IMPORTANT:</b>
+ Oozie ignores any set value for <tt>OOZIE_HOME</tt>
+, Oozie computes its home automatically.</p>
+<p><ul><li>Build an Oozie binary distribution</li>
+<li>Download a Hadoop binary distribution</li>
+<li>Download ExtJS library (it must be version 2.2)</li>
+</ul>
+</p>
+<p><b>NOTE:</b>
+ The ExtJS library is not bundled with Oozie because it uses a different license.</p>
+<p><b>NOTE:</b>
+ It is recommended to use a Oozie Unix user for the Oozie server.</p>
+<p>Expand the Oozie distribution <tt>tar.gz</tt>
+.</p>
+<p>Expand the Hadoop distribution <tt>tar.gz</tt>
+ (as the Oozie Unix user).</p>
+<p><a name="HadoopProxyUser"></a>
+</p>
+<p><b>NOTE:</b>
+ Configure the Hadoop cluster with proxyuser for the Oozie process.</p>
+<p>The following two properties are required in Hadoop core-site.xml:</p>
+<p><pre>
+  &lt;!-- OOZIE --&gt;
+  &lt;property&gt;
+    &lt;name&gt;hadoop.proxyuser.[OOZIE_SERVER_USER].hosts&lt;/name&gt;
+    &lt;value&gt;[OOZIE_SERVER_HOSTNAME]&lt;/value&gt;
+  &lt;/property&gt;
+  &lt;property&gt;
+    &lt;name&gt;hadoop.proxyuser.[OOZIE_SERVER_USER].groups&lt;/name&gt;
+    &lt;value&gt;[USER_GROUPS_THAT_ALLOW_IMPERSONATION]&lt;/value&gt;
+  &lt;/property&gt;
+</pre></p>
+<p>Replace the capital letter sections with specific values and then restart Hadoop.</p>
+<p>Expand the Oozie hadooplibs <tt>tar.gz</tt>
+ in the same location Oozie distribution <tt>tar.gz</tt>
+ was expanded. A
+*hadooplibs/* directory will be created containing the Hadoop JARs for the versions of Hadoop that
+the Oozie distribution supports.</p>
+<p>The ExtJS library is optional (only required for the Oozie web-console to work)</p>
+<p><b>IMPORTANT:</b>
+ all Oozie server scripts (=oozie-setup.sh=, <tt>oozied.sh</tt>
+, <tt>oozie-start.sh</tt>
+, <tt>oozie-run.sh</tt>
+
+and <tt>oozie-stop.sh</tt>
+) run only under the Unix user that owns the Oozie installation directory,
+if necessary use <tt>sudo -u OOZIE_USER</tt>
+ when invoking the scripts.</p>
+<p>As of Oozie 3.3.2, use of <tt>oozie-start.sh</tt>
+, <tt>oozie-run.sh</tt>
+, and <tt>oozie-stop.sh</tt>
+ has
+been deprecated and will print a warning. The <tt>oozied.sh</tt>
+ script should be used
+instead; passing it <tt>start</tt>
+, <tt>run</tt>
+, or <tt>stop</tt>
+ as an argument will perform the
+behaviors of <tt>oozie-start.sh</tt>
+, <tt>oozie-run.sh</tt>
+, and <tt>oozie-stop.sh</tt>
+ respectively.</p>
+<p>Create a <b>libext/</b>
+ directory in the directory where Oozie was expanded.</p>
+<p>If using a version of Hadoop bundled in Oozie <b>hadooplibs/</b>
+, copy the corresponding Hadoop JARs
+from <b>hadooplibs/</b>
+ to the <b>libext/</b>
+ directory. If using a different version of Hadoop, copy the
+required Hadoop JARs from such version in the <b>libext/</b>
+ directory.</p>
+<p>If using the ExtJS library copy the ZIP file to the <b>libext/</b>
+ directory.</p>
+<p>A &quot;sharelib create|upgrade -fs fs_default_name [-locallib sharelib]&quot; command is available when running oozie-setup.sh
+for uploading new or upgrading existing sharelib into hdfs where the first argument is the default fs name
+and the second argument is the Oozie sharelib to install, it can be a tarball or the expanded version of it.
+If the second argument is omitted, the Oozie sharelib tarball from the Oozie installation directory will be used.</p>
+<p>&quot;prepare-war [-d directory]&quot; command is for creating war files for oozie with an optional alternative directory other
+than libext.</p>
+<p>db create|upgrade|postupgrade -run [-sqlfile <FILE>] command is for create, upgrade or postupgrade oozie db with an
+optional sql file</p>
+<p>Run the <tt>oozie-setup.sh</tt>
+ script to configure Oozie with all the components added to the <b>libext/</b>
+ directory.</p>
+<p><pre>
+$ bin/oozie-setup.sh prepare-war [-d directory] [-secure]
+                     sharelib create -fs &lt;FS_URI&gt; [-locallib &lt;PATH&gt;]
+                     sharelib upgrade -fs &lt;FS_URI&gt; [-locallib &lt;PATH&gt;]
+                     db create|upgrade|postupgrade -run [-sqlfile &lt;FILE&gt;]
+</pre></p>
+<p>The <tt>-secure</tt>
+ option will configure Oozie to use HTTP (SSL); refer to
+<a href="./AG_Install.html#Setting_Up_Oozie_with_HTTPS_SSL">Setting Up Oozie with HTTPS (SSL)</a>
+ for more details.</p>
+<p>Create the Oozie DB using the 'ooziedb.sh' command line tool:</p>
+<p><pre>
+$ bin/ooziedb.sh create -sqlfile oozie.sql -runValidate DB Connection.
+DONE
+Check DB schema does not exist
+DONE
+Check OOZIE_SYS table does not exist
+DONE
+Create SQL schema
+DONE
+DONE
+Create OOZIE_SYS table
+DONE
+Oozie DB has been created for Oozie version '3.2.0'
+$
+</pre>
+</p>
+<p>Start Oozie as a daemon process run:</p>
+<p><pre>
+$ bin/oozied.sh start
+</pre></p>
+<p>To start Oozie as a foreground process run:</p>
+<p><pre>
+$ bin/oozied.sh run
+</pre></p>
+<p>Check the Oozie log file <tt>logs/oozie.log</tt>
+ to ensure Oozie started properly.</p>
+<p>Using the Oozie command line tool check the status of Oozie:</p>
+<p><pre>
+$ bin/oozie admin -oozie http://localhost:11000/oozie -status
+</pre></p>
+<p>Using a browser go to the <a href="http://localhost:11000/oozie" class="externalLink">Oozie web console</a>
+, Oozie status should be <b>NORMAL</b>
+.</p>
+<p>Refer to the <a href="./DG_Examples.html">Running the Examples</a>
+ document for details on running the examples.</p>
+<a name="Client_Installation"></a>
+</div>
+</div>
+<div class="section"><h3>Client Installation</h3>
+<a name="System_Requirements_"></a>
+<div class="section"><h4>System Requirements</h4>
+<p><ul><li>Unix (tested in Linux and Mac OS X)</li>
+<li>Java 1.6+</li>
+</ul>
+</p>
+<p>The Java 1.6+ <tt>bin</tt>
+ directory should be in the command path.</p>
+<a name="Client_Installation_"></a>
+</div>
+<div class="section"><h4>Client Installation</h4>
+<p>Copy and expand the <tt>oozie-client</tt>
+ TAR.GZ file bundled with the distribution. Add the <tt>bin/</tt>
+ directory to the <tt>PATH</tt>
+.</p>
+<p>Refer to the <a href="./DG_CommandLineTool.html">Command Line Interface Utilities</a>
+ document for a a full reference of the <tt>oozie</tt>
+
+command line tool.</p>
+<p>NOTE: The Oozie server installation includes the Oozie client. The Oozie client should be installed in remote machines
+only.</p>
+<p><a name="OozieShareLib"></a>
+</p>
+<a name="Oozie_Share_Lib_Installation"></a>
+</div>
+</div>
+<div class="section"><h3>Oozie Share Lib Installation</h3>
+<p>Expand the <tt>oozie-sharelib</tt>
+ TAR.GZ file bundled with the distribution.</p>
+<p>The <tt>share/</tt>
+ directory must be copied to the Oozie HOME directory in HDFS:</p>
+<p><pre>
+$ hadoop fs -put share share
+</pre></p>
+<p><b>IMPORTANT:</b>
+ This must be done using the Oozie Hadoop (HDFS) user. If a <tt>share</tt>
+ directory already exists in HDFS,
+it must be deleted before copying it again.</p>
+<p>See the <a href="./WorkflowFunctionalSpec.html#ShareLib">Workflow Functional Specification</a>
+ for more information about the Oozie ShareLib.</p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<p></p>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2015
+    
+          Apache Software Foundation
+          
+  
+
+  
+    
+  
+  
+    
+   - <a href="http://maven.apache.org/privacy-policy.html">Privacy Policy</a></div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

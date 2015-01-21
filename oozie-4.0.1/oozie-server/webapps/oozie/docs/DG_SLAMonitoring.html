@@ -1,0 +1,471 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Oozie - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Oozie
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2015-01-20
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                                                <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <p></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<a name="Oozie_SLA_Monitoring"></a>
+<div class="section"><h2> Oozie SLA Monitoring</h2>
+<p><ul><ul><li><a href="#Overview">Overview</a>
+</li>
+<li><a href="#Oozie_Server_Configuration">Oozie Server Configuration</a>
+</li>
+<li><a href="#SLA_Tracking">SLA Tracking</a>
+<ul><li><a href="#Event_Status">Event Status</a>
+</li>
+<li><a href="#SLA_Status">SLA Status</a>
+</li>
+</ul>
+</li>
+<li><a href="#Configuring_SLA_in_Applications">Configuring SLA in Applications</a>
+<ul><li><a href="#SLA_Definition_in_Workflow">SLA Definition in Workflow</a>
+</li>
+<li><a href="#SLA_Definition_in_Workflow_Action">SLA Definition in Workflow Action</a>
+</li>
+<li><a href="#SLA_Definition_in_Coordinator_Action">SLA Definition in Coordinator Action</a>
+</li>
+</ul>
+</li>
+<li><a href="#Accessing_SLA_Information">Accessing SLA Information</a>
+<ul><li><a href="#Scenario_1:_Workflow_Job_Start_Miss">Scenario 1: Workflow Job Start_Miss</a>
+</li>
+<li><a href="#Scenario_2:_Workflow_Action_End_Miss">Scenario 2: Workflow Action End_Miss</a>
+</li>
+<li><a href="#Scenario_3:_Coordinator_Action_Duration_Miss">Scenario 3: Coordinator Action Duration_Miss</a>
+</li>
+<li><a href="#Sample_Email_Alert">Sample Email Alert</a>
+</li>
+</ul>
+</li>
+<li><a href="#Known_issues">Known issues</a>
+</li>
+</ul>
+</ul>
+</p>
+<a name="Overview"></a>
+<div class="section"><h3>Overview</h3>
+<p>Critical jobs can have certain SLA requirements associated with them. This SLA can be in terms of time
+i.e. a maximum allowed time limit associated with when the job should start, by when should it end,
+and its duration of run. Oozie workflows and coordinators allow defining such SLA limits in the application definition xml.</p>
+<p>With the addition of SLA Monitoring, Oozie can now actively monitor the state of these SLA-sensitive jobs
+and send out notifications for SLA mets and misses.</p>
+<p>In versions earlier than 4.x, this was a passive feature where users needed to query the Oozie client SLA API
+to fetch the records regarding job status changes, and use their own custom calculation engine to compute
+whether SLA was met or missed, based on initial definition of time limits.</p>
+<p>Oozie now also has a SLA tab in the Oozie UI, where users can query for SLA information and have a summarized view
+of how their jobs fared against their SLAs.</p>
+<a name="Oozie_Server_Configuration"></a>
+</div>
+<div class="section"><h3>Oozie Server Configuration</h3>
+<p>Refer to <a href="./AG_Install.html#Notifications_Configuration">Notifications Configuration</a>
+ for configuring Oozie server to track
+SLA for jobs and send notifications.</p>
+<a name="SLA_Tracking"></a>
+</div>
+<div class="section"><h3>SLA Tracking</h3>
+<p>Oozie allows tracking SLA for meeting the following criteria:<ul><li>Start time</li>
+<li>End time</li>
+<li>Job Duration</li>
+</ul>
+</p>
+<a name="Event_Status"></a>
+<div class="section"><h5>Event Status</h5>
+<p>Corresponding to each of these 3 criteria, your jobs are processed for whether Met or Miss i.e.<ul><li>START_MET, START_MISS</li>
+<li>END_MET, END_MISS</li>
+<li>DURATION_MET, DURATION_MISS</li>
+</ul>
+</p>
+<a name="SLA_Status"></a>
+</div>
+<div class="section"><h5>SLA Status</h5>
+<p>Expected end-time is the most important criterion for majority of users while deciding overall SLA Met or Miss.
+Hence the <i>&quot;SLA</i>
+Status&quot;_ for a job will transition through these four stages<ul><li>Not_Started &lt;-- Job not yet begun</li>
+<li>In_Process &lt;-- Job started and is running, and SLAs are being tracked</li>
+<li>Met &lt;-- caused by an END_MET</li>
+<li>Miss &lt;-- caused by an END_MISS</li>
+</ul>
+</p>
+<p>In addition to overshooting expected end-time, and END_MISS (and so an eventual SLA MISS) also occurs when the
+job does not end successfully e.g. goes to error state - Failed/Killed/Error/Timedout.</p>
+<a name="Configuring_SLA_in_Applications"></a>
+</div>
+</div>
+<div class="section"><h3>Configuring SLA in Applications</h3>
+<p>To make your jobs trackable for SLA, you simply need to add the <tt><sla:info></tt>
+ tag to your workflow application definition.
+If you were already using the existing SLA schema in your workflows (Schema xmlns:sla=&quot;uri:oozie:sla:0.1&quot;), you dont need to
+do anything extra to receive SLA notifications via JMS messages. This new SLA monitoring framework is backward-compatible -
+no need to change application XML for now and you can continue to fetch old records via the <a href="./DG_CommandLineTool.html#SLAOperations">command line API</a>
+.
+However, usage of old schema and API is deprecated and we strongly recommend using new schema.<ul><li>New SLA schema is 'uri:oozie:sla:0.2'</li>
+<li>In order to use new SLA schema, you will need to upgrade your workflow/coordinator schema to 0.5 i.e. 'uri:oozie:workflow:0.5'</li>
+</ul>
+</p>
+<a name="SLA_Definition_in_Workflow"></a>
+<div class="section"><h4>SLA Definition in Workflow</h4>
+<p>Example:
+<pre>
+&lt;workflow-app name=&quot;test-wf-job-sla&quot;
+              xmlns=&quot;uri:oozie:workflow:0.5&quot;
+              xmlns:sla=&quot;uri:oozie:sla:0.2&quot;&gt;
+    &lt;start to=&quot;grouper&quot;/&gt;
+    &lt;action name=&quot;grouper&quot;&gt;
+        &lt;map-reduce&gt;
+            &lt;job-tracker&gt;jt&lt;/job-tracker&gt;
+            &lt;name-node&gt;nn&lt;/name-node&gt;
+            &lt;configuration&gt;
+                &lt;property&gt;
+                    &lt;name&gt;mapred.input.dir&lt;/name&gt;
+                    &lt;value&gt;input&lt;/value&gt;
+                &lt;/property&gt;
+                &lt;property&gt;
+                    &lt;name&gt;mapred.output.dir&lt;/name&gt;
+                    &lt;value&gt;output&lt;/value&gt;
+                &lt;/property&gt;
+            &lt;/configuration&gt;
+        &lt;/map-reduce&gt;
+        &lt;ok to=&quot;end&quot;/&gt;
+        &lt;error to=&quot;end&quot;/&gt;
+    &lt;/action&gt;
+    &lt;end name=&quot;end&quot;/&gt;
+    &lt;sla:info&gt;
+        &lt;sla:nominal-time&gt;${nominal_time}&lt;/sla:nominal-time&gt;
+        &lt;sla:should-start&gt;${10 * MINUTES}&lt;/sla:should-start&gt;
+        &lt;sla:should-end&gt;${30 * MINUTES}&lt;/sla:should-end&gt;
+        &lt;sla:max-duration&gt;${30 * MINUTES}&lt;/sla:max-duration&gt;
+        &lt;sla:alert-events&gt;start_miss,end_miss,duration_miss&lt;/sla:alert-events&gt;
+        &lt;sla:alert-contact&gt;joe@example.com&lt;/sla:alert-contact&gt;
+    &lt;/sla:info&gt;
+&lt;/workflow-app&gt;
+</pre></p>
+<p>For the list of tags usable under <tt><sla:info></tt>
+, refer to <a href="./WorkflowFunctionalSpec.html#SLASchema">Schemas Appendix</a>
+.
+This new schema is much more compact and meaningful, getting rid of redundant and unused tags.</p>
+<p><ul><li><b><tt>nominal-time</tt>
+</b>
+: As the name suggests, this is the time relative to which your jobs' SLAs will be calculated. Generally since Oozie workflows are aligned with synchronous data dependencies, this nominal time can be parameterized to be passed the value of your coordinator nominal time. Nominal time is also required in case of independent workflows and you can specify the time in which you expect the workflow to be run if you don't have a synchronous dataset associated with it.</li>
+<li><b><tt>should-start</tt>
+</b>
+: Relative to <tt>nominal-time</tt>
+ this is the amount of time (along with time-unit - MINUTES, HOURS, DAYS) within which your job should <b>start running</b>
+ to meet SLA. This is optional.</li>
+<li><b><tt>should-end</tt>
+</b>
+: Relative to <tt>nominal-time</tt>
+ this is the amount of time (along with time-unit - MINUTES, HOURS, DAYS) within which your job should <b>finish</b>
+ to meet SLA.</li>
+<li><b><tt>max-duration</tt>
+</b>
+: This is the maximum amount of time (along with time-unit - MINUTES, HOURS, DAYS) your job is expected to run. This is optional.</li>
+<li><b><tt>alert-events</tt>
+</b>
+: Specify the types of events for which <b>Email</b>
+ alerts should be sent. Allowable values in this comma-separated list are start_miss, end_miss and duration_miss. *_met events can generally be deemed low priority and hence email alerting for these is not neccessary. However, note that this setting is only for alerts via <b>email</b>
+ alerts and not via JMS messages, where all events send out notifications, and user can filter them using desired selectors. This is optional and only applicable when alert-contact is configured.</li>
+<li><b><tt>alert-contact</tt>
+</b>
+: Specify a comma separated list of email addresses where you wish your alerts to be sent. This is optional and need not be configured if you just want to view your job SLA history in the UI and do not want to receive email alerts.</li>
+</ul>
+</p>
+<p>NOTE: All tags can be parameterized.</p>
+<p>Same schema can be applied to and embedded under Workflow-Action as well as Coordinator-Action XML.</p>
+<a name="SLA_Definition_in_Workflow_Action"></a>
+</div>
+<div class="section"><h4>SLA Definition in Workflow Action</h4>
+<p><pre>
+&lt;workflow-app name=&quot;test-wf-action-sla&quot; xmlns=&quot;uri:oozie:workflow:0.5&quot; xmlns:sla=&quot;uri:oozie:sla:0.2&quot;&gt;
+    &lt;start to=&quot;grouper&quot;/&gt;
+    &lt;action name=&quot;grouper&quot;&gt;
+        ...
+        &lt;ok to=&quot;end&quot;/&gt;
+        &lt;error to=&quot;end&quot;/&gt;
+        &lt;sla:info&gt;
+            &lt;sla:nominal-time&gt;${nominal_time}&lt;/sla:nominal-time&gt;
+            &lt;sla:should-start&gt;${10 * MINUTES}&lt;/sla:should-start&gt;
+        ...
+        &lt;/sla:info&gt;
+    &lt;/action&gt;
+    &lt;end name=&quot;end&quot;/&gt;
+&lt;/workflow-app&gt;
+</pre></p>
+<a name="SLA_Definition_in_Coordinator_Action"></a>
+</div>
+<div class="section"><h4>SLA Definition in Coordinator Action</h4>
+<p><pre>
+&lt;coordinator-app name=&quot;test-coord-sla&quot; frequency=&quot;${coord:days(1)}&quot; freq_timeunit=&quot;DAY&quot;
+    end_of_duration=&quot;NONE&quot; start=&quot;2013-06-20T08:01Z&quot; end=&quot;2013-12-01T08:01Z&quot;
+    timezone=&quot;America/Los_Angeles&quot; xmlns=&quot;uri:oozie:coordinator:0.4&quot; xmlns:sla=&quot;uri:oozie:sla:0.2&quot;&gt;
+    &lt;action&gt;
+        &lt;workflow&gt;
+            &lt;app-path&gt;${wfAppPath}&lt;/app-path&gt;
+        &lt;/workflow&gt;
+        &lt;sla:info&gt;
+            &lt;sla:nominal-time&gt;${nominal_time}&lt;/sla:nominal-time&gt;
+            ...
+        &lt;/sla:info&gt;
+    &lt;/action&gt;
+&lt;/coordinator-app&gt;
+</pre></p>
+<a name="Accessing_SLA_Information"></a>
+</div>
+</div>
+<div class="section"><h3>Accessing SLA Information</h3>
+<p>SLA information is accessible via the following two ways<ul><li>Through the SLA tab of the Oozie Web UI.</li>
+<li>JMS messages sent to a configured JMS provider for instantaneous tracking.</li>
+<li>RESTful API to query for SLA summary.</li>
+</ul>
+</p>
+<p>For JMS Notifications, you have to have a message broker in place, on which Oozie publishes messages and you can
+hook on a subscriber to receive those messages. For more info on setting up and consuming JMS messages, refer
+<a href="./DG_JMSNotifications.html">JMS Notifications</a>
+ documentation.</p>
+<p>In the REST API, the following filters can be applied while fetching SLA information:<ul><li>app_name - Application name</li>
+<li>id  - id of the workflow job, workflow action or coordinator action</li>
+<li>parent_id - Parent id of the workflow job, workflow action or coordinator action</li>
+<li>nominal_start and nominal_end - Start and End range for nominal time of the workflow or coordinator.</li>
+</ul>
+</p>
+<p>When timezone query parameter is specified, the expected and actual start/end time returned is formatted. If not specified,
+the number of milliseconds that have elapsed since January 1, 1970 00:00:00.000 GMT is returned.</p>
+<p>The examples below demonstrate the use of REST API and explains the JSON response.</p>
+<a name="Scenario_1:_Workflow_Job_Start_Miss"></a>
+<div class="section"><h4>Scenario 1: Workflow Job Start_Miss</h4>
+<p><b>Request:</b>
+
+<pre>
+GET &lt;oozie-host&gt;:&lt;port&gt;/oozie/v2/sla?timezone=GMT&amp;filter=nominal_start=2013-06-18T00:01Z;nominal_end=2013-06-23T00:01Z;app_name=my-sla-app
+</pre></p>
+<p><b>JSON Response</b>
+
+<pre>
+{    id : &quot;000056-1238791320234-oozie-joe-W&quot;
+    parentId : &quot;000001-1238791320234-oozie-joe-C@8&quot;
+    appType : &quot;WORKFLOW_JOB&quot;
+    msgType : &quot;SLA&quot;
+    appName : &quot;my-sla-app&quot;
+    slaStatus : &quot;IN_PROCESS&quot;
+    eventStatus : &quot;START_MISS&quot;
+    user: &quot;joe&quot;
+    nominalTime: &quot;2013-16-22T05:00Z&quot;
+    expectedStartTime: &quot;2013-16-22T05:10Z&quot; &lt;-- (should start by this time)
+    actualStartTime: &quot;2013-16-22T05:30Z&quot; &lt;-- (20 min late relative to expected start)
+    expectedEndTime: &quot;2013-16-22T05:40Z&quot; &lt;-- (should end by this time)
+    actualEndTime: null
+    expectedDuration: 15
+    actualDuration: null
+    notificationMessage: &quot;My Job has encountered an SLA event!&quot;
+    upstreamApps: &quot;dependent-app-1, dependent-app-2&quot;
+}
+</pre>
+</p>
+<a name="Scenario_2:_Workflow_Action_End_Miss"></a>
+</div>
+<div class="section"><h4>Scenario 2: Workflow Action End_Miss</h4>
+<p><b>Request:</b>
+
+<pre>
+GET &lt;oozie-host&gt;:&lt;port&gt;/oozie/v2/sla?timezone=GMT&amp;filter=parent_id=000056-1238791320234-oozie-joe-W
+</pre></p>
+<p><b>JSON Response</b>
+
+<pre>
+{    id : &quot;000056-1238791320234-oozie-joe-W@map-reduce-action&quot;
+    parentId : &quot;000056-1238791320234-oozie-joe-W&quot;
+    appType : &quot;WORKFLOW_ACTION&quot;
+    msgType : &quot;SLA&quot;
+    appName : &quot;map-reduce-action&quot;
+    slaStatus : &quot;MISS&quot;
+    eventStatus : &quot;END_MISS&quot;
+    user: &quot;joe&quot;
+    nominalTime: &quot;2013-16-22T05:00Z&quot;
+    expectedStartTime: &quot;2013-16-22T05:10Z&quot;
+    actualStartTime: &quot;2013-16-22T05:05Z&quot;
+    expectedEndTime: &quot;2013-16-22T05:40Z&quot; &lt;-- (should end by this time)
+    actualEndTime: &quot;2013-16-22T06:00Z&quot; &lt;-- (20 min late relative to expected end)
+    expectedDuration: 60
+    actualDuration: 55
+    notificationMessage: &quot;My Job has encountered an SLA event!&quot;
+    upstreamApps: &quot;dependent-app-1, dependent-app-2&quot;
+}
+</pre>
+</p>
+<a name="Scenario_3:_Coordinator_Action_Duration_Miss"></a>
+</div>
+<div class="section"><h4>Scenario 3: Coordinator Action Duration_Miss</h4>
+<p><b>Request:</b>
+
+<pre>
+GET &lt;oozie-host&gt;:&lt;port&gt;/oozie/v2/sla?timezone=GMT&amp;filter=id=000001-1238791320234-oozie-joe-C
+</pre></p>
+<p><b>JSON Response</b>
+
+<pre>
+{    id : &quot;000001-1238791320234-oozie-joe-C@2&quot;
+    parentId : &quot;000001-1238791320234-oozie-joe-C&quot;
+    appType : &quot;COORDINATOR_ACTION&quot;
+    msgType : &quot;SLA&quot;
+    appName : &quot;my-coord-app&quot;
+    slaStatus : &quot;MET&quot;
+    eventStatus : &quot;DURATION_MISS&quot;
+    user: &quot;joe&quot;
+    nominalTime: &quot;2013-16-22T05:00Z&quot;
+    expectedStartTime: &quot;2013-16-22T05:10Z&quot;
+    actualStartTime: &quot;2013-16-22T05:05Z&quot;
+    expectedEndTime: &quot;2013-16-22T05:40Z&quot;
+    actualEndTime: &quot;2013-16-22T05:30Z&quot;
+    expectedDuration: 15 &lt;-- (expected duration in minutes)
+    actualDuration: 25
+    notificationMessage: &quot;My Job has encountered an SLA event!&quot;
+    upstreamApps: &quot;dependent-app-1, dependent-app-2&quot;
+}
+</pre>
+</p>
+<p>Scenario #3 is particularly interesting because it is an overall &quot;MET&quot; because it met its expected End-time,
+but it is &quot;Duration_Miss&quot; because the actual run (between actual start and actual end) exceeded expected duration.</p>
+<a name="Sample_Email_Alert"></a>
+</div>
+<div class="section"><h4>Sample Email Alert</h4>
+<p><pre>
+Subject: OOZIE - SLA END_MISS (AppName=wf-sla-job, JobID=0000004-130610225200680-oozie-oozi-W)Status:
+  SLA Status - END_MISS
+  Job Status - RUNNING
+  Notification Message - Missed SLA for Data Pipeline job
+Job Details:
+  App Name - wf-sla-job
+  App Type - WORKFLOW_JOB
+  User - strat_ci
+  Job ID - 0000004-130610225200680-oozie-oozi-W
+  Job URL - http://host.domain.com:4080/oozie//?job=0000004-130610225200680-oozie-oozi-W
+  Parent Job ID - N/A
+  Parent Job URL - N/A
+  Upstream Apps - wf-sla-up-app
+SLA Details:
+  Nominal Time - Mon Jun 10 23:33:00 UTC 2013
+  Expected Start Time - Mon Jun 10 23:35:00 UTC 2013
+  Actual Start Time - Mon Jun 10 23:34:04 UTC 2013
+  Expected End Time - Mon Jun 10 23:38:00 UTC 2013
+  Expected Duration (in mins) - 300000
+  Actual Duration (in mins) - -1
+</pre>
+</p>
+<a name="Known_issues"></a>
+</div>
+</div>
+<div class="section"><h3>Known issues</h3>
+<p>There are two known issues when you define SLA for a workflow action.<ul><li>If there are decision nodes and SLA is defined for a workflow action not in the execution path because of the decision node, you will still get an SLA_MISS notification.</li>
+<li>If you have dangling action nodes in your workflow definition and SLA is defined for it, you will still get an SLA_MISS notification.</li>
+</ul>
+</p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<p></p>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2015
+    
+          Apache Software Foundation
+          
+  
+
+  
+    
+  
+  
+    
+   - <a href="http://maven.apache.org/privacy-policy.html">Privacy Policy</a></div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

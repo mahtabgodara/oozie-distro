@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Oozie - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Oozie
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2015-01-20
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                                                <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <p></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<a name="Oozie_Upgrade"></a>
+<div class="section"><h2> Oozie Upgrade</h2>
+<p><ul><li><a href="#Preparation">Preparation</a>
+</li>
+<li><a href="#Oozie_Server_Upgrade">Oozie Server Upgrade</a>
+</li>
+<li><a href="#Oozie_Client_Upgrade">Oozie Client Upgrade</a>
+</li>
+</ul>
+</p>
+<a name="Preparation"></a>
+<div class="section"><h2>Preparation</h2>
+<p>Make sure there are not Workflows in RUNNING or SUSPENDED status, otherwise the database upgrade will fail.</p>
+<p>Shutdown Oozie and backup the Oozie database.</p>
+<p>Copy the oozie-site.xml from your current setup.</p>
+<a name="Oozie_Server_Upgrade"></a>
+</div>
+<div class="section"><h2>Oozie Server Upgrade</h2>
+<p>Expand the new Oozie tarball in a new location.</p>
+<p>Edit the new <tt>oozie-site.xml</tt>
+ setting all custom properties values from the old <tt>oozie-site.xml</tt>
+</p>
+<p>IMPORTANT: From Oozie 2.x to Oozie 3.x the names of the database configuration properties have
+changed. Their prefix has changed from =oozie.service.StoreService.*= to =oozie.service.JPAService.*=.
+Make sure you are using the new prefix.</p>
+<p>After upgrading the Oozie server, the <tt>oozie-setup.sh</tt>
+ MUST be rerun before starting the
+upgraded Oozie server.</p>
+<p>Oozie database migration is required when there Oozie database schema changes, like
+upgrading from Oozie 2.x to Oozie 3.x.</p>
+<p>Configure the oozie-site.xml with the correct database configuration properties as
+explained in the 'Database Configuration' section  in <a href="./AG_Install.html">Oozie Install</a>
+.</p>
+<p>Once <tt>oozie-site.xml</tt>
+ has been configured with the database configuration execute the <tt>ooziedb.sh</tt>
+
+command line tool to upgrade the database:</p>
+<p><pre>
+$ bin/ooziedb.sh upgrade -runValidate DB Connection.
+DONE
+Check DB schema exists
+DONE
+Check OOZIE_SYS table does not exist
+DONE
+Verify there are not active Workflow Jobs
+DONE
+Create SQL schema
+DONE
+DONE
+Create OOZIE_SYS table
+DONE
+Upgrade COORD_JOBS new columns default values.
+DONE
+Upgrade COORD_JOBS &amp; COORD_ACTIONS status values.
+DONE
+Table 'WF_ACTIONS' column 'execution_path', length changed to 1024
+DONE
+Oozie DB has been upgraded to Oozie version '3.2.0'
+The SQL commands have been written to: /tmp/ooziedb-5737263881793872034.sql
+$
+</pre>
+</p>
+<p>The new version of the Oozie server is ready to be started.</p>
+<p>NOTE: If using MySQL or Oracle, copy the corresponding JDBC driver JAR file to the <tt>libext/</tt>
+ directory before running
+the <tt>ooziedb.sh</tt>
+ command line tool.</p>
+<p>NOTE: If instead using the '-run' option, the '-sqlfile <FILE>' option is used, then all the
+database changes will be written to the specified file and the database won't be modified.</p>
+<a name="Oozie_Client_Upgrade"></a>
+</div>
+<div class="section"><h2>Oozie Client Upgrade</h2>
+<p>While older Oozie clients work with newer Oozie server, to have access to all the
+functionality of the Oozie server the same version of Oozie client should be installed
+and used by users.</p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<p></p>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2015
+    
+          Apache Software Foundation
+          
+  
+
+  
+    
+  
+  
+    
+   - <a href="http://maven.apache.org/privacy-policy.html">Privacy Policy</a></div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

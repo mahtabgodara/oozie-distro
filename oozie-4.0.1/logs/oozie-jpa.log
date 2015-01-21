@@ -1,0 +1,40 @@
+2015-01-20 15:22:06,609  INFO JDBC:81 - Using dictionary class "org.apache.openjpa.jdbc.sql.DerbyDictionary".
+2015-01-20 15:22:06,698  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.CoordinatorJobBean" with action "buildSchema".
+2015-01-20 15:22:06,971  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.BundleJobBean" with action "buildSchema".
+2015-01-20 15:22:06,996  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonCoordinatorAction" with action "buildSchema".
+2015-01-20 15:22:07,008  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.BundleActionBean" with action "buildSchema".
+2015-01-20 15:22:07,016  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonBundleJob" with action "buildSchema".
+2015-01-20 15:22:07,016  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonWorkflowAction" with action "buildSchema".
+2015-01-20 15:22:07,033  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonSLAEvent" with action "buildSchema".
+2015-01-20 15:22:07,036  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.sla.SLASummaryBean" with action "buildSchema".
+2015-01-20 15:22:07,046  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonCoordinatorJob" with action "buildSchema".
+2015-01-20 15:22:07,047  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.sla.SLARegistrationBean" with action "buildSchema".
+2015-01-20 15:22:07,056  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.WorkflowJobBean" with action "buildSchema".
+2015-01-20 15:22:07,072  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.SLAEventBean" with action "buildSchema".
+2015-01-20 15:22:07,081  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.CoordinatorActionBean" with action "buildSchema".
+2015-01-20 15:22:07,101  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonWorkflowJob" with action "buildSchema".
+2015-01-20 15:22:07,102  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.WorkflowActionBean" with action "buildSchema".
+2015-01-20 15:22:07,115  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.util.db.ValidateConnectionBean" with action "buildSchema".
+2015-01-20 15:22:07,117  INFO Tool:81 - Recording mapping and schema changes.
+2015-01-20 15:22:07,664  INFO JDBC:81 - Using dictionary class "org.apache.openjpa.jdbc.sql.DerbyDictionary".
+2015-01-20 15:22:07,670  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.CoordinatorJobBean" with action "buildSchema".
+2015-01-20 15:22:07,717  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.BundleJobBean" with action "buildSchema".
+2015-01-20 15:22:07,730  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonCoordinatorAction" with action "buildSchema".
+2015-01-20 15:22:07,736  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.BundleActionBean" with action "buildSchema".
+2015-01-20 15:22:07,743  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonBundleJob" with action "buildSchema".
+2015-01-20 15:22:07,743  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonWorkflowAction" with action "buildSchema".
+2015-01-20 15:22:07,756  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonSLAEvent" with action "buildSchema".
+2015-01-20 15:22:07,757  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.sla.SLASummaryBean" with action "buildSchema".
+2015-01-20 15:22:07,764  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonCoordinatorJob" with action "buildSchema".
+2015-01-20 15:22:07,764  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.sla.SLARegistrationBean" with action "buildSchema".
+2015-01-20 15:22:07,770  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.WorkflowJobBean" with action "buildSchema".
+2015-01-20 15:22:07,780  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.SLAEventBean" with action "buildSchema".
+2015-01-20 15:22:07,783  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.CoordinatorActionBean" with action "buildSchema".
+2015-01-20 15:22:07,800  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.client.rest.JsonWorkflowJob" with action "buildSchema".
+2015-01-20 15:22:07,800  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.WorkflowActionBean" with action "buildSchema".
+2015-01-20 15:22:07,811  INFO Tool:81 - Mapping tool running on type "class org.apache.oozie.util.db.ValidateConnectionBean" with action "buildSchema".
+2015-01-20 15:22:07,812  INFO Tool:81 - Recording mapping and schema changes.
+2015-01-20 15:27:00,502  INFO Runtime:81 - Starting OpenJPA 2.2.2
+2015-01-20 15:27:01,306  INFO JDBC:81 - Using dictionary class "org.apache.openjpa.jdbc.sql.DerbyDictionary" (Apache Derby 10.6.1.0 - (938214) ,Apache Derby Embedded JDBC Driver 10.6.1.0 - (938214)).
+2015-01-20 15:28:20,630  INFO Runtime:81 - Starting OpenJPA 2.2.2
+2015-01-20 15:28:21,235  INFO JDBC:81 - Using dictionary class "org.apache.openjpa.jdbc.sql.DerbyDictionary" (Apache Derby 10.6.1.0 - (938214) ,Apache Derby Embedded JDBC Driver 10.6.1.0 - (938214)).

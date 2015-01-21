@@ -1,0 +1,706 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * or more contributor license agreements.  See the NOTICE file<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * distributed with this work for additional information<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * regarding copyright ownership.  The ASF licenses this file<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * to you under the Apache License, Version 2.0 (the<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * "License"); you may not use this file except in compliance<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * with the License.  You may obtain a copy of the License at<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * <a name="line.9"></a>
+<span class="sourceLineNo">010</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * <a name="line.11"></a>
+<span class="sourceLineNo">012</span> * Unless required by applicable law or agreed to in writing, software<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * See the License for the specific language governing permissions and<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * limitations under the License.<a name="line.16"></a>
+<span class="sourceLineNo">017</span> */<a name="line.17"></a>
+<span class="sourceLineNo">018</span>package org.apache.oozie.command;<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.util.ArrayList;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.util.List;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.util.UUID;<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.apache.oozie.CoordinatorActionBean;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.apache.oozie.CoordinatorJobBean;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.apache.oozie.ErrorCode;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.apache.oozie.FaultInjection;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.oozie.WorkflowActionBean;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.apache.oozie.WorkflowJobBean;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.oozie.XException;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.apache.oozie.service.CallableQueueService;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.apache.oozie.service.DagXLogInfoService;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.apache.oozie.service.InstrumentationService;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.apache.oozie.service.MemoryLocksService;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.apache.oozie.service.Services;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.apache.oozie.service.StoreService;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.apache.oozie.service.XLogService;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import org.apache.oozie.store.Store;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.apache.oozie.store.StoreException;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.apache.oozie.store.WorkflowStore;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.apache.oozie.util.Instrumentation;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.apache.oozie.util.ParamChecker;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.apache.oozie.util.XCallable;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import org.apache.oozie.util.XLog;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import org.apache.oozie.util.MemoryLocks.LockToken;<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>/**<a name="line.47"></a>
+<span class="sourceLineNo">048</span> * Base class for all synchronous and asynchronous DagEngine commands.<a name="line.48"></a>
+<span class="sourceLineNo">049</span> */<a name="line.49"></a>
+<span class="sourceLineNo">050</span>public abstract class Command&lt;T, S extends Store&gt; implements XCallable&lt;T&gt; {<a name="line.50"></a>
+<span class="sourceLineNo">051</span>    /**<a name="line.51"></a>
+<span class="sourceLineNo">052</span>     * The instrumentation group used for Commands.<a name="line.52"></a>
+<span class="sourceLineNo">053</span>     */<a name="line.53"></a>
+<span class="sourceLineNo">054</span>    private static final String INSTRUMENTATION_GROUP = "commands";<a name="line.54"></a>
+<span class="sourceLineNo">055</span><a name="line.55"></a>
+<span class="sourceLineNo">056</span>    private final long createdTime;<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>    /**<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     * The instrumentation group used for Jobs.<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     */<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    private static final String INSTRUMENTATION_JOB_GROUP = "jobs";<a name="line.61"></a>
+<span class="sourceLineNo">062</span><a name="line.62"></a>
+<span class="sourceLineNo">063</span>    private static final long LOCK_TIMEOUT = 1000;<a name="line.63"></a>
+<span class="sourceLineNo">064</span>    protected static final long LOCK_FAILURE_REQUEUE_INTERVAL = 30000;<a name="line.64"></a>
+<span class="sourceLineNo">065</span><a name="line.65"></a>
+<span class="sourceLineNo">066</span>    protected Instrumentation instrumentation;<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    private List&lt;XCallable&lt;Void&gt;&gt; callables;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    private List&lt;XCallable&lt;Void&gt;&gt; delayedCallables;<a name="line.68"></a>
+<span class="sourceLineNo">069</span>    private long delay = 0;<a name="line.69"></a>
+<span class="sourceLineNo">070</span>    private List&lt;XCallable&lt;Void&gt;&gt; exceptionCallables;<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    private String name;<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    private String type;<a name="line.72"></a>
+<span class="sourceLineNo">073</span>    private String key;<a name="line.73"></a>
+<span class="sourceLineNo">074</span>    private int priority;<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    private int logMask;<a name="line.75"></a>
+<span class="sourceLineNo">076</span>    private boolean withStore;<a name="line.76"></a>
+<span class="sourceLineNo">077</span>    protected boolean dryrun = false;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>    private ArrayList&lt;LockToken&gt; locks = null;<a name="line.78"></a>
+<span class="sourceLineNo">079</span><a name="line.79"></a>
+<span class="sourceLineNo">080</span>    /**<a name="line.80"></a>
+<span class="sourceLineNo">081</span>     * This variable is package private for testing purposes only.<a name="line.81"></a>
+<span class="sourceLineNo">082</span>     */<a name="line.82"></a>
+<span class="sourceLineNo">083</span>    XLog.Info logInfo;<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>    /**<a name="line.85"></a>
+<span class="sourceLineNo">086</span>     * Create a command that uses a {@link WorkflowStore} instance. &lt;p/&gt; The current {@link XLog.Info} values are<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     * captured for execution.<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     *<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     * @param name command name.<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     * @param type command type.<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     * @param priority priority of the command, used when queuing for asynchronous execution.<a name="line.91"></a>
+<span class="sourceLineNo">092</span>     * @param logMask log mask for the command logging calls.<a name="line.92"></a>
+<span class="sourceLineNo">093</span>     */<a name="line.93"></a>
+<span class="sourceLineNo">094</span>    public Command(String name, String type, int priority, int logMask) {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        this(name, type, priority, logMask, true);<a name="line.95"></a>
+<span class="sourceLineNo">096</span>    }<a name="line.96"></a>
+<span class="sourceLineNo">097</span><a name="line.97"></a>
+<span class="sourceLineNo">098</span>    /**<a name="line.98"></a>
+<span class="sourceLineNo">099</span>     * Create a command. &lt;p/&gt; The current {@link XLog.Info} values are captured for execution.<a name="line.99"></a>
+<span class="sourceLineNo">100</span>     *<a name="line.100"></a>
+<span class="sourceLineNo">101</span>     * @param name command name.<a name="line.101"></a>
+<span class="sourceLineNo">102</span>     * @param type command type.<a name="line.102"></a>
+<span class="sourceLineNo">103</span>     * @param priority priority of the command, used when queuing for asynchronous execution.<a name="line.103"></a>
+<span class="sourceLineNo">104</span>     * @param logMask log mask for the command logging calls.<a name="line.104"></a>
+<span class="sourceLineNo">105</span>     * @param withStore indicates if the command needs a {@link org.apache.oozie.store.WorkflowStore} instance or not.<a name="line.105"></a>
+<span class="sourceLineNo">106</span>     */<a name="line.106"></a>
+<span class="sourceLineNo">107</span>    public Command(String name, String type, int priority, int logMask, boolean withStore) {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        this.name = ParamChecker.notEmpty(name, "name");<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        this.type = ParamChecker.notEmpty(type, "type");<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        this.key = name + "_" + UUID.randomUUID();<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        this.priority = priority;<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        this.withStore = withStore;<a name="line.112"></a>
+<span class="sourceLineNo">113</span>        this.logMask = logMask;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        instrumentation = Services.get().get(InstrumentationService.class).get();<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        logInfo = new XLog.Info(XLog.Info.get());<a name="line.115"></a>
+<span class="sourceLineNo">116</span>        createdTime = System.currentTimeMillis();<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        locks = new ArrayList&lt;LockToken&gt;();<a name="line.117"></a>
+<span class="sourceLineNo">118</span>    }<a name="line.118"></a>
+<span class="sourceLineNo">119</span><a name="line.119"></a>
+<span class="sourceLineNo">120</span>    /**<a name="line.120"></a>
+<span class="sourceLineNo">121</span>     * Create a command. &lt;p/&gt; The current {@link XLog.Info} values are captured for execution.<a name="line.121"></a>
+<span class="sourceLineNo">122</span>     *<a name="line.122"></a>
+<span class="sourceLineNo">123</span>     * @param name command name.<a name="line.123"></a>
+<span class="sourceLineNo">124</span>     * @param type command type.<a name="line.124"></a>
+<span class="sourceLineNo">125</span>     * @param priority priority of the command, used when queuing for asynchronous execution.<a name="line.125"></a>
+<span class="sourceLineNo">126</span>     * @param logMask log mask for the command logging calls.<a name="line.126"></a>
+<span class="sourceLineNo">127</span>     * @param withStore indicates if the command needs a {@link org.apache.oozie.store.WorkflowStore} instance or not.<a name="line.127"></a>
+<span class="sourceLineNo">128</span>     * @param dryrun indicates if dryrun option is enabled. if enabled coordinator will show a diagnostic output without<a name="line.128"></a>
+<span class="sourceLineNo">129</span>     * really submitting the job<a name="line.129"></a>
+<span class="sourceLineNo">130</span>     */<a name="line.130"></a>
+<span class="sourceLineNo">131</span>    public Command(String name, String type, int priority, int logMask, boolean withStore, boolean dryrun) {<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        this(name, type, priority, logMask, withStore);<a name="line.132"></a>
+<span class="sourceLineNo">133</span>        this.dryrun = dryrun;<a name="line.133"></a>
+<span class="sourceLineNo">134</span>    }<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span>    /**<a name="line.136"></a>
+<span class="sourceLineNo">137</span>     * Return the name of the command.<a name="line.137"></a>
+<span class="sourceLineNo">138</span>     *<a name="line.138"></a>
+<span class="sourceLineNo">139</span>     * @return the name of the command.<a name="line.139"></a>
+<span class="sourceLineNo">140</span>     */<a name="line.140"></a>
+<span class="sourceLineNo">141</span>    @Override<a name="line.141"></a>
+<span class="sourceLineNo">142</span>    public String getName() {<a name="line.142"></a>
+<span class="sourceLineNo">143</span>        return name;<a name="line.143"></a>
+<span class="sourceLineNo">144</span>    }<a name="line.144"></a>
+<span class="sourceLineNo">145</span><a name="line.145"></a>
+<span class="sourceLineNo">146</span>    /**<a name="line.146"></a>
+<span class="sourceLineNo">147</span>     * Return the callable type. &lt;p/&gt; The callable type is used for concurrency throttling in the {@link<a name="line.147"></a>
+<span class="sourceLineNo">148</span>     * org.apache.oozie.service.CallableQueueService}.<a name="line.148"></a>
+<span class="sourceLineNo">149</span>     *<a name="line.149"></a>
+<span class="sourceLineNo">150</span>     * @return the callable type.<a name="line.150"></a>
+<span class="sourceLineNo">151</span>     */<a name="line.151"></a>
+<span class="sourceLineNo">152</span>    @Override<a name="line.152"></a>
+<span class="sourceLineNo">153</span>    public String getType() {<a name="line.153"></a>
+<span class="sourceLineNo">154</span>        return type;<a name="line.154"></a>
+<span class="sourceLineNo">155</span>    }<a name="line.155"></a>
+<span class="sourceLineNo">156</span><a name="line.156"></a>
+<span class="sourceLineNo">157</span>    /**<a name="line.157"></a>
+<span class="sourceLineNo">158</span>     * Return the priority of the command.<a name="line.158"></a>
+<span class="sourceLineNo">159</span>     *<a name="line.159"></a>
+<span class="sourceLineNo">160</span>     * @return the priority of the command.<a name="line.160"></a>
+<span class="sourceLineNo">161</span>     */<a name="line.161"></a>
+<span class="sourceLineNo">162</span>    @Override<a name="line.162"></a>
+<span class="sourceLineNo">163</span>    public int getPriority() {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        return priority;<a name="line.164"></a>
+<span class="sourceLineNo">165</span>    }<a name="line.165"></a>
+<span class="sourceLineNo">166</span><a name="line.166"></a>
+<span class="sourceLineNo">167</span>    /**<a name="line.167"></a>
+<span class="sourceLineNo">168</span>     * Returns the createdTime of the callable in milliseconds<a name="line.168"></a>
+<span class="sourceLineNo">169</span>     *<a name="line.169"></a>
+<span class="sourceLineNo">170</span>     * @return the callable createdTime<a name="line.170"></a>
+<span class="sourceLineNo">171</span>     */<a name="line.171"></a>
+<span class="sourceLineNo">172</span>    @Override<a name="line.172"></a>
+<span class="sourceLineNo">173</span>    public long getCreatedTime() {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        return createdTime;<a name="line.174"></a>
+<span class="sourceLineNo">175</span>    }<a name="line.175"></a>
+<span class="sourceLineNo">176</span><a name="line.176"></a>
+<span class="sourceLineNo">177</span>    /**<a name="line.177"></a>
+<span class="sourceLineNo">178</span>     * Execute the command {@link #call(WorkflowStore)} setting all the necessary context. &lt;p/&gt; The {@link XLog.Info} is<a name="line.178"></a>
+<span class="sourceLineNo">179</span>     * set to the values at instance creation time. &lt;p/&gt; The command execution is logged and instrumented. &lt;p/&gt; If a<a name="line.179"></a>
+<span class="sourceLineNo">180</span>     * {@link WorkflowStore} is used, a fresh instance will be passed and it will be commited after the {@link<a name="line.180"></a>
+<span class="sourceLineNo">181</span>     * #call(WorkflowStore)} execution. It will be closed without committing if an exception is thrown. &lt;p/&gt; Commands<a name="line.181"></a>
+<span class="sourceLineNo">182</span>     * queued via the DagCommand queue methods are queued for execution after the workflow store has been committed.<a name="line.182"></a>
+<span class="sourceLineNo">183</span>     * &lt;p/&gt; If an exception happends the queued commands will not be effectively queued for execution. Instead, the the<a name="line.183"></a>
+<span class="sourceLineNo">184</span>     * commands queued for exception will be effectively queued fro execution..<a name="line.184"></a>
+<span class="sourceLineNo">185</span>     *<a name="line.185"></a>
+<span class="sourceLineNo">186</span>     * @throws CommandException thrown if the command could not be executed successfully, the workflow store is closed<a name="line.186"></a>
+<span class="sourceLineNo">187</span>     * without committing, thus doing a rollback.<a name="line.187"></a>
+<span class="sourceLineNo">188</span>     */<a name="line.188"></a>
+<span class="sourceLineNo">189</span>    @SuppressWarnings({"ThrowFromFinallyBlock", "unchecked"})<a name="line.189"></a>
+<span class="sourceLineNo">190</span>    public final T call() throws CommandException {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        XLog.Info.get().setParameters(logInfo);<a name="line.191"></a>
+<span class="sourceLineNo">192</span>        XLog log = XLog.getLog(getClass());<a name="line.192"></a>
+<span class="sourceLineNo">193</span>        log.trace(logMask, "Start");<a name="line.193"></a>
+<span class="sourceLineNo">194</span>        Instrumentation.Cron cron = new Instrumentation.Cron();<a name="line.194"></a>
+<span class="sourceLineNo">195</span>        cron.start();<a name="line.195"></a>
+<span class="sourceLineNo">196</span>        callables = new ArrayList&lt;XCallable&lt;Void&gt;&gt;();<a name="line.196"></a>
+<span class="sourceLineNo">197</span>        delayedCallables = new ArrayList&lt;XCallable&lt;Void&gt;&gt;();<a name="line.197"></a>
+<span class="sourceLineNo">198</span>        exceptionCallables = new ArrayList&lt;XCallable&lt;Void&gt;&gt;();<a name="line.198"></a>
+<span class="sourceLineNo">199</span>        delay = 0;<a name="line.199"></a>
+<span class="sourceLineNo">200</span>        S store = null;<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        boolean exception = false;<a name="line.201"></a>
+<span class="sourceLineNo">202</span><a name="line.202"></a>
+<span class="sourceLineNo">203</span>        try {<a name="line.203"></a>
+<span class="sourceLineNo">204</span>            if (withStore) {<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                store = (S) Services.get().get(StoreService.class).getStore(getStoreClass());<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                store.beginTrx();<a name="line.206"></a>
+<span class="sourceLineNo">207</span>            }<a name="line.207"></a>
+<span class="sourceLineNo">208</span>            T result = execute(store);<a name="line.208"></a>
+<span class="sourceLineNo">209</span>            /*<a name="line.209"></a>
+<span class="sourceLineNo">210</span>             *<a name="line.210"></a>
+<span class="sourceLineNo">211</span>             * if (store != null &amp;&amp; log != null) { log.info(XLog.STD,<a name="line.211"></a>
+<span class="sourceLineNo">212</span>             * "connection log from store Flush Mode {0} ",<a name="line.212"></a>
+<span class="sourceLineNo">213</span>             * store.getFlushMode()); }<a name="line.213"></a>
+<span class="sourceLineNo">214</span>             */<a name="line.214"></a>
+<span class="sourceLineNo">215</span>            if (withStore) {<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                if (store == null) {<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                    throw new IllegalStateException("WorkflowStore should not be null");<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                }<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                if (FaultInjection.isActive("org.apache.oozie.command.SkipCommitFaultInjection")) {<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                    throw new RuntimeException("Skipping Commit for Failover Testing");<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                }<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                store.commitTrx();<a name="line.222"></a>
+<span class="sourceLineNo">223</span>            }<a name="line.223"></a>
+<span class="sourceLineNo">224</span><a name="line.224"></a>
+<span class="sourceLineNo">225</span>            // TODO figure out the reject due to concurrency problems and remove<a name="line.225"></a>
+<span class="sourceLineNo">226</span>            // the delayed queuing for callables.<a name="line.226"></a>
+<span class="sourceLineNo">227</span>            boolean ret = Services.get().get(CallableQueueService.class).queueSerial(callables, 10);<a name="line.227"></a>
+<span class="sourceLineNo">228</span>            if (ret == false) {<a name="line.228"></a>
+<span class="sourceLineNo">229</span>                logQueueCallableFalse(callables);<a name="line.229"></a>
+<span class="sourceLineNo">230</span>            }<a name="line.230"></a>
+<span class="sourceLineNo">231</span><a name="line.231"></a>
+<span class="sourceLineNo">232</span>            ret = Services.get().get(CallableQueueService.class).queueSerial(delayedCallables, delay);<a name="line.232"></a>
+<span class="sourceLineNo">233</span>            if (ret == false) {<a name="line.233"></a>
+<span class="sourceLineNo">234</span>                logQueueCallableFalse(delayedCallables);<a name="line.234"></a>
+<span class="sourceLineNo">235</span>            }<a name="line.235"></a>
+<span class="sourceLineNo">236</span><a name="line.236"></a>
+<span class="sourceLineNo">237</span>            return result;<a name="line.237"></a>
+<span class="sourceLineNo">238</span>        }<a name="line.238"></a>
+<span class="sourceLineNo">239</span>        catch (XException ex) {<a name="line.239"></a>
+<span class="sourceLineNo">240</span>            log.error(logMask | XLog.OPS, "XException, {0}", ex.getMessage(), ex);<a name="line.240"></a>
+<span class="sourceLineNo">241</span>            if (store != null) {<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                log.info(XLog.STD, "XException - connection logs from store {0}, {1}", store.getConnection(), store<a name="line.242"></a>
+<span class="sourceLineNo">243</span>                        .isClosed());<a name="line.243"></a>
+<span class="sourceLineNo">244</span>            }<a name="line.244"></a>
+<span class="sourceLineNo">245</span>            exception = true;<a name="line.245"></a>
+<span class="sourceLineNo">246</span>            if (store != null &amp;&amp; store.isActive()) {<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                try {<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                    store.rollbackTrx();<a name="line.248"></a>
+<span class="sourceLineNo">249</span>                }<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                catch (RuntimeException rex) {<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                    log.warn(logMask | XLog.OPS, "openjpa error, {0}, {1}", name, rex.getMessage(), rex);<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                }<a name="line.252"></a>
+<span class="sourceLineNo">253</span>            }<a name="line.253"></a>
+<span class="sourceLineNo">254</span><a name="line.254"></a>
+<span class="sourceLineNo">255</span>            // TODO figure out the reject due to concurrency problems and remove<a name="line.255"></a>
+<span class="sourceLineNo">256</span>            // the delayed queuing for callables.<a name="line.256"></a>
+<span class="sourceLineNo">257</span>            boolean ret = Services.get().get(CallableQueueService.class).queueSerial(exceptionCallables, 10);<a name="line.257"></a>
+<span class="sourceLineNo">258</span>            if (ret == false) {<a name="line.258"></a>
+<span class="sourceLineNo">259</span>                logQueueCallableFalse(exceptionCallables);<a name="line.259"></a>
+<span class="sourceLineNo">260</span>            }<a name="line.260"></a>
+<span class="sourceLineNo">261</span>            if (ex instanceof CommandException) {<a name="line.261"></a>
+<span class="sourceLineNo">262</span>                throw (CommandException) ex;<a name="line.262"></a>
+<span class="sourceLineNo">263</span>            }<a name="line.263"></a>
+<span class="sourceLineNo">264</span>            else {<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                throw new CommandException(ex);<a name="line.265"></a>
+<span class="sourceLineNo">266</span>            }<a name="line.266"></a>
+<span class="sourceLineNo">267</span>        }<a name="line.267"></a>
+<span class="sourceLineNo">268</span>        catch (Exception ex) {<a name="line.268"></a>
+<span class="sourceLineNo">269</span>            log.error(logMask | XLog.OPS, "Exception, {0}", ex.getMessage(), ex);<a name="line.269"></a>
+<span class="sourceLineNo">270</span>            exception = true;<a name="line.270"></a>
+<span class="sourceLineNo">271</span>            if (store != null &amp;&amp; store.isActive()) {<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                try {<a name="line.272"></a>
+<span class="sourceLineNo">273</span>                    store.rollbackTrx();<a name="line.273"></a>
+<span class="sourceLineNo">274</span>                }<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                catch (RuntimeException rex) {<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                    log.warn(logMask | XLog.OPS, "openjpa error, {0}, {1}", name, rex.getMessage(), rex);<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                }<a name="line.277"></a>
+<span class="sourceLineNo">278</span>            }<a name="line.278"></a>
+<span class="sourceLineNo">279</span>            throw new CommandException(ErrorCode.E0607, name, ex.getMessage(), ex);<a name="line.279"></a>
+<span class="sourceLineNo">280</span>        }<a name="line.280"></a>
+<span class="sourceLineNo">281</span>        catch (Error er) {<a name="line.281"></a>
+<span class="sourceLineNo">282</span>            log.error(logMask | XLog.OPS, "Error, {0}", er.getMessage(), er);<a name="line.282"></a>
+<span class="sourceLineNo">283</span>            exception = true;<a name="line.283"></a>
+<span class="sourceLineNo">284</span>            if (store != null &amp;&amp; store.isActive()) {<a name="line.284"></a>
+<span class="sourceLineNo">285</span>                try {<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                    store.rollbackTrx();<a name="line.286"></a>
+<span class="sourceLineNo">287</span>                }<a name="line.287"></a>
+<span class="sourceLineNo">288</span>                catch (RuntimeException rex) {<a name="line.288"></a>
+<span class="sourceLineNo">289</span>                    log.warn(logMask | XLog.OPS, "openjpa error, {0}, {1}", name, rex.getMessage(), rex);<a name="line.289"></a>
+<span class="sourceLineNo">290</span>                }<a name="line.290"></a>
+<span class="sourceLineNo">291</span>            }<a name="line.291"></a>
+<span class="sourceLineNo">292</span>            throw er;<a name="line.292"></a>
+<span class="sourceLineNo">293</span>        }<a name="line.293"></a>
+<span class="sourceLineNo">294</span>        finally {<a name="line.294"></a>
+<span class="sourceLineNo">295</span>            FaultInjection.deactivate("org.apache.oozie.command.SkipCommitFaultInjection");<a name="line.295"></a>
+<span class="sourceLineNo">296</span>            cron.stop();<a name="line.296"></a>
+<span class="sourceLineNo">297</span>            instrumentation.addCron(INSTRUMENTATION_GROUP, name, cron);<a name="line.297"></a>
+<span class="sourceLineNo">298</span>            incrCommandCounter(1);<a name="line.298"></a>
+<span class="sourceLineNo">299</span>            log.trace(logMask, "End");<a name="line.299"></a>
+<span class="sourceLineNo">300</span>            if (locks != null) {<a name="line.300"></a>
+<span class="sourceLineNo">301</span>                for (LockToken lock : locks) {<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                    lock.release();<a name="line.302"></a>
+<span class="sourceLineNo">303</span>                }<a name="line.303"></a>
+<span class="sourceLineNo">304</span>                locks.clear();<a name="line.304"></a>
+<span class="sourceLineNo">305</span>            }<a name="line.305"></a>
+<span class="sourceLineNo">306</span>            if (store != null) {<a name="line.306"></a>
+<span class="sourceLineNo">307</span>                if (!store.isActive()) {<a name="line.307"></a>
+<span class="sourceLineNo">308</span>                    try {<a name="line.308"></a>
+<span class="sourceLineNo">309</span>                        store.closeTrx();<a name="line.309"></a>
+<span class="sourceLineNo">310</span>                    }<a name="line.310"></a>
+<span class="sourceLineNo">311</span>                    catch (RuntimeException rex) {<a name="line.311"></a>
+<span class="sourceLineNo">312</span>                        if (exception) {<a name="line.312"></a>
+<span class="sourceLineNo">313</span>                            log.warn(logMask | XLog.OPS, "openjpa error, {0}, {1}", name, rex.getMessage(), rex);<a name="line.313"></a>
+<span class="sourceLineNo">314</span>                        }<a name="line.314"></a>
+<span class="sourceLineNo">315</span>                        else {<a name="line.315"></a>
+<span class="sourceLineNo">316</span>                            throw rex;<a name="line.316"></a>
+<span class="sourceLineNo">317</span>                        }<a name="line.317"></a>
+<span class="sourceLineNo">318</span>                    }<a name="line.318"></a>
+<span class="sourceLineNo">319</span>                }<a name="line.319"></a>
+<span class="sourceLineNo">320</span>                else {<a name="line.320"></a>
+<span class="sourceLineNo">321</span>                    log.warn(logMask | XLog.OPS, "transaction is not committed or rolled back before closing entitymanager.");<a name="line.321"></a>
+<span class="sourceLineNo">322</span>                }<a name="line.322"></a>
+<span class="sourceLineNo">323</span>            }<a name="line.323"></a>
+<span class="sourceLineNo">324</span>        }<a name="line.324"></a>
+<span class="sourceLineNo">325</span>    }<a name="line.325"></a>
+<span class="sourceLineNo">326</span><a name="line.326"></a>
+<span class="sourceLineNo">327</span>    /**<a name="line.327"></a>
+<span class="sourceLineNo">328</span>     * Queue a callable for execution after the current callable call invocation completes and the {@link WorkflowStore}<a name="line.328"></a>
+<span class="sourceLineNo">329</span>     * transaction commits. &lt;p/&gt; All queued callables, regardless of the number of queue invocations, are queued for a<a name="line.329"></a>
+<span class="sourceLineNo">330</span>     * single serial execution. &lt;p/&gt; If the call invocation throws an exception all queued callables are discarded, they<a name="line.330"></a>
+<span class="sourceLineNo">331</span>     * are not queued for execution.<a name="line.331"></a>
+<span class="sourceLineNo">332</span>     *<a name="line.332"></a>
+<span class="sourceLineNo">333</span>     * @param callable callable to queue for execution.<a name="line.333"></a>
+<span class="sourceLineNo">334</span>     */<a name="line.334"></a>
+<span class="sourceLineNo">335</span>    protected void queueCallable(XCallable&lt;Void&gt; callable) {<a name="line.335"></a>
+<span class="sourceLineNo">336</span>        callables.add(callable);<a name="line.336"></a>
+<span class="sourceLineNo">337</span>    }<a name="line.337"></a>
+<span class="sourceLineNo">338</span><a name="line.338"></a>
+<span class="sourceLineNo">339</span>    /**<a name="line.339"></a>
+<span class="sourceLineNo">340</span>     * Queue a list of callables for execution after the current callable call invocation completes and the {@link<a name="line.340"></a>
+<span class="sourceLineNo">341</span>     * WorkflowStore} transaction commits. &lt;p/&gt; All queued callables, regardless of the number of queue invocations, are<a name="line.341"></a>
+<span class="sourceLineNo">342</span>     * queued for a single serial execution. &lt;p/&gt; If the call invocation throws an exception all queued callables are<a name="line.342"></a>
+<span class="sourceLineNo">343</span>     * discarded, they are not queued for execution.<a name="line.343"></a>
+<span class="sourceLineNo">344</span>     *<a name="line.344"></a>
+<span class="sourceLineNo">345</span>     * @param callables list of callables to queue for execution.<a name="line.345"></a>
+<span class="sourceLineNo">346</span>     */<a name="line.346"></a>
+<span class="sourceLineNo">347</span>    protected void queueCallable(List&lt;? extends XCallable&lt;Void&gt;&gt; callables) {<a name="line.347"></a>
+<span class="sourceLineNo">348</span>        this.callables.addAll(callables);<a name="line.348"></a>
+<span class="sourceLineNo">349</span>    }<a name="line.349"></a>
+<span class="sourceLineNo">350</span><a name="line.350"></a>
+<span class="sourceLineNo">351</span>    /**<a name="line.351"></a>
+<span class="sourceLineNo">352</span>     * Queue a callable for delayed execution after the current callable call invocation completes and the {@link<a name="line.352"></a>
+<span class="sourceLineNo">353</span>     * WorkflowStore} transaction commits. &lt;p/&gt; All queued delayed callables, regardless of the number of delay queue<a name="line.353"></a>
+<span class="sourceLineNo">354</span>     * invocations, are queued for a single serial delayed execution with the highest delay of all queued callables.<a name="line.354"></a>
+<span class="sourceLineNo">355</span>     * &lt;p/&gt; If the call invocation throws an exception all queued callables are discarded, they are not queued for<a name="line.355"></a>
+<span class="sourceLineNo">356</span>     * execution.<a name="line.356"></a>
+<span class="sourceLineNo">357</span>     *<a name="line.357"></a>
+<span class="sourceLineNo">358</span>     * @param callable callable to queue for delayed execution.<a name="line.358"></a>
+<span class="sourceLineNo">359</span>     * @param delay the queue delay in milliseconds<a name="line.359"></a>
+<span class="sourceLineNo">360</span>     */<a name="line.360"></a>
+<span class="sourceLineNo">361</span>    protected void queueCallable(XCallable&lt;Void&gt; callable, long delay) {<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        this.delayedCallables.add(callable);<a name="line.362"></a>
+<span class="sourceLineNo">363</span>        this.delay = Math.max(this.delay, delay);<a name="line.363"></a>
+<span class="sourceLineNo">364</span>    }<a name="line.364"></a>
+<span class="sourceLineNo">365</span><a name="line.365"></a>
+<span class="sourceLineNo">366</span>    /**<a name="line.366"></a>
+<span class="sourceLineNo">367</span>     * Queue a callable for execution only in the event of an exception being thrown during the call invocation. &lt;p/&gt; If<a name="line.367"></a>
+<span class="sourceLineNo">368</span>     * an exception does not happen, all the callables queued by this method are discarded, they are not queued for<a name="line.368"></a>
+<span class="sourceLineNo">369</span>     * execution. &lt;p/&gt; All queued callables, regardless of the number of queue invocations, are queued for a single<a name="line.369"></a>
+<span class="sourceLineNo">370</span>     * serial execution.<a name="line.370"></a>
+<span class="sourceLineNo">371</span>     *<a name="line.371"></a>
+<span class="sourceLineNo">372</span>     * @param callable callable to queue for execution in the case of an exception.<a name="line.372"></a>
+<span class="sourceLineNo">373</span>     */<a name="line.373"></a>
+<span class="sourceLineNo">374</span>    protected void queueCallableForException(XCallable&lt;Void&gt; callable) {<a name="line.374"></a>
+<span class="sourceLineNo">375</span>        exceptionCallables.add(callable);<a name="line.375"></a>
+<span class="sourceLineNo">376</span>    }<a name="line.376"></a>
+<span class="sourceLineNo">377</span><a name="line.377"></a>
+<span class="sourceLineNo">378</span>    /**<a name="line.378"></a>
+<span class="sourceLineNo">379</span>     * Logging the info if failed to queue the callables.<a name="line.379"></a>
+<span class="sourceLineNo">380</span>     *<a name="line.380"></a>
+<span class="sourceLineNo">381</span>     * @param callables<a name="line.381"></a>
+<span class="sourceLineNo">382</span>     */<a name="line.382"></a>
+<span class="sourceLineNo">383</span>    protected void logQueueCallableFalse(List&lt;? extends XCallable&lt;Void&gt;&gt; callables) {<a name="line.383"></a>
+<span class="sourceLineNo">384</span>        StringBuilder sb = new StringBuilder(<a name="line.384"></a>
+<span class="sourceLineNo">385</span>                "Unable to queue the callables, delayedQueue is full or system is in SAFEMODE - failed to queue:[");<a name="line.385"></a>
+<span class="sourceLineNo">386</span>        int size = callables.size();<a name="line.386"></a>
+<span class="sourceLineNo">387</span>        for (int i = 0; i &lt; size; i++) {<a name="line.387"></a>
+<span class="sourceLineNo">388</span>            XCallable&lt;Void&gt; callable = callables.get(i);<a name="line.388"></a>
+<span class="sourceLineNo">389</span>            sb.append(callable.getName());<a name="line.389"></a>
+<span class="sourceLineNo">390</span>            if (i &lt; size - 1) {<a name="line.390"></a>
+<span class="sourceLineNo">391</span>                sb.append(", ");<a name="line.391"></a>
+<span class="sourceLineNo">392</span>            }<a name="line.392"></a>
+<span class="sourceLineNo">393</span>            else {<a name="line.393"></a>
+<span class="sourceLineNo">394</span>                sb.append("]");<a name="line.394"></a>
+<span class="sourceLineNo">395</span>            }<a name="line.395"></a>
+<span class="sourceLineNo">396</span>        }<a name="line.396"></a>
+<span class="sourceLineNo">397</span>        XLog.getLog(getClass()).warn(sb.toString());<a name="line.397"></a>
+<span class="sourceLineNo">398</span>    }<a name="line.398"></a>
+<span class="sourceLineNo">399</span><a name="line.399"></a>
+<span class="sourceLineNo">400</span>    /**<a name="line.400"></a>
+<span class="sourceLineNo">401</span>     * DagCallable subclasses must implement this method to perform their task. &lt;p/&gt; The workflow store works in<a name="line.401"></a>
+<span class="sourceLineNo">402</span>     * transactional mode. The transaction is committed only if this method ends successfully. Otherwise the transaction<a name="line.402"></a>
+<span class="sourceLineNo">403</span>     * is rolledback.<a name="line.403"></a>
+<span class="sourceLineNo">404</span>     *<a name="line.404"></a>
+<span class="sourceLineNo">405</span>     * @param store the workflow store instance for the callable, &lt;code&gt;null&lt;/code&gt; if the callable does not use a<a name="line.405"></a>
+<span class="sourceLineNo">406</span>     * store.<a name="line.406"></a>
+<span class="sourceLineNo">407</span>     * @return the return value of the callable.<a name="line.407"></a>
+<span class="sourceLineNo">408</span>     * @throws StoreException thrown if the workflow store could not perform an operation.<a name="line.408"></a>
+<span class="sourceLineNo">409</span>     * @throws CommandException thrown if the command could not perform its operation.<a name="line.409"></a>
+<span class="sourceLineNo">410</span>     */<a name="line.410"></a>
+<span class="sourceLineNo">411</span>    protected abstract T call(S store) throws StoreException, CommandException;<a name="line.411"></a>
+<span class="sourceLineNo">412</span><a name="line.412"></a>
+<span class="sourceLineNo">413</span>    // to do<a name="line.413"></a>
+<span class="sourceLineNo">414</span>    // need to implement on all sub commands and break down the transactions<a name="line.414"></a>
+<span class="sourceLineNo">415</span><a name="line.415"></a>
+<span class="sourceLineNo">416</span>    // protected abstract T execute(String id) throws CommandException;<a name="line.416"></a>
+<span class="sourceLineNo">417</span><a name="line.417"></a>
+<span class="sourceLineNo">418</span>    /**<a name="line.418"></a>
+<span class="sourceLineNo">419</span>     * Command subclasses must implement this method correct Store can be passed to call(store);<a name="line.419"></a>
+<span class="sourceLineNo">420</span>     *<a name="line.420"></a>
+<span class="sourceLineNo">421</span>     * @return the Store class for use by Callable<a name="line.421"></a>
+<span class="sourceLineNo">422</span>     * @throws CommandException thrown if the command could not perform its operation.<a name="line.422"></a>
+<span class="sourceLineNo">423</span>     */<a name="line.423"></a>
+<span class="sourceLineNo">424</span>    protected abstract Class&lt;? extends Store&gt; getStoreClass();<a name="line.424"></a>
+<span class="sourceLineNo">425</span><a name="line.425"></a>
+<span class="sourceLineNo">426</span>    /**<a name="line.426"></a>
+<span class="sourceLineNo">427</span>     * Set the log info with the context of the given coordinator bean.<a name="line.427"></a>
+<span class="sourceLineNo">428</span>     *<a name="line.428"></a>
+<span class="sourceLineNo">429</span>     * @param cBean coordinator bean.<a name="line.429"></a>
+<span class="sourceLineNo">430</span>     */<a name="line.430"></a>
+<span class="sourceLineNo">431</span>    protected void setLogInfo(CoordinatorJobBean cBean) {<a name="line.431"></a>
+<span class="sourceLineNo">432</span>        if (logInfo.getParameter(XLogService.GROUP) == null) {<a name="line.432"></a>
+<span class="sourceLineNo">433</span>            logInfo.setParameter(XLogService.GROUP, cBean.getGroup());<a name="line.433"></a>
+<span class="sourceLineNo">434</span>        }<a name="line.434"></a>
+<span class="sourceLineNo">435</span>        if (logInfo.getParameter(XLogService.USER) == null) {<a name="line.435"></a>
+<span class="sourceLineNo">436</span>            logInfo.setParameter(XLogService.USER, cBean.getUser());<a name="line.436"></a>
+<span class="sourceLineNo">437</span>        }<a name="line.437"></a>
+<span class="sourceLineNo">438</span>        logInfo.setParameter(DagXLogInfoService.JOB, cBean.getId());<a name="line.438"></a>
+<span class="sourceLineNo">439</span>        logInfo.setParameter(DagXLogInfoService.TOKEN, "");<a name="line.439"></a>
+<span class="sourceLineNo">440</span>        logInfo.setParameter(DagXLogInfoService.APP, cBean.getAppName());<a name="line.440"></a>
+<span class="sourceLineNo">441</span>        XLog.Info.get().setParameters(logInfo);<a name="line.441"></a>
+<span class="sourceLineNo">442</span>    }<a name="line.442"></a>
+<span class="sourceLineNo">443</span><a name="line.443"></a>
+<span class="sourceLineNo">444</span>    /**<a name="line.444"></a>
+<span class="sourceLineNo">445</span>     * Set the log info with the context of the given coordinator action bean.<a name="line.445"></a>
+<span class="sourceLineNo">446</span>     *<a name="line.446"></a>
+<span class="sourceLineNo">447</span>     * @param action action bean.<a name="line.447"></a>
+<span class="sourceLineNo">448</span>     */<a name="line.448"></a>
+<span class="sourceLineNo">449</span>    protected void setLogInfo(CoordinatorActionBean action) {<a name="line.449"></a>
+<span class="sourceLineNo">450</span>        logInfo.setParameter(DagXLogInfoService.JOB, action.getJobId());<a name="line.450"></a>
+<span class="sourceLineNo">451</span>        // logInfo.setParameter(DagXLogInfoService.TOKEN, action.getLogToken());<a name="line.451"></a>
+<span class="sourceLineNo">452</span>        logInfo.setParameter(DagXLogInfoService.ACTION, action.getId());<a name="line.452"></a>
+<span class="sourceLineNo">453</span>        XLog.Info.get().setParameters(logInfo);<a name="line.453"></a>
+<span class="sourceLineNo">454</span>    }<a name="line.454"></a>
+<span class="sourceLineNo">455</span><a name="line.455"></a>
+<span class="sourceLineNo">456</span>    /**<a name="line.456"></a>
+<span class="sourceLineNo">457</span>     * Set the log info with the context of the given workflow bean.<a name="line.457"></a>
+<span class="sourceLineNo">458</span>     *<a name="line.458"></a>
+<span class="sourceLineNo">459</span>     * @param workflow workflow bean.<a name="line.459"></a>
+<span class="sourceLineNo">460</span>     */<a name="line.460"></a>
+<span class="sourceLineNo">461</span>    protected void setLogInfo(WorkflowJobBean workflow) {<a name="line.461"></a>
+<span class="sourceLineNo">462</span>        if (logInfo.getParameter(XLogService.GROUP) == null) {<a name="line.462"></a>
+<span class="sourceLineNo">463</span>            logInfo.setParameter(XLogService.GROUP, workflow.getGroup());<a name="line.463"></a>
+<span class="sourceLineNo">464</span>        }<a name="line.464"></a>
+<span class="sourceLineNo">465</span>        if (logInfo.getParameter(XLogService.USER) == null) {<a name="line.465"></a>
+<span class="sourceLineNo">466</span>            logInfo.setParameter(XLogService.USER, workflow.getUser());<a name="line.466"></a>
+<span class="sourceLineNo">467</span>        }<a name="line.467"></a>
+<span class="sourceLineNo">468</span>        logInfo.setParameter(DagXLogInfoService.JOB, workflow.getId());<a name="line.468"></a>
+<span class="sourceLineNo">469</span>        logInfo.setParameter(DagXLogInfoService.TOKEN, workflow.getLogToken());<a name="line.469"></a>
+<span class="sourceLineNo">470</span>        logInfo.setParameter(DagXLogInfoService.APP, workflow.getAppName());<a name="line.470"></a>
+<span class="sourceLineNo">471</span>        XLog.Info.get().setParameters(logInfo);<a name="line.471"></a>
+<span class="sourceLineNo">472</span>    }<a name="line.472"></a>
+<span class="sourceLineNo">473</span><a name="line.473"></a>
+<span class="sourceLineNo">474</span>    /**<a name="line.474"></a>
+<span class="sourceLineNo">475</span>     * Set the log info with the context of the given action bean.<a name="line.475"></a>
+<span class="sourceLineNo">476</span>     *<a name="line.476"></a>
+<span class="sourceLineNo">477</span>     * @param action action bean.<a name="line.477"></a>
+<span class="sourceLineNo">478</span>     */<a name="line.478"></a>
+<span class="sourceLineNo">479</span>    protected void setLogInfo(WorkflowActionBean action) {<a name="line.479"></a>
+<span class="sourceLineNo">480</span>        logInfo.setParameter(DagXLogInfoService.JOB, action.getJobId());<a name="line.480"></a>
+<span class="sourceLineNo">481</span>        logInfo.setParameter(DagXLogInfoService.TOKEN, action.getLogToken());<a name="line.481"></a>
+<span class="sourceLineNo">482</span>        logInfo.setParameter(DagXLogInfoService.ACTION, action.getId());<a name="line.482"></a>
+<span class="sourceLineNo">483</span>        XLog.Info.get().setParameters(logInfo);<a name="line.483"></a>
+<span class="sourceLineNo">484</span>    }<a name="line.484"></a>
+<span class="sourceLineNo">485</span><a name="line.485"></a>
+<span class="sourceLineNo">486</span>    /**<a name="line.486"></a>
+<span class="sourceLineNo">487</span>     * Reset the action bean information from the log info.<a name="line.487"></a>
+<span class="sourceLineNo">488</span>     */<a name="line.488"></a>
+<span class="sourceLineNo">489</span>    // TODO check if they are used, else delete<a name="line.489"></a>
+<span class="sourceLineNo">490</span>    protected void resetLogInfoAction() {<a name="line.490"></a>
+<span class="sourceLineNo">491</span>        logInfo.clearParameter(DagXLogInfoService.ACTION);<a name="line.491"></a>
+<span class="sourceLineNo">492</span>        XLog.Info.get().clearParameter(DagXLogInfoService.ACTION);<a name="line.492"></a>
+<span class="sourceLineNo">493</span>    }<a name="line.493"></a>
+<span class="sourceLineNo">494</span><a name="line.494"></a>
+<span class="sourceLineNo">495</span>    /**<a name="line.495"></a>
+<span class="sourceLineNo">496</span>     * Reset the workflow bean information from the log info.<a name="line.496"></a>
+<span class="sourceLineNo">497</span>     */<a name="line.497"></a>
+<span class="sourceLineNo">498</span>    // TODO check if they are used, else delete<a name="line.498"></a>
+<span class="sourceLineNo">499</span>    protected void resetLogInfoWorkflow() {<a name="line.499"></a>
+<span class="sourceLineNo">500</span>        logInfo.clearParameter(DagXLogInfoService.JOB);<a name="line.500"></a>
+<span class="sourceLineNo">501</span>        logInfo.clearParameter(DagXLogInfoService.APP);<a name="line.501"></a>
+<span class="sourceLineNo">502</span>        logInfo.clearParameter(DagXLogInfoService.TOKEN);<a name="line.502"></a>
+<span class="sourceLineNo">503</span>        XLog.Info.get().clearParameter(DagXLogInfoService.JOB);<a name="line.503"></a>
+<span class="sourceLineNo">504</span>        XLog.Info.get().clearParameter(DagXLogInfoService.APP);<a name="line.504"></a>
+<span class="sourceLineNo">505</span>        XLog.Info.get().clearParameter(DagXLogInfoService.TOKEN);<a name="line.505"></a>
+<span class="sourceLineNo">506</span>    }<a name="line.506"></a>
+<span class="sourceLineNo">507</span><a name="line.507"></a>
+<span class="sourceLineNo">508</span>    /**<a name="line.508"></a>
+<span class="sourceLineNo">509</span>     * Convenience method to increment counters.<a name="line.509"></a>
+<span class="sourceLineNo">510</span>     *<a name="line.510"></a>
+<span class="sourceLineNo">511</span>     * @param group the group name.<a name="line.511"></a>
+<span class="sourceLineNo">512</span>     * @param name the counter name.<a name="line.512"></a>
+<span class="sourceLineNo">513</span>     * @param count increment count.<a name="line.513"></a>
+<span class="sourceLineNo">514</span>     */<a name="line.514"></a>
+<span class="sourceLineNo">515</span>    private void incrCounter(String group, String name, int count) {<a name="line.515"></a>
+<span class="sourceLineNo">516</span>        if (instrumentation != null) {<a name="line.516"></a>
+<span class="sourceLineNo">517</span>            instrumentation.incr(group, name, count);<a name="line.517"></a>
+<span class="sourceLineNo">518</span>        }<a name="line.518"></a>
+<span class="sourceLineNo">519</span>    }<a name="line.519"></a>
+<span class="sourceLineNo">520</span><a name="line.520"></a>
+<span class="sourceLineNo">521</span>    /**<a name="line.521"></a>
+<span class="sourceLineNo">522</span>     * Used to increment command counters.<a name="line.522"></a>
+<span class="sourceLineNo">523</span>     *<a name="line.523"></a>
+<span class="sourceLineNo">524</span>     * @param count the increment count.<a name="line.524"></a>
+<span class="sourceLineNo">525</span>     */<a name="line.525"></a>
+<span class="sourceLineNo">526</span>    protected void incrCommandCounter(int count) {<a name="line.526"></a>
+<span class="sourceLineNo">527</span>        incrCounter(INSTRUMENTATION_GROUP, name, count);<a name="line.527"></a>
+<span class="sourceLineNo">528</span>    }<a name="line.528"></a>
+<span class="sourceLineNo">529</span><a name="line.529"></a>
+<span class="sourceLineNo">530</span>    /**<a name="line.530"></a>
+<span class="sourceLineNo">531</span>     * Used to increment job counters. The counter name s the same as the command name.<a name="line.531"></a>
+<span class="sourceLineNo">532</span>     *<a name="line.532"></a>
+<span class="sourceLineNo">533</span>     * @param count the increment count.<a name="line.533"></a>
+<span class="sourceLineNo">534</span>     */<a name="line.534"></a>
+<span class="sourceLineNo">535</span>    protected void incrJobCounter(int count) {<a name="line.535"></a>
+<span class="sourceLineNo">536</span>        incrJobCounter(name, count);<a name="line.536"></a>
+<span class="sourceLineNo">537</span>    }<a name="line.537"></a>
+<span class="sourceLineNo">538</span><a name="line.538"></a>
+<span class="sourceLineNo">539</span>    /**<a name="line.539"></a>
+<span class="sourceLineNo">540</span>     * Used to increment job counters.<a name="line.540"></a>
+<span class="sourceLineNo">541</span>     *<a name="line.541"></a>
+<span class="sourceLineNo">542</span>     * @param name the job name.<a name="line.542"></a>
+<span class="sourceLineNo">543</span>     * @param count the increment count.<a name="line.543"></a>
+<span class="sourceLineNo">544</span>     */<a name="line.544"></a>
+<span class="sourceLineNo">545</span>    protected void incrJobCounter(String name, int count) {<a name="line.545"></a>
+<span class="sourceLineNo">546</span>        incrCounter(INSTRUMENTATION_JOB_GROUP, name, count);<a name="line.546"></a>
+<span class="sourceLineNo">547</span>    }<a name="line.547"></a>
+<span class="sourceLineNo">548</span><a name="line.548"></a>
+<span class="sourceLineNo">549</span>    /**<a name="line.549"></a>
+<span class="sourceLineNo">550</span>     * Return the {@link Instrumentation} instance in use.<a name="line.550"></a>
+<span class="sourceLineNo">551</span>     *<a name="line.551"></a>
+<span class="sourceLineNo">552</span>     * @return the {@link Instrumentation} instance in use.<a name="line.552"></a>
+<span class="sourceLineNo">553</span>     */<a name="line.553"></a>
+<span class="sourceLineNo">554</span>    protected Instrumentation getInstrumentation() {<a name="line.554"></a>
+<span class="sourceLineNo">555</span>        return instrumentation;<a name="line.555"></a>
+<span class="sourceLineNo">556</span>    }<a name="line.556"></a>
+<span class="sourceLineNo">557</span><a name="line.557"></a>
+<span class="sourceLineNo">558</span>    /**<a name="line.558"></a>
+<span class="sourceLineNo">559</span>     * Return the identity.<a name="line.559"></a>
+<span class="sourceLineNo">560</span>     *<a name="line.560"></a>
+<span class="sourceLineNo">561</span>     * @return the identity.<a name="line.561"></a>
+<span class="sourceLineNo">562</span>     */<a name="line.562"></a>
+<span class="sourceLineNo">563</span>    @Override<a name="line.563"></a>
+<span class="sourceLineNo">564</span>    public String toString() {<a name="line.564"></a>
+<span class="sourceLineNo">565</span>        StringBuilder sb = new StringBuilder();<a name="line.565"></a>
+<span class="sourceLineNo">566</span>        sb.append(getType());<a name="line.566"></a>
+<span class="sourceLineNo">567</span>        sb.append(",").append(getPriority());<a name="line.567"></a>
+<span class="sourceLineNo">568</span>        return sb.toString();<a name="line.568"></a>
+<span class="sourceLineNo">569</span>    }<a name="line.569"></a>
+<span class="sourceLineNo">570</span><a name="line.570"></a>
+<span class="sourceLineNo">571</span>    protected boolean lock(String id) throws InterruptedException {<a name="line.571"></a>
+<span class="sourceLineNo">572</span>        if (id == null || id.length() == 0) {<a name="line.572"></a>
+<span class="sourceLineNo">573</span>            XLog.getLog(getClass()).warn("lock(): Id is null or empty :" + id + ":");<a name="line.573"></a>
+<span class="sourceLineNo">574</span>            return false;<a name="line.574"></a>
+<span class="sourceLineNo">575</span>        }<a name="line.575"></a>
+<span class="sourceLineNo">576</span>        LockToken token = Services.get().get(MemoryLocksService.class).getWriteLock(id, LOCK_TIMEOUT);<a name="line.576"></a>
+<span class="sourceLineNo">577</span>        if (token != null) {<a name="line.577"></a>
+<span class="sourceLineNo">578</span>            locks.add(token);<a name="line.578"></a>
+<span class="sourceLineNo">579</span>            return true;<a name="line.579"></a>
+<span class="sourceLineNo">580</span>        }<a name="line.580"></a>
+<span class="sourceLineNo">581</span>        else {<a name="line.581"></a>
+<span class="sourceLineNo">582</span>            return false;<a name="line.582"></a>
+<span class="sourceLineNo">583</span>        }<a name="line.583"></a>
+<span class="sourceLineNo">584</span>    }<a name="line.584"></a>
+<span class="sourceLineNo">585</span><a name="line.585"></a>
+<span class="sourceLineNo">586</span>    /*<a name="line.586"></a>
+<span class="sourceLineNo">587</span>     * TODO - remove store coupling to EM. Store will only contain queries<a name="line.587"></a>
+<span class="sourceLineNo">588</span>     * protected EntityManager getEntityManager() { return<a name="line.588"></a>
+<span class="sourceLineNo">589</span>     * store.getEntityManager(); }<a name="line.589"></a>
+<span class="sourceLineNo">590</span>     */<a name="line.590"></a>
+<span class="sourceLineNo">591</span>    protected T execute(S store) throws CommandException, StoreException {<a name="line.591"></a>
+<span class="sourceLineNo">592</span>        T result = call(store);<a name="line.592"></a>
+<span class="sourceLineNo">593</span>        return result;<a name="line.593"></a>
+<span class="sourceLineNo">594</span>    }<a name="line.594"></a>
+<span class="sourceLineNo">595</span><a name="line.595"></a>
+<span class="sourceLineNo">596</span>    /**<a name="line.596"></a>
+<span class="sourceLineNo">597</span>     * Get command key<a name="line.597"></a>
+<span class="sourceLineNo">598</span>     *<a name="line.598"></a>
+<span class="sourceLineNo">599</span>     * @return command key<a name="line.599"></a>
+<span class="sourceLineNo">600</span>     */<a name="line.600"></a>
+<span class="sourceLineNo">601</span>    @Override<a name="line.601"></a>
+<span class="sourceLineNo">602</span>    public String getKey(){<a name="line.602"></a>
+<span class="sourceLineNo">603</span>        return this.key;<a name="line.603"></a>
+<span class="sourceLineNo">604</span>    }<a name="line.604"></a>
+<span class="sourceLineNo">605</span><a name="line.605"></a>
+<span class="sourceLineNo">606</span>    /**<a name="line.606"></a>
+<span class="sourceLineNo">607</span>     * Get command lock key returning the key as an entity key, [not used] Just<a name="line.607"></a>
+<span class="sourceLineNo">608</span>     * to be able to implement XCallable [to be deprecated]<a name="line.608"></a>
+<span class="sourceLineNo">609</span>     *<a name="line.609"></a>
+<span class="sourceLineNo">610</span>     * @return key<a name="line.610"></a>
+<span class="sourceLineNo">611</span>     */<a name="line.611"></a>
+<span class="sourceLineNo">612</span>    @Override<a name="line.612"></a>
+<span class="sourceLineNo">613</span>    public String getEntityKey() {<a name="line.613"></a>
+<span class="sourceLineNo">614</span>        return this.key;<a name="line.614"></a>
+<span class="sourceLineNo">615</span>    }<a name="line.615"></a>
+<span class="sourceLineNo">616</span><a name="line.616"></a>
+<span class="sourceLineNo">617</span>    /**<a name="line.617"></a>
+<span class="sourceLineNo">618</span>     * set the mode of execution for the callable. True if in interrupt, false<a name="line.618"></a>
+<span class="sourceLineNo">619</span>     * if not [to be deprecated]<a name="line.619"></a>
+<span class="sourceLineNo">620</span>     */<a name="line.620"></a>
+<span class="sourceLineNo">621</span>    public void setInterruptMode(boolean mode) {<a name="line.621"></a>
+<span class="sourceLineNo">622</span>    }<a name="line.622"></a>
+<span class="sourceLineNo">623</span><a name="line.623"></a>
+<span class="sourceLineNo">624</span>    /**<a name="line.624"></a>
+<span class="sourceLineNo">625</span>     * [to be deprecated]<a name="line.625"></a>
+<span class="sourceLineNo">626</span>     *<a name="line.626"></a>
+<span class="sourceLineNo">627</span>     * @return the mode of execution. true if it is executed as an Interrupt,<a name="line.627"></a>
+<span class="sourceLineNo">628</span>     *         false otherwise<a name="line.628"></a>
+<span class="sourceLineNo">629</span>     */<a name="line.629"></a>
+<span class="sourceLineNo">630</span>    public boolean inInterruptMode() {<a name="line.630"></a>
+<span class="sourceLineNo">631</span>        return false;<a name="line.631"></a>
+<span class="sourceLineNo">632</span>    }<a name="line.632"></a>
+<span class="sourceLineNo">633</span><a name="line.633"></a>
+<span class="sourceLineNo">634</span>}<a name="line.634"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

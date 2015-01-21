@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Oozie - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Oozie
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2015-01-20
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                                                <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <p></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<a name="HCatalog_Integration_Since_Oozie_4.x"></a>
+<div class="section"><h2> HCatalog Integration (Since Oozie 4.x)</h2>
+<p><ul><ul><li><a href="#HCatalog_Overview">HCatalog Overview</a>
+<ul><li><a href="#HCatalog_notifications">HCatalog notifications</a>
+</li>
+</ul>
+</li>
+<li><a href="#Oozie_HCatalog_Integration">Oozie HCatalog Integration</a>
+<ul><li><a href="#Oozie_Server_Configuration">Oozie Server Configuration</a>
+</li>
+<li><a href="#HCatalog_URI_Format">HCatalog URI Format</a>
+</li>
+<li><a href="#HCatalog_Libraries">HCatalog Libraries</a>
+</li>
+<li><a href="#Coordinator">Coordinator</a>
+</li>
+<li><a href="#Workflow">Workflow</a>
+</li>
+<li><a href="#Known_Issues">Known Issues</a>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</p>
+<a name="HCatalog_Overview"></a>
+<div class="section"><h3>HCatalog Overview</h3>
+<p>HCatalog is a table and storage management layer for Hadoop that enables users with different data processing
+tools - Pig, MapReduce, and Hive - to more easily read and write data on the grid. HCatalog's table abstraction presents
+users with a relational view of data in the Hadoop distributed file system (HDFS).</p>
+<p>Read <a href="http://incubator.apache.org/hcatalog/docs/r0.5.0/index.html" class="externalLink">HCatalog Documentation</a>
+ to know more about HCatalog.
+Working with HCatalog using pig is detailed in
+<a href="http://incubator.apache.org/hcatalog/docs/r0.5.0/loadstore.html" class="externalLink">HCatLoader and HCatStorer</a>
+.
+Working with HCatalog using MapReduce directly is detailed in
+<a href="http://incubator.apache.org/hcatalog/docs/r0.5.0/inputoutput.html" class="externalLink">HCatInputFormat and HCatOutputFormat</a>
+.</p>
+<a name="HCatalog_notifications"></a>
+<div class="section"><h4>HCatalog notifications</h4>
+<p>HCatalog provides notifications through a JMS provider like ActiveMQ when a new partition is added to a table in the
+database. This allows applications to consume those events and schedule the work that depends on them. In case of Oozie,
+the notifications are used to determine the availability of HCatalog partitions defined as data dependencies in the
+Coordinator and trigger workflows.</p>
+<p>Read <a href="http://incubator.apache.org/hcatalog/docs/r0.5.0/notification.html" class="externalLink">HCatalog Notification</a>
+ to know more about
+notifications in HCatalog.</p>
+<a name="Oozie_HCatalog_Integration"></a>
+</div>
+</div>
+<div class="section"><h3>Oozie HCatalog Integration</h3>
+<p>Oozie's Coordinators so far have been supporting HDFS directories as a input data dependency. When a HDFS URI
+template is specified as a dataset and input events are defined in Coordinator for the dataset, Oozie performs data
+availability checks by polling the HDFS directory URIs resolved based on the nominal time. When all the data
+dependencies are met, the Coordinator's workflow is triggered which then consumes the available HDFS data.</p>
+<p>With addition of HCatalog support, Coordinators also support specifying a set of HCatalog table partitions as a dataset.
+The workflow is triggered when the HCatalog table partitions are available and the workflow actions can then read the
+partition data. A mix of HDFS and HCatalog dependencies can be specified as input data dependencies.
+Similar to HDFS directories, HCatalog table partitions can also be specified as output dataset events.</p>
+<p>With HDFS data dependencies, Oozie has to poll HDFS every time to determine the availability of a directory.
+If the HCatalog server is configured to publish partition availability notifications to a JMS provider, Oozie can be
+configured to subscribe to it and trigger jobs immediately. This pub-sub model reduces pressure on Namenode and also
+cuts down on delays caused by polling intervals.</p>
+<p>In the absence of a message bus in the deployment, Oozie will always
+poll the HCatalog server directly for partition availability with the same frequency as the HDFS polling. Even when
+subscribed to notifications, Oozie falls back to polling HCatalog server for partitions that were available before the
+coordinator action was materialized and to deal with missed notifications due to system downtimes. The frequency of the
+fallback polling is usually lower than the constant polling. Defaults are 10 minutes and 1 minute respectively.</p>
+<a name="Oozie_Server_Configuration"></a>
+<div class="section"><h4>Oozie Server Configuration</h4>
+<p>Refer to <a href="./AG_Install.html#HCatalog_Configuration">HCatalog Configuration</a>
+ section of <a href="./AG_Install.html">Oozie Install</a>
+
+documentation for the Oozie server side configuration required to support HCatalog table partitions as a data dependency.</p>
+<a name="HCatalog_URI_Format"></a>
+</div>
+<div class="section"><h4>HCatalog URI Format</h4>
+<p>Oozie supports specifying HCatalog partitions as a data dependency through a URI notation. The HCatalog partition URI is
+used to identify a set of table partitions: <a href="./hcat://bar:8020/logsDB/logsTable/dt=20090415;region=US..html">hcat://bar:8020/logsDB/logsTable/dt=20090415;region=US.</a>
+</p>
+<p>The format to specify a HCatalog table partition URI is
+hcat://[metastore server]:[port]/[database name]/[table name]/[partkey1]=[value];[partkey2]=[value];...</p>
+<p>For example,
+<pre>
+  &lt;dataset name=&quot;logs&quot; frequency=&quot;${coord:days(1)}&quot;
+           initial-instance=&quot;2009-02-15T08:15Z&quot; timezone=&quot;America/Los_Angeles&quot;&gt;
+    &lt;uri-template&gt;
+      hcat://myhcatmetastore:9080/database1/table1/datestamp=${YEAR}${MONTH}${DAY}${HOUR};region=USA
+    &lt;/uri-template&gt;
+  &lt;/dataset&gt;
+</pre></p>
+<p><a name="HCatalogLibraries"></a>
+</p>
+<a name="HCatalog_Libraries"></a>
+</div>
+<div class="section"><h4>HCatalog Libraries</h4>
+<p>A workflow action interacting with HCatalog requires the following jars in the classpath: 
+hcatalog-core.jar, hcatalog-pig-adapter.jar, webhcat-java-client.jar, hive-common.jar, hive-exec.jar,
+hive-metastore.jar, hive-serde.jar and libfb303.jar.
+hive-site.xml which has the configuration to talk to the HCatalog server also needs to be in the classpath. The correct
+version of HCatalog and hive jars should be placed in classpath based on the version of HCatalog installed on the cluster.</p>
+<p>The jars can be added to the classpath of the action using one of the below ways.<ul><li>You can place the jars and hive-site.xml in the system shared library. The shared library for a pig, hive or java action can be overridden to include hcatalog shared libraries along with the action's shared library. Refer to <a href="./WorkflowFunctionalSpec.html.html#a17_HDFS_Share_Libraries_for_Workflow_Applications_since_Oozie_2.3">Shared Libraries</a>
+ for more information. The oozie-sharelib-[version].tar.gz in the oozie distribution bundles the required HCatalog jars in a hcatalog sharelib. If using a different version of HCatalog than the one bundled in the sharelib, copy the required HCatalog jars from such version into the sharelib.</li>
+<li>You can place the jars and hive-site.xml in the workflow application lib/ path.</li>
+<li>You can specify the location of the jar files in <tt>archive</tt>
+ tag and the hive-site.xml in <tt>file</tt>
+ tag in the corresponding pig, hive or java action.</li>
+</ul>
+</p>
+<a name="Coordinator"></a>
+</div>
+<div class="section"><h4>Coordinator</h4>
+<p>Refer to <a href="./CoordinatorFunctionalSpec.html">Coordinator Functional Specification</a>
+ for more information about<ul><li>how to specify HCatalog partitions as a data dependency using input dataset events</li>
+<li>how to specify HCatalog partitions as output dataset events</li>
+<li>the various EL functions available to work with HCatalog dataset events and how to use them to access HCatalog partitions in pig, hive or java actions in a workflow.</li>
+</ul>
+</p>
+<a name="Workflow"></a>
+</div>
+<div class="section"><h4>Workflow</h4>
+<p>Refer to <a href="./WorkflowFunctionalSpec.html">Workflow Functional Specification</a>
+ for more information about<ul><li>how to drop HCatalog partitions in the prepare block of a action</li>
+<li>the HCatalog EL functions available to use in workflows</li>
+</ul>
+</p>
+<a name="Known_Issues"></a>
+</div>
+<div class="section"><h4>Known Issues</h4>
+<p><ul><li>When rerunning a coordinator action without specifying -nocleanup option if the 'output-event' are hdfs directories, then they are deleted. But if the 'output-event' is a hcatalog partition, currently the partition is not dropped.</li>
+</ul>
+</p>
+</div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2015
+    
+          Apache Software Foundation
+          
+  
+
+  
+    
+  
+  
+    
+   - <a href="http://maven.apache.org/privacy-policy.html">Privacy Policy</a></div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

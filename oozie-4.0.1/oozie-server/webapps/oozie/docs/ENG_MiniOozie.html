@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Oozie - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Oozie
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2015-01-20
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                                                <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <p></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<a name="Running_MiniOozie_Tests"></a>
+<div class="section"><h2> Running MiniOozie Tests</h2>
+<p><ul><ul><li><a href="#System_Requirements">System Requirements</a>
+</li>
+<li><a href="#Installing_Oozie_Jars_To_Maven_Cache">Installing Oozie Jars To Maven Cache</a>
+</li>
+<li><a href="#Create_Tests_Using_MiniOozie">Create Tests Using MiniOozie</a>
+</li>
+<li><a href="#IDE_Setup">IDE Setup</a>
+</li>
+</ul>
+</ul>
+</p>
+<a name="System_Requirements"></a>
+<div class="section"><h3>System Requirements</h3>
+<p><ul><li>Unix box (tested on Mac OS X and Linux)</li>
+<li>Java JDK 1.6+</li>
+<li>Eclipse (tested on 3.5 and 3.6)</li>
+<li><a href="http://maven.apache.org/" class="externalLink">Maven 3.0.1+</a>
+</li>
+</ul>
+</p>
+<p>The Maven command (mvn) must be in the command path.</p>
+<a name="Installing_Oozie_Jars_To_Maven_Cache"></a>
+</div>
+<div class="section"><h3>Installing Oozie Jars To Maven Cache</h3>
+<p>Oozie source tree is at Apache SVN or Apache GIT. MiniOozie sample project is under Oozie source tree.</p>
+<p>The following command downloads Oozie trunk to local:</p>
+<p><pre>
+$ svn co https://svn.apache.org/repos/asf/incubator/oozie/trunk
+</pre></p>
+<p>OR</p>
+<p><pre>
+$ git clone git://github.com/apache/oozie.git
+</pre></p>
+<p>To run MiniOozie tests, the required jars like oozie-core, oozie-client, oozie-core-tests need to be
+available in remote maven repositories or local maven repository. The local maven cache for the above
+jars can be created and installed using the command:</p>
+<p><pre>
+$ mvn clean install -DskipTests -DtestJarSimple
+</pre></p>
+<p>The following properties should be specified to install correct jars for MiniOozie:</p>
+<p><ul><li>-DskipTests       : ignore executing Oozie unittests</li>
+<li>-DtestJarSimple=  : build only required test classes to oozie-core-tests</li>
+</ul>
+</p>
+<p>MiniOozie is a folder named 'minitest' under Oozie source tree. Two sample tests are included in the project.
+The following command to execute tests under MiniOozie:</p>
+<p><pre>
+$ cd minitest
+$ mvn clean test
+</pre></p>
+<a name="Create_Tests_Using_MiniOozie"></a>
+</div>
+<div class="section"><h3>Create Tests Using MiniOozie</h3>
+<p>MiniOozie is a junit test class to test Oozie applications such as workflow and coordinator. The test case
+needs to extend from MiniOozieTestCase and does the same as the example class 'WorkflowTest.java' to create Oozie
+workflow application properties and workflow XML. The example file is under Oozie source tree:</p>
+<p><ul><li><tt>minitest/src/test/java/org/apache/oozie/test/WorkflowTest.java</tt>
+</li>
+</ul>
+</p>
+<a name="IDE_Setup"></a>
+</div>
+<div class="section"><h3>IDE Setup</h3>
+<p>Eclipse and IntelliJ can use directly MiniOozie Maven project files. MiniOozie project can be imported to
+Eclipse and IntelliJ as independent project.</p>
+<p>The test directories under MiniOozie are:</p>
+<p><ul><li><tt>minitest/src/test/java</tt>
+ : as test-source directory</li>
+<li><tt>minitest/src/test/resources</tt>
+ : as test-resource directory</li>
+</ul>
+</p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2015
+    
+          Apache Software Foundation
+          
+  
+
+  
+    
+  
+  
+    
+   - <a href="http://maven.apache.org/privacy-policy.html">Privacy Policy</a></div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

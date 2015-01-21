@@ -1,0 +1,808 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * or more contributor license agreements.  See the NOTICE file<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * distributed with this work for additional information<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * regarding copyright ownership.  The ASF licenses this file<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * to you under the Apache License, Version 2.0 (the<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * "License"); you may not use this file except in compliance<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * with the License.  You may obtain a copy of the License at<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * <a name="line.9"></a>
+<span class="sourceLineNo">010</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * <a name="line.11"></a>
+<span class="sourceLineNo">012</span> * Unless required by applicable law or agreed to in writing, software<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * See the License for the specific language governing permissions and<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * limitations under the License.<a name="line.16"></a>
+<span class="sourceLineNo">017</span> */<a name="line.17"></a>
+<span class="sourceLineNo">018</span>package org.apache.oozie.util;<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.util.AbstractQueue;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.util.ArrayList;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.util.Arrays;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.util.Collection;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.util.ConcurrentModificationException;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.util.Iterator;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.util.List;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.util.concurrent.BlockingQueue;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.concurrent.DelayQueue;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.util.concurrent.Delayed;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import java.util.concurrent.TimeUnit;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import java.util.concurrent.atomic.AtomicInteger;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import java.util.concurrent.locks.ReentrantLock;<a name="line.32"></a>
+<span class="sourceLineNo">033</span><a name="line.33"></a>
+<span class="sourceLineNo">034</span>/**<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * A Queue implementation that support queuing elements into the future and priority queuing.<a name="line.35"></a>
+<span class="sourceLineNo">036</span> * &lt;p/&gt;<a name="line.36"></a>
+<span class="sourceLineNo">037</span> * The {@link PriorityDelayQueue} avoids starvation by raising elements priority as they age.<a name="line.37"></a>
+<span class="sourceLineNo">038</span> * &lt;p/&gt;<a name="line.38"></a>
+<span class="sourceLineNo">039</span> * To support queuing elements into the future, the JDK &lt;code&gt;DelayQueue&lt;/code&gt; is used.<a name="line.39"></a>
+<span class="sourceLineNo">040</span> * &lt;p/&gt;<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * To support priority queuing, an array of &lt;code&gt;DelayQueue&lt;/code&gt; sub-queues is used. Elements are consumed from the<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * higher priority sub-queues first. From a sub-queue, elements are available based on their age.<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * &lt;p/&gt;<a name="line.43"></a>
+<span class="sourceLineNo">044</span> * To avoid starvation, there is is maximum wait time for an an element in a sub-queue, after the maximum wait time has<a name="line.44"></a>
+<span class="sourceLineNo">045</span> * elapsed, the element is promoted to the next higher priority sub-queue. Eventually it will reach the maximum priority<a name="line.45"></a>
+<span class="sourceLineNo">046</span> * sub-queue and it will be consumed when it is the oldest element in the that sub-queue.<a name="line.46"></a>
+<span class="sourceLineNo">047</span> * &lt;p/&gt;<a name="line.47"></a>
+<span class="sourceLineNo">048</span> * Every time an element is promoted to a higher priority sub-queue, a new maximum wait time applies.<a name="line.48"></a>
+<span class="sourceLineNo">049</span> * &lt;p/&gt;<a name="line.49"></a>
+<span class="sourceLineNo">050</span> * This class does not use a separate thread for anti-starvation check, instead, the check is performed on polling and<a name="line.50"></a>
+<span class="sourceLineNo">051</span> * seeking operations. This check is performed, the most every 1/2 second.<a name="line.51"></a>
+<span class="sourceLineNo">052</span> */<a name="line.52"></a>
+<span class="sourceLineNo">053</span>public class PriorityDelayQueue&lt;E&gt; extends AbstractQueue&lt;PriorityDelayQueue.QueueElement&lt;E&gt;&gt;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        implements BlockingQueue&lt;PriorityDelayQueue.QueueElement&lt;E&gt;&gt; {<a name="line.54"></a>
+<span class="sourceLineNo">055</span><a name="line.55"></a>
+<span class="sourceLineNo">056</span>    /**<a name="line.56"></a>
+<span class="sourceLineNo">057</span>     * Element wrapper required by the queue.<a name="line.57"></a>
+<span class="sourceLineNo">058</span>     * &lt;p/&gt;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     * This wrapper keeps track of the priority and the age of a queue element.<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     */<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    public static class QueueElement&lt;E&gt; implements Delayed {<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        private E element;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        private int priority;<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        private long baseTime;<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        boolean inQueue;<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>        /**<a name="line.67"></a>
+<span class="sourceLineNo">068</span>         * Create an Element wrapper.<a name="line.68"></a>
+<span class="sourceLineNo">069</span>         *<a name="line.69"></a>
+<span class="sourceLineNo">070</span>         * @param element element.<a name="line.70"></a>
+<span class="sourceLineNo">071</span>         * @param priority priority of the element.<a name="line.71"></a>
+<span class="sourceLineNo">072</span>         * @param delay delay of the element.<a name="line.72"></a>
+<span class="sourceLineNo">073</span>         * @param unit time unit of the delay.<a name="line.73"></a>
+<span class="sourceLineNo">074</span>         *<a name="line.74"></a>
+<span class="sourceLineNo">075</span>         * @throws IllegalArgumentException if the element is &lt;tt&gt;NULL&lt;/tt&gt;, the priority is negative or if the delay is<a name="line.75"></a>
+<span class="sourceLineNo">076</span>         * negative.<a name="line.76"></a>
+<span class="sourceLineNo">077</span>         */<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        public QueueElement(E element, int priority, long delay, TimeUnit unit) {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>            if (element == null) {<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                throw new IllegalArgumentException("element cannot be null");<a name="line.80"></a>
+<span class="sourceLineNo">081</span>            }<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            if (priority &lt; 0) {<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                throw new IllegalArgumentException("priority cannot be negative, [" + element + "]");<a name="line.83"></a>
+<span class="sourceLineNo">084</span>            }<a name="line.84"></a>
+<span class="sourceLineNo">085</span>            if (delay &lt; 0) {<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                throw new IllegalArgumentException("delay cannot be negative");<a name="line.86"></a>
+<span class="sourceLineNo">087</span>            }<a name="line.87"></a>
+<span class="sourceLineNo">088</span>            this.element = element;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>            this.priority = priority;<a name="line.89"></a>
+<span class="sourceLineNo">090</span>            setDelay(delay, unit);<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        }<a name="line.91"></a>
+<span class="sourceLineNo">092</span><a name="line.92"></a>
+<span class="sourceLineNo">093</span>        /**<a name="line.93"></a>
+<span class="sourceLineNo">094</span>         * Create an Element wrapper with no delay and minimum priority.<a name="line.94"></a>
+<span class="sourceLineNo">095</span>         *<a name="line.95"></a>
+<span class="sourceLineNo">096</span>         * @param element element.<a name="line.96"></a>
+<span class="sourceLineNo">097</span>         */<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        public QueueElement(E element) {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>            this(element, 0, 0, TimeUnit.MILLISECONDS);<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        }<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>        /**<a name="line.102"></a>
+<span class="sourceLineNo">103</span>         * Return the element from the wrapper.<a name="line.103"></a>
+<span class="sourceLineNo">104</span>         *<a name="line.104"></a>
+<span class="sourceLineNo">105</span>         * @return the element.<a name="line.105"></a>
+<span class="sourceLineNo">106</span>         */<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        public E getElement() {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            return element;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
+<span class="sourceLineNo">110</span><a name="line.110"></a>
+<span class="sourceLineNo">111</span>        /**<a name="line.111"></a>
+<span class="sourceLineNo">112</span>         * Return the priority of the element.<a name="line.112"></a>
+<span class="sourceLineNo">113</span>         *<a name="line.113"></a>
+<span class="sourceLineNo">114</span>         * @return the priority of the element.<a name="line.114"></a>
+<span class="sourceLineNo">115</span>         */<a name="line.115"></a>
+<span class="sourceLineNo">116</span>        public int getPriority() {<a name="line.116"></a>
+<span class="sourceLineNo">117</span>            return priority;<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        }<a name="line.118"></a>
+<span class="sourceLineNo">119</span><a name="line.119"></a>
+<span class="sourceLineNo">120</span>        /**<a name="line.120"></a>
+<span class="sourceLineNo">121</span>         * Set the delay of the element.<a name="line.121"></a>
+<span class="sourceLineNo">122</span>         *<a name="line.122"></a>
+<span class="sourceLineNo">123</span>         * @param delay delay of the element.<a name="line.123"></a>
+<span class="sourceLineNo">124</span>         * @param unit time unit of the delay.<a name="line.124"></a>
+<span class="sourceLineNo">125</span>         */<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        public void setDelay(long delay, TimeUnit unit) {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>            baseTime = System.currentTimeMillis() + unit.toMillis(delay);<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        }<a name="line.128"></a>
+<span class="sourceLineNo">129</span><a name="line.129"></a>
+<span class="sourceLineNo">130</span>        /**<a name="line.130"></a>
+<span class="sourceLineNo">131</span>         * Return the delay of the element.<a name="line.131"></a>
+<span class="sourceLineNo">132</span>         *<a name="line.132"></a>
+<span class="sourceLineNo">133</span>         * @param unit time unit of the delay.<a name="line.133"></a>
+<span class="sourceLineNo">134</span>         *<a name="line.134"></a>
+<span class="sourceLineNo">135</span>         * @return the delay in the specified time unit.<a name="line.135"></a>
+<span class="sourceLineNo">136</span>         */<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        public long getDelay(TimeUnit unit) {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>            return unit.convert(baseTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS);<a name="line.138"></a>
+<span class="sourceLineNo">139</span>        }<a name="line.139"></a>
+<span class="sourceLineNo">140</span><a name="line.140"></a>
+<span class="sourceLineNo">141</span>        /**<a name="line.141"></a>
+<span class="sourceLineNo">142</span>         * Compare the age of this wrapper element with another. The priority is not used for the comparision.<a name="line.142"></a>
+<span class="sourceLineNo">143</span>         *<a name="line.143"></a>
+<span class="sourceLineNo">144</span>         * @param o the other wrapper element to compare with.<a name="line.144"></a>
+<span class="sourceLineNo">145</span>         *<a name="line.145"></a>
+<span class="sourceLineNo">146</span>         * @return less than zero if this wrapper is older, zero if both wrapper elements have the same age, greater<a name="line.146"></a>
+<span class="sourceLineNo">147</span>         *         than zero if the parameter wrapper element is older.<a name="line.147"></a>
+<span class="sourceLineNo">148</span>         */<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        public int compareTo(Delayed o) {<a name="line.149"></a>
+<span class="sourceLineNo">150</span>            long diff = (getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));<a name="line.150"></a>
+<span class="sourceLineNo">151</span>            if(diff &gt; 0) {<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                return 1;<a name="line.152"></a>
+<span class="sourceLineNo">153</span>            } else if(diff &lt; 0) {<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                return -1;<a name="line.154"></a>
+<span class="sourceLineNo">155</span>            } else {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                return 0;<a name="line.156"></a>
+<span class="sourceLineNo">157</span>            }<a name="line.157"></a>
+<span class="sourceLineNo">158</span>        }<a name="line.158"></a>
+<span class="sourceLineNo">159</span><a name="line.159"></a>
+<span class="sourceLineNo">160</span>        /**<a name="line.160"></a>
+<span class="sourceLineNo">161</span>         * Return the string representation of the wrapper element.<a name="line.161"></a>
+<span class="sourceLineNo">162</span>         *<a name="line.162"></a>
+<span class="sourceLineNo">163</span>         * @return the string representation of the wrapper element.<a name="line.163"></a>
+<span class="sourceLineNo">164</span>         */<a name="line.164"></a>
+<span class="sourceLineNo">165</span>        @Override<a name="line.165"></a>
+<span class="sourceLineNo">166</span>        public String toString() {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>            StringBuilder sb = new StringBuilder();<a name="line.167"></a>
+<span class="sourceLineNo">168</span>            sb.append("[").append(element).append("] priority=").append(priority).append(" delay=").<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                    append(getDelay(TimeUnit.MILLISECONDS));<a name="line.169"></a>
+<span class="sourceLineNo">170</span>            return sb.toString();<a name="line.170"></a>
+<span class="sourceLineNo">171</span>        }<a name="line.171"></a>
+<span class="sourceLineNo">172</span><a name="line.172"></a>
+<span class="sourceLineNo">173</span>    }<a name="line.173"></a>
+<span class="sourceLineNo">174</span><a name="line.174"></a>
+<span class="sourceLineNo">175</span>    /**<a name="line.175"></a>
+<span class="sourceLineNo">176</span>     * Frequency, in milliseconds, of the anti-starvation check.<a name="line.176"></a>
+<span class="sourceLineNo">177</span>     */<a name="line.177"></a>
+<span class="sourceLineNo">178</span>    public static final long ANTI_STARVATION_INTERVAL = 500;<a name="line.178"></a>
+<span class="sourceLineNo">179</span><a name="line.179"></a>
+<span class="sourceLineNo">180</span>    protected int priorities;<a name="line.180"></a>
+<span class="sourceLineNo">181</span>    protected DelayQueue&lt;QueueElement&lt;E&gt;&gt;[] queues;<a name="line.181"></a>
+<span class="sourceLineNo">182</span>    protected transient final ReentrantLock lock = new ReentrantLock();<a name="line.182"></a>
+<span class="sourceLineNo">183</span>    private transient long lastAntiStarvationCheck = 0;<a name="line.183"></a>
+<span class="sourceLineNo">184</span>    private long maxWait;<a name="line.184"></a>
+<span class="sourceLineNo">185</span>    private int maxSize;<a name="line.185"></a>
+<span class="sourceLineNo">186</span>    protected AtomicInteger currentSize;<a name="line.186"></a>
+<span class="sourceLineNo">187</span><a name="line.187"></a>
+<span class="sourceLineNo">188</span>    /**<a name="line.188"></a>
+<span class="sourceLineNo">189</span>     * Create a &lt;code&gt;PriorityDelayQueue&lt;/code&gt;.<a name="line.189"></a>
+<span class="sourceLineNo">190</span>     *<a name="line.190"></a>
+<span class="sourceLineNo">191</span>     * @param priorities number of priorities the queue will support.<a name="line.191"></a>
+<span class="sourceLineNo">192</span>     * @param maxWait max wait time for elements before they are promoted to the next higher priority.<a name="line.192"></a>
+<span class="sourceLineNo">193</span>     * @param unit time unit of the max wait time.<a name="line.193"></a>
+<span class="sourceLineNo">194</span>     * @param maxSize maximum size of the queue, -1 means unbounded.<a name="line.194"></a>
+<span class="sourceLineNo">195</span>     */<a name="line.195"></a>
+<span class="sourceLineNo">196</span>    @SuppressWarnings("unchecked")<a name="line.196"></a>
+<span class="sourceLineNo">197</span>    public PriorityDelayQueue(int priorities, long maxWait, TimeUnit unit, int maxSize) {<a name="line.197"></a>
+<span class="sourceLineNo">198</span>        if (priorities &lt; 1) {<a name="line.198"></a>
+<span class="sourceLineNo">199</span>            throw new IllegalArgumentException("priorities must be 1 or more");<a name="line.199"></a>
+<span class="sourceLineNo">200</span>        }<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        if (maxWait &lt; 0) {<a name="line.201"></a>
+<span class="sourceLineNo">202</span>            throw new IllegalArgumentException("maxWait must be greater than 0");<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        }<a name="line.203"></a>
+<span class="sourceLineNo">204</span>        if (maxSize &lt; -1 || maxSize == 0) {<a name="line.204"></a>
+<span class="sourceLineNo">205</span>            throw new IllegalArgumentException("maxSize must be -1 or greater than 0");<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        }<a name="line.206"></a>
+<span class="sourceLineNo">207</span>        this.priorities = priorities;<a name="line.207"></a>
+<span class="sourceLineNo">208</span>        queues = new DelayQueue[priorities];<a name="line.208"></a>
+<span class="sourceLineNo">209</span>        for (int i = 0; i &lt; priorities; i++) {<a name="line.209"></a>
+<span class="sourceLineNo">210</span>            queues[i] = new DelayQueue&lt;QueueElement&lt;E&gt;&gt;();<a name="line.210"></a>
+<span class="sourceLineNo">211</span>        }<a name="line.211"></a>
+<span class="sourceLineNo">212</span>        this.maxWait = unit.toMillis(maxWait);<a name="line.212"></a>
+<span class="sourceLineNo">213</span>        this.maxSize = maxSize;<a name="line.213"></a>
+<span class="sourceLineNo">214</span>        if (maxSize != -1) {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>            currentSize = new AtomicInteger();<a name="line.215"></a>
+<span class="sourceLineNo">216</span>        }<a name="line.216"></a>
+<span class="sourceLineNo">217</span>    }<a name="line.217"></a>
+<span class="sourceLineNo">218</span><a name="line.218"></a>
+<span class="sourceLineNo">219</span>    /**<a name="line.219"></a>
+<span class="sourceLineNo">220</span>     * Return number of priorities the queue supports.<a name="line.220"></a>
+<span class="sourceLineNo">221</span>     *<a name="line.221"></a>
+<span class="sourceLineNo">222</span>     * @return number of priorities the queue supports.<a name="line.222"></a>
+<span class="sourceLineNo">223</span>     */<a name="line.223"></a>
+<span class="sourceLineNo">224</span>    public int getPriorities() {<a name="line.224"></a>
+<span class="sourceLineNo">225</span>        return priorities;<a name="line.225"></a>
+<span class="sourceLineNo">226</span>    }<a name="line.226"></a>
+<span class="sourceLineNo">227</span><a name="line.227"></a>
+<span class="sourceLineNo">228</span>    /**<a name="line.228"></a>
+<span class="sourceLineNo">229</span>     * Return the max wait time for elements before they are promoted to the next higher priority.<a name="line.229"></a>
+<span class="sourceLineNo">230</span>     *<a name="line.230"></a>
+<span class="sourceLineNo">231</span>     * @param unit time unit of the max wait time.<a name="line.231"></a>
+<span class="sourceLineNo">232</span>     *<a name="line.232"></a>
+<span class="sourceLineNo">233</span>     * @return the max wait time in the specified time unit.<a name="line.233"></a>
+<span class="sourceLineNo">234</span>     */<a name="line.234"></a>
+<span class="sourceLineNo">235</span>    public long getMaxWait(TimeUnit unit) {<a name="line.235"></a>
+<span class="sourceLineNo">236</span>        return unit.convert(maxWait, TimeUnit.MILLISECONDS);<a name="line.236"></a>
+<span class="sourceLineNo">237</span>    }<a name="line.237"></a>
+<span class="sourceLineNo">238</span><a name="line.238"></a>
+<span class="sourceLineNo">239</span>    /**<a name="line.239"></a>
+<span class="sourceLineNo">240</span>     * Return the maximum queue size.<a name="line.240"></a>
+<span class="sourceLineNo">241</span>     *<a name="line.241"></a>
+<span class="sourceLineNo">242</span>     * @return the maximum queue size. If &lt;code&gt;-1&lt;/code&gt; the queue is unbounded.<a name="line.242"></a>
+<span class="sourceLineNo">243</span>     */<a name="line.243"></a>
+<span class="sourceLineNo">244</span>    public long getMaxSize() {<a name="line.244"></a>
+<span class="sourceLineNo">245</span>        return maxSize;<a name="line.245"></a>
+<span class="sourceLineNo">246</span>    }<a name="line.246"></a>
+<span class="sourceLineNo">247</span><a name="line.247"></a>
+<span class="sourceLineNo">248</span>    /**<a name="line.248"></a>
+<span class="sourceLineNo">249</span>     * Return an iterator over all the {@link QueueElement} elements (both expired and unexpired) in this queue. The<a name="line.249"></a>
+<span class="sourceLineNo">250</span>     * iterator does not return the elements in any particular order.  The returned &lt;tt&gt;Iterator&lt;/tt&gt; is a "weakly<a name="line.250"></a>
+<span class="sourceLineNo">251</span>     * consistent" iterator that will never throw {@link ConcurrentModificationException}, and guarantees to traverse<a name="line.251"></a>
+<span class="sourceLineNo">252</span>     * elements as they existed upon construction of the iterator, and may (but is not guaranteed to) reflect any<a name="line.252"></a>
+<span class="sourceLineNo">253</span>     * modifications subsequent to construction.<a name="line.253"></a>
+<span class="sourceLineNo">254</span>     *<a name="line.254"></a>
+<span class="sourceLineNo">255</span>     * @return an iterator over the {@link QueueElement} elements in this queue.<a name="line.255"></a>
+<span class="sourceLineNo">256</span>     */<a name="line.256"></a>
+<span class="sourceLineNo">257</span>    @Override<a name="line.257"></a>
+<span class="sourceLineNo">258</span>    @SuppressWarnings("unchecked")<a name="line.258"></a>
+<span class="sourceLineNo">259</span>    public Iterator&lt;QueueElement&lt;E&gt;&gt; iterator() {<a name="line.259"></a>
+<span class="sourceLineNo">260</span>        QueueElement[][] queueElements = new QueueElement[queues.length][];<a name="line.260"></a>
+<span class="sourceLineNo">261</span>        try {<a name="line.261"></a>
+<span class="sourceLineNo">262</span>            lock.lock();<a name="line.262"></a>
+<span class="sourceLineNo">263</span>            for (int i = 0; i &lt; queues.length; i++) {<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                queueElements[i] = queues[i].toArray(new QueueElement[0]);<a name="line.264"></a>
+<span class="sourceLineNo">265</span>            }<a name="line.265"></a>
+<span class="sourceLineNo">266</span>        }<a name="line.266"></a>
+<span class="sourceLineNo">267</span>        finally {<a name="line.267"></a>
+<span class="sourceLineNo">268</span>            lock.unlock();<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        }<a name="line.269"></a>
+<span class="sourceLineNo">270</span>        List&lt;QueueElement&lt;E&gt;&gt; list = new ArrayList&lt;QueueElement&lt;E&gt;&gt;();<a name="line.270"></a>
+<span class="sourceLineNo">271</span>        for (QueueElement[] elements : queueElements) {<a name="line.271"></a>
+<span class="sourceLineNo">272</span>            list.addAll(Arrays.asList((QueueElement&lt;E&gt;[]) elements));<a name="line.272"></a>
+<span class="sourceLineNo">273</span>        }<a name="line.273"></a>
+<span class="sourceLineNo">274</span>        return list.iterator();<a name="line.274"></a>
+<span class="sourceLineNo">275</span>    }<a name="line.275"></a>
+<span class="sourceLineNo">276</span><a name="line.276"></a>
+<span class="sourceLineNo">277</span>    /**<a name="line.277"></a>
+<span class="sourceLineNo">278</span>     * Return the number of elements in the queue.<a name="line.278"></a>
+<span class="sourceLineNo">279</span>     *<a name="line.279"></a>
+<span class="sourceLineNo">280</span>     * @return the number of elements in the queue.<a name="line.280"></a>
+<span class="sourceLineNo">281</span>     */<a name="line.281"></a>
+<span class="sourceLineNo">282</span>    @Override<a name="line.282"></a>
+<span class="sourceLineNo">283</span>    public int size() {<a name="line.283"></a>
+<span class="sourceLineNo">284</span>        int size = 0;<a name="line.284"></a>
+<span class="sourceLineNo">285</span>        for (DelayQueue&lt;QueueElement&lt;E&gt;&gt; queue : queues) {<a name="line.285"></a>
+<span class="sourceLineNo">286</span>            size += queue.size();<a name="line.286"></a>
+<span class="sourceLineNo">287</span>        }<a name="line.287"></a>
+<span class="sourceLineNo">288</span>        return size;<a name="line.288"></a>
+<span class="sourceLineNo">289</span>    }<a name="line.289"></a>
+<span class="sourceLineNo">290</span><a name="line.290"></a>
+<span class="sourceLineNo">291</span>    /**<a name="line.291"></a>
+<span class="sourceLineNo">292</span>     * Return the number of elements on each priority sub-queue.<a name="line.292"></a>
+<span class="sourceLineNo">293</span>     *<a name="line.293"></a>
+<span class="sourceLineNo">294</span>     * @return the number of elements on each priority sub-queue.<a name="line.294"></a>
+<span class="sourceLineNo">295</span>     */<a name="line.295"></a>
+<span class="sourceLineNo">296</span>    public int[] sizes() {<a name="line.296"></a>
+<span class="sourceLineNo">297</span>        int[] sizes = new int[queues.length];<a name="line.297"></a>
+<span class="sourceLineNo">298</span>        for (int i = 0; i &lt; queues.length; i++) {<a name="line.298"></a>
+<span class="sourceLineNo">299</span>            sizes[i] = queues[i].size();<a name="line.299"></a>
+<span class="sourceLineNo">300</span>        }<a name="line.300"></a>
+<span class="sourceLineNo">301</span>        return sizes;<a name="line.301"></a>
+<span class="sourceLineNo">302</span>    }<a name="line.302"></a>
+<span class="sourceLineNo">303</span><a name="line.303"></a>
+<span class="sourceLineNo">304</span>    /**<a name="line.304"></a>
+<span class="sourceLineNo">305</span>     * Inserts the specified element into this queue if it is possible to do<a name="line.305"></a>
+<span class="sourceLineNo">306</span>     * so immediately without violating capacity restrictions, returning<a name="line.306"></a>
+<span class="sourceLineNo">307</span>     * &lt;tt&gt;true&lt;/tt&gt; upon success and throwing an<a name="line.307"></a>
+<span class="sourceLineNo">308</span>     * &lt;tt&gt;IllegalStateException&lt;/tt&gt; if no space is currently available.<a name="line.308"></a>
+<span class="sourceLineNo">309</span>     * When using a capacity-restricted queue, it is generally preferable to<a name="line.309"></a>
+<span class="sourceLineNo">310</span>     * use {@link #offer(Object) offer}.<a name="line.310"></a>
+<span class="sourceLineNo">311</span>     *<a name="line.311"></a>
+<span class="sourceLineNo">312</span>     * @param queueElement the {@link QueueElement} element to add.<a name="line.312"></a>
+<span class="sourceLineNo">313</span>     * @return &lt;tt&gt;true&lt;/tt&gt; (as specified by {@link Collection#add})<a name="line.313"></a>
+<span class="sourceLineNo">314</span>     * @throws IllegalStateException if the element cannot be added at this<a name="line.314"></a>
+<span class="sourceLineNo">315</span>     *         time due to capacity restrictions<a name="line.315"></a>
+<span class="sourceLineNo">316</span>     * @throws ClassCastException if the class of the specified element<a name="line.316"></a>
+<span class="sourceLineNo">317</span>     *         prevents it from being added to this queue<a name="line.317"></a>
+<span class="sourceLineNo">318</span>     * @throws NullPointerException if the specified element is null<a name="line.318"></a>
+<span class="sourceLineNo">319</span>     * @throws IllegalArgumentException if some property of the specified<a name="line.319"></a>
+<span class="sourceLineNo">320</span>     *         element prevents it from being added to this queue<a name="line.320"></a>
+<span class="sourceLineNo">321</span>     */<a name="line.321"></a>
+<span class="sourceLineNo">322</span>    @Override<a name="line.322"></a>
+<span class="sourceLineNo">323</span>    public boolean add(QueueElement&lt;E&gt; queueElement) {<a name="line.323"></a>
+<span class="sourceLineNo">324</span>        return offer(queueElement, false);<a name="line.324"></a>
+<span class="sourceLineNo">325</span>    }<a name="line.325"></a>
+<span class="sourceLineNo">326</span><a name="line.326"></a>
+<span class="sourceLineNo">327</span>    /**<a name="line.327"></a>
+<span class="sourceLineNo">328</span>     * Insert the specified {@link QueueElement} element into the queue.<a name="line.328"></a>
+<span class="sourceLineNo">329</span>     *<a name="line.329"></a>
+<span class="sourceLineNo">330</span>     * @param queueElement the {@link QueueElement} element to add.<a name="line.330"></a>
+<span class="sourceLineNo">331</span>     * @param ignoreSize if the queue is bound to a maximum size and the maximum size is reached, this parameter (if set<a name="line.331"></a>
+<span class="sourceLineNo">332</span>     * to &lt;tt&gt;true&lt;/tt&gt;) allows to ignore the maximum size and add the element to the queue.<a name="line.332"></a>
+<span class="sourceLineNo">333</span>     *<a name="line.333"></a>
+<span class="sourceLineNo">334</span>     * @return &lt;tt&gt;true&lt;/tt&gt; if the element has been inserted, &lt;tt&gt;false&lt;/tt&gt; if the element was not inserted (the queue<a name="line.334"></a>
+<span class="sourceLineNo">335</span>     *         has reached its maximum size).<a name="line.335"></a>
+<span class="sourceLineNo">336</span>     *<a name="line.336"></a>
+<span class="sourceLineNo">337</span>     * @throws NullPointerException if the specified element is null<a name="line.337"></a>
+<span class="sourceLineNo">338</span>     */<a name="line.338"></a>
+<span class="sourceLineNo">339</span>    boolean offer(QueueElement&lt;E&gt; queueElement, boolean ignoreSize) {<a name="line.339"></a>
+<span class="sourceLineNo">340</span>        if (queueElement == null) {<a name="line.340"></a>
+<span class="sourceLineNo">341</span>            throw new NullPointerException("queueElement is NULL");<a name="line.341"></a>
+<span class="sourceLineNo">342</span>        }<a name="line.342"></a>
+<span class="sourceLineNo">343</span>        if (queueElement.getPriority() &lt; 0 &amp;&amp; queueElement.getPriority() &gt;= priorities) {<a name="line.343"></a>
+<span class="sourceLineNo">344</span>            throw new IllegalArgumentException("priority out of range");<a name="line.344"></a>
+<span class="sourceLineNo">345</span>        }<a name="line.345"></a>
+<span class="sourceLineNo">346</span>        if (queueElement.inQueue) {<a name="line.346"></a>
+<span class="sourceLineNo">347</span>            throw new IllegalStateException("queueElement already in a queue");<a name="line.347"></a>
+<span class="sourceLineNo">348</span>        }<a name="line.348"></a>
+<span class="sourceLineNo">349</span>        if (!ignoreSize &amp;&amp; currentSize != null &amp;&amp; currentSize.get() &gt;= maxSize) {<a name="line.349"></a>
+<span class="sourceLineNo">350</span>            return false;<a name="line.350"></a>
+<span class="sourceLineNo">351</span>        }<a name="line.351"></a>
+<span class="sourceLineNo">352</span>        boolean accepted = queues[queueElement.getPriority()].offer(queueElement);<a name="line.352"></a>
+<span class="sourceLineNo">353</span>        debug("offer([{0}]), to P[{1}] delay[{2}ms] accepted[{3}]", queueElement.getElement().toString(),<a name="line.353"></a>
+<span class="sourceLineNo">354</span>              queueElement.getPriority(), queueElement.getDelay(TimeUnit.MILLISECONDS), accepted);<a name="line.354"></a>
+<span class="sourceLineNo">355</span>        if (accepted) {<a name="line.355"></a>
+<span class="sourceLineNo">356</span>            if (currentSize != null) {<a name="line.356"></a>
+<span class="sourceLineNo">357</span>                currentSize.incrementAndGet();<a name="line.357"></a>
+<span class="sourceLineNo">358</span>            }<a name="line.358"></a>
+<span class="sourceLineNo">359</span>            queueElement.inQueue = true;<a name="line.359"></a>
+<span class="sourceLineNo">360</span>        }<a name="line.360"></a>
+<span class="sourceLineNo">361</span>        return accepted;<a name="line.361"></a>
+<span class="sourceLineNo">362</span>    }<a name="line.362"></a>
+<span class="sourceLineNo">363</span><a name="line.363"></a>
+<span class="sourceLineNo">364</span>    /**<a name="line.364"></a>
+<span class="sourceLineNo">365</span>     * Insert the specified element into the queue.<a name="line.365"></a>
+<span class="sourceLineNo">366</span>     * &lt;p/&gt;<a name="line.366"></a>
+<span class="sourceLineNo">367</span>     * The element is added with minimun priority and no delay.<a name="line.367"></a>
+<span class="sourceLineNo">368</span>     *<a name="line.368"></a>
+<span class="sourceLineNo">369</span>     * @param queueElement the element to add.<a name="line.369"></a>
+<span class="sourceLineNo">370</span>     *<a name="line.370"></a>
+<span class="sourceLineNo">371</span>     * @return &lt;tt&gt;true&lt;/tt&gt; if the element has been inserted, &lt;tt&gt;false&lt;/tt&gt; if the element was not inserted (the queue<a name="line.371"></a>
+<span class="sourceLineNo">372</span>     *         has reached its maximum size).<a name="line.372"></a>
+<span class="sourceLineNo">373</span>     *<a name="line.373"></a>
+<span class="sourceLineNo">374</span>     * @throws NullPointerException if the specified element is null<a name="line.374"></a>
+<span class="sourceLineNo">375</span>     */<a name="line.375"></a>
+<span class="sourceLineNo">376</span>    @Override<a name="line.376"></a>
+<span class="sourceLineNo">377</span>    public boolean offer(QueueElement&lt;E&gt; queueElement) {<a name="line.377"></a>
+<span class="sourceLineNo">378</span>        return offer(queueElement, false);<a name="line.378"></a>
+<span class="sourceLineNo">379</span>    }<a name="line.379"></a>
+<span class="sourceLineNo">380</span><a name="line.380"></a>
+<span class="sourceLineNo">381</span>    /**<a name="line.381"></a>
+<span class="sourceLineNo">382</span>     * Retrieve and remove the head of this queue, or return &lt;tt&gt;null&lt;/tt&gt; if this queue has no elements with an expired<a name="line.382"></a>
+<span class="sourceLineNo">383</span>     * delay.<a name="line.383"></a>
+<span class="sourceLineNo">384</span>     * &lt;p/&gt;<a name="line.384"></a>
+<span class="sourceLineNo">385</span>     * The retrieved element is the oldest one from the highest priority sub-queue.<a name="line.385"></a>
+<span class="sourceLineNo">386</span>     * &lt;p/&gt;<a name="line.386"></a>
+<span class="sourceLineNo">387</span>     * Invocations to this method run the anti-starvation (once every interval check).<a name="line.387"></a>
+<span class="sourceLineNo">388</span>     *<a name="line.388"></a>
+<span class="sourceLineNo">389</span>     * @return the head of this queue, or &lt;tt&gt;null&lt;/tt&gt; if this queue has no elements with an expired delay.<a name="line.389"></a>
+<span class="sourceLineNo">390</span>     */<a name="line.390"></a>
+<span class="sourceLineNo">391</span>    @Override<a name="line.391"></a>
+<span class="sourceLineNo">392</span>    public QueueElement&lt;E&gt; poll() {<a name="line.392"></a>
+<span class="sourceLineNo">393</span>        try {<a name="line.393"></a>
+<span class="sourceLineNo">394</span>            lock.lock();<a name="line.394"></a>
+<span class="sourceLineNo">395</span>            antiStarvation();<a name="line.395"></a>
+<span class="sourceLineNo">396</span>            QueueElement&lt;E&gt; e = null;<a name="line.396"></a>
+<span class="sourceLineNo">397</span>            int i = priorities;<a name="line.397"></a>
+<span class="sourceLineNo">398</span>            for (; e == null &amp;&amp; i &gt; 0; i--) {<a name="line.398"></a>
+<span class="sourceLineNo">399</span>                e = queues[i - 1].poll();<a name="line.399"></a>
+<span class="sourceLineNo">400</span>            }<a name="line.400"></a>
+<span class="sourceLineNo">401</span>            if (e != null) {<a name="line.401"></a>
+<span class="sourceLineNo">402</span>                if (currentSize != null) {<a name="line.402"></a>
+<span class="sourceLineNo">403</span>                    currentSize.decrementAndGet();<a name="line.403"></a>
+<span class="sourceLineNo">404</span>                }<a name="line.404"></a>
+<span class="sourceLineNo">405</span>                e.inQueue = false;<a name="line.405"></a>
+<span class="sourceLineNo">406</span>                debug("poll(): [{0}], from P[{1}]", e.getElement().toString(), i);<a name="line.406"></a>
+<span class="sourceLineNo">407</span>            }<a name="line.407"></a>
+<span class="sourceLineNo">408</span>            return e;<a name="line.408"></a>
+<span class="sourceLineNo">409</span>        }<a name="line.409"></a>
+<span class="sourceLineNo">410</span>        finally {<a name="line.410"></a>
+<span class="sourceLineNo">411</span>            lock.unlock();<a name="line.411"></a>
+<span class="sourceLineNo">412</span>        }<a name="line.412"></a>
+<span class="sourceLineNo">413</span>    }<a name="line.413"></a>
+<span class="sourceLineNo">414</span><a name="line.414"></a>
+<span class="sourceLineNo">415</span>    /**<a name="line.415"></a>
+<span class="sourceLineNo">416</span>     * Retrieve, but does not remove, the head of this queue, or returns &lt;tt&gt;null&lt;/tt&gt; if this queue is empty.  Unlike<a name="line.416"></a>
+<span class="sourceLineNo">417</span>     * &lt;tt&gt;poll&lt;/tt&gt;, if no expired elements are available in the queue, this method returns the element that will<a name="line.417"></a>
+<span class="sourceLineNo">418</span>     * expire next, if one exists.<a name="line.418"></a>
+<span class="sourceLineNo">419</span>     *<a name="line.419"></a>
+<span class="sourceLineNo">420</span>     * @return the head of this queue, or &lt;tt&gt;null&lt;/tt&gt; if this queue is empty.<a name="line.420"></a>
+<span class="sourceLineNo">421</span>     */<a name="line.421"></a>
+<span class="sourceLineNo">422</span>    @Override<a name="line.422"></a>
+<span class="sourceLineNo">423</span>    public QueueElement&lt;E&gt; peek() {<a name="line.423"></a>
+<span class="sourceLineNo">424</span>        try {<a name="line.424"></a>
+<span class="sourceLineNo">425</span>            lock.lock();<a name="line.425"></a>
+<span class="sourceLineNo">426</span>            antiStarvation();<a name="line.426"></a>
+<span class="sourceLineNo">427</span>            QueueElement&lt;E&gt; e = null;<a name="line.427"></a>
+<span class="sourceLineNo">428</span><a name="line.428"></a>
+<span class="sourceLineNo">429</span>            QueueElement&lt;E&gt; [] seeks = new QueueElement[priorities];<a name="line.429"></a>
+<span class="sourceLineNo">430</span>            boolean foundElement = false;<a name="line.430"></a>
+<span class="sourceLineNo">431</span>            for (int i = priorities - 1; i &gt; -1; i--) {<a name="line.431"></a>
+<span class="sourceLineNo">432</span>                e = queues[i].peek();<a name="line.432"></a>
+<span class="sourceLineNo">433</span>                debug("peek(): considering [{0}] from P[{1}]", e, i);<a name="line.433"></a>
+<span class="sourceLineNo">434</span>                seeks[priorities - i - 1] = e;<a name="line.434"></a>
+<span class="sourceLineNo">435</span>                foundElement |= e != null;<a name="line.435"></a>
+<span class="sourceLineNo">436</span>            }<a name="line.436"></a>
+<span class="sourceLineNo">437</span>            if (foundElement) {<a name="line.437"></a>
+<span class="sourceLineNo">438</span>                e = null;<a name="line.438"></a>
+<span class="sourceLineNo">439</span>                for (int i = 0; e == null &amp;&amp; i &lt; priorities; i++) {<a name="line.439"></a>
+<span class="sourceLineNo">440</span>                    if (seeks[i] != null &amp;&amp; seeks[i].getDelay(TimeUnit.MILLISECONDS) &gt; 0) {<a name="line.440"></a>
+<span class="sourceLineNo">441</span>                        debug("peek, ignoring [{0}]", seeks[i]);<a name="line.441"></a>
+<span class="sourceLineNo">442</span>                    }<a name="line.442"></a>
+<span class="sourceLineNo">443</span>                    else {<a name="line.443"></a>
+<span class="sourceLineNo">444</span>                        e = seeks[i];<a name="line.444"></a>
+<span class="sourceLineNo">445</span>                    }<a name="line.445"></a>
+<span class="sourceLineNo">446</span>                }<a name="line.446"></a>
+<span class="sourceLineNo">447</span>                if (e != null) {<a name="line.447"></a>
+<span class="sourceLineNo">448</span>                    debug("peek(): choosing [{0}]", e);<a name="line.448"></a>
+<span class="sourceLineNo">449</span>                }<a name="line.449"></a>
+<span class="sourceLineNo">450</span>                if (e == null) {<a name="line.450"></a>
+<span class="sourceLineNo">451</span>                    int first;<a name="line.451"></a>
+<span class="sourceLineNo">452</span>                    for (first = 0; e == null &amp;&amp; first &lt; priorities; first++) {<a name="line.452"></a>
+<span class="sourceLineNo">453</span>                        e = seeks[first];<a name="line.453"></a>
+<span class="sourceLineNo">454</span>                    }<a name="line.454"></a>
+<span class="sourceLineNo">455</span>                    if (e != null) {<a name="line.455"></a>
+<span class="sourceLineNo">456</span>                        debug("peek(): initial choosing [{0}]", e);<a name="line.456"></a>
+<span class="sourceLineNo">457</span>                    }<a name="line.457"></a>
+<span class="sourceLineNo">458</span>                    for (int i = first; i &lt; priorities; i++) {<a name="line.458"></a>
+<span class="sourceLineNo">459</span>                        QueueElement&lt;E&gt; ee = seeks[i];<a name="line.459"></a>
+<span class="sourceLineNo">460</span>                        if (ee != null &amp;&amp; ee.getDelay(TimeUnit.MILLISECONDS) &lt; e.getDelay(TimeUnit.MILLISECONDS)) {<a name="line.460"></a>
+<span class="sourceLineNo">461</span>                            debug("peek(): choosing [{0}] over [{1}]", ee, e);<a name="line.461"></a>
+<span class="sourceLineNo">462</span>                            e = ee;<a name="line.462"></a>
+<span class="sourceLineNo">463</span>                        }<a name="line.463"></a>
+<span class="sourceLineNo">464</span>                    }<a name="line.464"></a>
+<span class="sourceLineNo">465</span>                }<a name="line.465"></a>
+<span class="sourceLineNo">466</span>            }<a name="line.466"></a>
+<span class="sourceLineNo">467</span>            if (e != null) {<a name="line.467"></a>
+<span class="sourceLineNo">468</span>                debug("peek(): [{0}], from P[{1}]", e.getElement().toString(), e.getPriority());<a name="line.468"></a>
+<span class="sourceLineNo">469</span>            }<a name="line.469"></a>
+<span class="sourceLineNo">470</span>            else {<a name="line.470"></a>
+<span class="sourceLineNo">471</span>                debug("peek(): NULL");<a name="line.471"></a>
+<span class="sourceLineNo">472</span>            }<a name="line.472"></a>
+<span class="sourceLineNo">473</span>            return e;<a name="line.473"></a>
+<span class="sourceLineNo">474</span>        }<a name="line.474"></a>
+<span class="sourceLineNo">475</span>        finally {<a name="line.475"></a>
+<span class="sourceLineNo">476</span>            lock.unlock();<a name="line.476"></a>
+<span class="sourceLineNo">477</span>        }<a name="line.477"></a>
+<span class="sourceLineNo">478</span>    }<a name="line.478"></a>
+<span class="sourceLineNo">479</span><a name="line.479"></a>
+<span class="sourceLineNo">480</span>    /**<a name="line.480"></a>
+<span class="sourceLineNo">481</span>     * Run the anti-starvation check every {@link #ANTI_STARVATION_INTERVAL} milliseconds.<a name="line.481"></a>
+<span class="sourceLineNo">482</span>     * &lt;p/&gt;<a name="line.482"></a>
+<span class="sourceLineNo">483</span>     * It promotes elements beyond max wait time to the next higher priority sub-queue.<a name="line.483"></a>
+<span class="sourceLineNo">484</span>     */<a name="line.484"></a>
+<span class="sourceLineNo">485</span>    protected void antiStarvation() {<a name="line.485"></a>
+<span class="sourceLineNo">486</span>        long now = System.currentTimeMillis();<a name="line.486"></a>
+<span class="sourceLineNo">487</span>        if (now - lastAntiStarvationCheck &gt; ANTI_STARVATION_INTERVAL) {<a name="line.487"></a>
+<span class="sourceLineNo">488</span>            for (int i = 0; i &lt; queues.length - 1; i++) {<a name="line.488"></a>
+<span class="sourceLineNo">489</span>                antiStarvation(queues[i], queues[i + 1], "from P[" + i + "] to P[" + (i + 1) + "]");<a name="line.489"></a>
+<span class="sourceLineNo">490</span>            }<a name="line.490"></a>
+<span class="sourceLineNo">491</span>            StringBuilder sb = new StringBuilder();<a name="line.491"></a>
+<span class="sourceLineNo">492</span>            for (int i = 0; i &lt; queues.length; i++) {<a name="line.492"></a>
+<span class="sourceLineNo">493</span>                sb.append("P[").append(i).append("]=").append(queues[i].size()).append(" ");<a name="line.493"></a>
+<span class="sourceLineNo">494</span>            }<a name="line.494"></a>
+<span class="sourceLineNo">495</span>            debug("sub-queue sizes: {0}", sb.toString());<a name="line.495"></a>
+<span class="sourceLineNo">496</span>            lastAntiStarvationCheck = System.currentTimeMillis();<a name="line.496"></a>
+<span class="sourceLineNo">497</span>        }<a name="line.497"></a>
+<span class="sourceLineNo">498</span>    }<a name="line.498"></a>
+<span class="sourceLineNo">499</span><a name="line.499"></a>
+<span class="sourceLineNo">500</span>    /**<a name="line.500"></a>
+<span class="sourceLineNo">501</span>     * Promote elements beyond max wait time from a lower priority sub-queue to a higher priority sub-queue.<a name="line.501"></a>
+<span class="sourceLineNo">502</span>     *<a name="line.502"></a>
+<span class="sourceLineNo">503</span>     * @param lowerQ lower priority sub-queue.<a name="line.503"></a>
+<span class="sourceLineNo">504</span>     * @param higherQ higher priority sub-queue.<a name="line.504"></a>
+<span class="sourceLineNo">505</span>     * @param msg sub-queues msg (from-to) for debugging purposes.<a name="line.505"></a>
+<span class="sourceLineNo">506</span>     */<a name="line.506"></a>
+<span class="sourceLineNo">507</span>    private void antiStarvation(DelayQueue&lt;QueueElement&lt;E&gt;&gt; lowerQ, DelayQueue&lt;QueueElement&lt;E&gt;&gt; higherQ, String msg) {<a name="line.507"></a>
+<span class="sourceLineNo">508</span>        int moved = 0;<a name="line.508"></a>
+<span class="sourceLineNo">509</span>        QueueElement&lt;E&gt; e = lowerQ.poll();<a name="line.509"></a>
+<span class="sourceLineNo">510</span>        while (e != null &amp;&amp; e.getDelay(TimeUnit.MILLISECONDS) &lt; -maxWait) {<a name="line.510"></a>
+<span class="sourceLineNo">511</span>            e.setDelay(0, TimeUnit.MILLISECONDS);<a name="line.511"></a>
+<span class="sourceLineNo">512</span>            if (!higherQ.offer(e)) {<a name="line.512"></a>
+<span class="sourceLineNo">513</span>                throw new IllegalStateException("Could not move element to higher sub-queue, element rejected");<a name="line.513"></a>
+<span class="sourceLineNo">514</span>            }<a name="line.514"></a>
+<span class="sourceLineNo">515</span>            e.priority++;<a name="line.515"></a>
+<span class="sourceLineNo">516</span>            e = lowerQ.poll();<a name="line.516"></a>
+<span class="sourceLineNo">517</span>            moved++;<a name="line.517"></a>
+<span class="sourceLineNo">518</span>        }<a name="line.518"></a>
+<span class="sourceLineNo">519</span>        if (e != null) {<a name="line.519"></a>
+<span class="sourceLineNo">520</span>            if (!lowerQ.offer(e)) {<a name="line.520"></a>
+<span class="sourceLineNo">521</span>                throw new IllegalStateException("Could not reinsert element to current sub-queue, element rejected");<a name="line.521"></a>
+<span class="sourceLineNo">522</span>            }<a name="line.522"></a>
+<span class="sourceLineNo">523</span>        }<a name="line.523"></a>
+<span class="sourceLineNo">524</span>        debug("anti-starvation, moved {0} element(s) {1}", moved, msg);<a name="line.524"></a>
+<span class="sourceLineNo">525</span>    }<a name="line.525"></a>
+<span class="sourceLineNo">526</span><a name="line.526"></a>
+<span class="sourceLineNo">527</span>    /**<a name="line.527"></a>
+<span class="sourceLineNo">528</span>     * Method for debugging purposes. This implementation is a &lt;tt&gt;NOP&lt;/tt&gt;.<a name="line.528"></a>
+<span class="sourceLineNo">529</span>     * &lt;p/&gt;<a name="line.529"></a>
+<span class="sourceLineNo">530</span>     * This method should be overriden for logging purposes.<a name="line.530"></a>
+<span class="sourceLineNo">531</span>     * &lt;p/&gt;<a name="line.531"></a>
+<span class="sourceLineNo">532</span>     * Message templates used by this class are in JDK's &lt;tt&gt;MessageFormat&lt;/tt&gt; syntax.<a name="line.532"></a>
+<span class="sourceLineNo">533</span>     *<a name="line.533"></a>
+<span class="sourceLineNo">534</span>     * @param msgTemplate message template.<a name="line.534"></a>
+<span class="sourceLineNo">535</span>     * @param msgArgs arguments for the message template.<a name="line.535"></a>
+<span class="sourceLineNo">536</span>     */<a name="line.536"></a>
+<span class="sourceLineNo">537</span>    protected void debug(String msgTemplate, Object... msgArgs) {<a name="line.537"></a>
+<span class="sourceLineNo">538</span>    }<a name="line.538"></a>
+<span class="sourceLineNo">539</span><a name="line.539"></a>
+<span class="sourceLineNo">540</span>    /**<a name="line.540"></a>
+<span class="sourceLineNo">541</span>     * Insert the specified element into this queue, waiting if necessary<a name="line.541"></a>
+<span class="sourceLineNo">542</span>     * for space to become available.<a name="line.542"></a>
+<span class="sourceLineNo">543</span>     * &lt;p/&gt;<a name="line.543"></a>
+<span class="sourceLineNo">544</span>     * NOTE: This method is to fulfill the &lt;tt&gt;BlockingQueue&lt;tt/&gt; interface. Not implemented in the most optimal way.<a name="line.544"></a>
+<span class="sourceLineNo">545</span>     *<a name="line.545"></a>
+<span class="sourceLineNo">546</span>     * @param e the element to add<a name="line.546"></a>
+<span class="sourceLineNo">547</span>     * @throws InterruptedException if interrupted while waiting<a name="line.547"></a>
+<span class="sourceLineNo">548</span>     * @throws ClassCastException if the class of the specified element<a name="line.548"></a>
+<span class="sourceLineNo">549</span>     *         prevents it from being added to this queue<a name="line.549"></a>
+<span class="sourceLineNo">550</span>     * @throws NullPointerException if the specified element is null<a name="line.550"></a>
+<span class="sourceLineNo">551</span>     * @throws IllegalArgumentException if some property of the specified<a name="line.551"></a>
+<span class="sourceLineNo">552</span>     *         element prevents it from being added to this queue<a name="line.552"></a>
+<span class="sourceLineNo">553</span>     */<a name="line.553"></a>
+<span class="sourceLineNo">554</span>    @Override<a name="line.554"></a>
+<span class="sourceLineNo">555</span>    public void put(QueueElement&lt;E&gt; e) throws InterruptedException {<a name="line.555"></a>
+<span class="sourceLineNo">556</span>        while (!offer(e, true)) {<a name="line.556"></a>
+<span class="sourceLineNo">557</span>            Thread.sleep(10);<a name="line.557"></a>
+<span class="sourceLineNo">558</span>        }<a name="line.558"></a>
+<span class="sourceLineNo">559</span>    }<a name="line.559"></a>
+<span class="sourceLineNo">560</span><a name="line.560"></a>
+<span class="sourceLineNo">561</span>    /**<a name="line.561"></a>
+<span class="sourceLineNo">562</span>     * Insert the specified element into this queue, waiting up to the<a name="line.562"></a>
+<span class="sourceLineNo">563</span>     * specified wait time if necessary for space to become available.<a name="line.563"></a>
+<span class="sourceLineNo">564</span>     * &lt;p/&gt;<a name="line.564"></a>
+<span class="sourceLineNo">565</span>     * IMPORTANT: This implementation forces the addition of the element to the queue regardless<a name="line.565"></a>
+<span class="sourceLineNo">566</span>     * of the queue current size. The timeout value is ignored as the element is added immediately.<a name="line.566"></a>
+<span class="sourceLineNo">567</span>     * &lt;p/&gt;<a name="line.567"></a>
+<span class="sourceLineNo">568</span>     * NOTE: This method is to fulfill the &lt;tt&gt;BlockingQueue&lt;tt/&gt; interface. Not implemented in the most optimal way.<a name="line.568"></a>
+<span class="sourceLineNo">569</span>     *<a name="line.569"></a>
+<span class="sourceLineNo">570</span>     * @param e the element to add<a name="line.570"></a>
+<span class="sourceLineNo">571</span>     * @param timeout how long to wait before giving up, in units of<a name="line.571"></a>
+<span class="sourceLineNo">572</span>     *        &lt;tt&gt;unit&lt;/tt&gt;<a name="line.572"></a>
+<span class="sourceLineNo">573</span>     * @param unit a &lt;tt&gt;TimeUnit&lt;/tt&gt; determining how to interpret the<a name="line.573"></a>
+<span class="sourceLineNo">574</span>     *        &lt;tt&gt;timeout&lt;/tt&gt; parameter<a name="line.574"></a>
+<span class="sourceLineNo">575</span>     * @return &lt;tt&gt;true&lt;/tt&gt; if successful, or &lt;tt&gt;false&lt;/tt&gt; if<a name="line.575"></a>
+<span class="sourceLineNo">576</span>     *         the specified waiting time elapses before space is available<a name="line.576"></a>
+<span class="sourceLineNo">577</span>     * @throws InterruptedException if interrupted while waiting<a name="line.577"></a>
+<span class="sourceLineNo">578</span>     * @throws ClassCastException if the class of the specified element<a name="line.578"></a>
+<span class="sourceLineNo">579</span>     *         prevents it from being added to this queue<a name="line.579"></a>
+<span class="sourceLineNo">580</span>     * @throws NullPointerException if the specified element is null<a name="line.580"></a>
+<span class="sourceLineNo">581</span>     * @throws IllegalArgumentException if some property of the specified<a name="line.581"></a>
+<span class="sourceLineNo">582</span>     *         element prevents it from being added to this queue<a name="line.582"></a>
+<span class="sourceLineNo">583</span>     */<a name="line.583"></a>
+<span class="sourceLineNo">584</span>    @Override<a name="line.584"></a>
+<span class="sourceLineNo">585</span>    public boolean offer(QueueElement&lt;E&gt; e, long timeout, TimeUnit unit) throws InterruptedException {<a name="line.585"></a>
+<span class="sourceLineNo">586</span>        return offer(e, true);<a name="line.586"></a>
+<span class="sourceLineNo">587</span>    }<a name="line.587"></a>
+<span class="sourceLineNo">588</span><a name="line.588"></a>
+<span class="sourceLineNo">589</span>    /**<a name="line.589"></a>
+<span class="sourceLineNo">590</span>     * Retrieve and removes the head of this queue, waiting if necessary<a name="line.590"></a>
+<span class="sourceLineNo">591</span>     * until an element becomes available.<a name="line.591"></a>
+<span class="sourceLineNo">592</span>     * &lt;p/&gt;<a name="line.592"></a>
+<span class="sourceLineNo">593</span>     * IMPORTANT: This implementation has a delay of up to 10ms (when the queue is empty) to detect a new element<a name="line.593"></a>
+<span class="sourceLineNo">594</span>     * is available. It is doing a 10ms sleep.<a name="line.594"></a>
+<span class="sourceLineNo">595</span>     * &lt;p/&gt;<a name="line.595"></a>
+<span class="sourceLineNo">596</span>     * NOTE: This method is to fulfill the &lt;tt&gt;BlockingQueue&lt;tt/&gt; interface. Not implemented in the most optimal way.<a name="line.596"></a>
+<span class="sourceLineNo">597</span>     *<a name="line.597"></a>
+<span class="sourceLineNo">598</span>     * @return the head of this queue<a name="line.598"></a>
+<span class="sourceLineNo">599</span>     * @throws InterruptedException if interrupted while waiting<a name="line.599"></a>
+<span class="sourceLineNo">600</span>     */<a name="line.600"></a>
+<span class="sourceLineNo">601</span>    @Override<a name="line.601"></a>
+<span class="sourceLineNo">602</span>    public QueueElement&lt;E&gt; take() throws InterruptedException {<a name="line.602"></a>
+<span class="sourceLineNo">603</span>        QueueElement&lt;E&gt; e = poll();<a name="line.603"></a>
+<span class="sourceLineNo">604</span>        while (e == null) {<a name="line.604"></a>
+<span class="sourceLineNo">605</span>            Thread.sleep(10);<a name="line.605"></a>
+<span class="sourceLineNo">606</span>            e = poll();<a name="line.606"></a>
+<span class="sourceLineNo">607</span>        }<a name="line.607"></a>
+<span class="sourceLineNo">608</span>        return e;<a name="line.608"></a>
+<span class="sourceLineNo">609</span>    }<a name="line.609"></a>
+<span class="sourceLineNo">610</span><a name="line.610"></a>
+<span class="sourceLineNo">611</span>    /**<a name="line.611"></a>
+<span class="sourceLineNo">612</span>     * Retrieve and removes the head of this queue, waiting up to the<a name="line.612"></a>
+<span class="sourceLineNo">613</span>     * specified wait time if necessary for an element to become available.<a name="line.613"></a>
+<span class="sourceLineNo">614</span>     * &lt;p/&gt;<a name="line.614"></a>
+<span class="sourceLineNo">615</span>     * NOTE: This method is to fulfill the &lt;tt&gt;BlockingQueue&lt;tt/&gt; interface. Not implemented in the most optimal way.<a name="line.615"></a>
+<span class="sourceLineNo">616</span>     *<a name="line.616"></a>
+<span class="sourceLineNo">617</span>     * @param timeout how long to wait before giving up, in units of<a name="line.617"></a>
+<span class="sourceLineNo">618</span>     *        &lt;tt&gt;unit&lt;/tt&gt;<a name="line.618"></a>
+<span class="sourceLineNo">619</span>     * @param unit a &lt;tt&gt;TimeUnit&lt;/tt&gt; determining how to interpret the<a name="line.619"></a>
+<span class="sourceLineNo">620</span>     *        &lt;tt&gt;timeout&lt;/tt&gt; parameter<a name="line.620"></a>
+<span class="sourceLineNo">621</span>     * @return the head of this queue, or &lt;tt&gt;null&lt;/tt&gt; if the<a name="line.621"></a>
+<span class="sourceLineNo">622</span>     *         specified waiting time elapses before an element is available<a name="line.622"></a>
+<span class="sourceLineNo">623</span>     * @throws InterruptedException if interrupted while waiting<a name="line.623"></a>
+<span class="sourceLineNo">624</span>     */<a name="line.624"></a>
+<span class="sourceLineNo">625</span>    @Override<a name="line.625"></a>
+<span class="sourceLineNo">626</span>    public QueueElement&lt;E&gt; poll(long timeout, TimeUnit unit) throws InterruptedException {<a name="line.626"></a>
+<span class="sourceLineNo">627</span>        QueueElement&lt;E&gt; e = poll();<a name="line.627"></a>
+<span class="sourceLineNo">628</span>        long time = System.currentTimeMillis() + unit.toMillis(timeout);<a name="line.628"></a>
+<span class="sourceLineNo">629</span>        while (e == null &amp;&amp; time &gt; System.currentTimeMillis()) {<a name="line.629"></a>
+<span class="sourceLineNo">630</span>            Thread.sleep(10);<a name="line.630"></a>
+<span class="sourceLineNo">631</span>            e = poll();<a name="line.631"></a>
+<span class="sourceLineNo">632</span>        }<a name="line.632"></a>
+<span class="sourceLineNo">633</span>        return poll();<a name="line.633"></a>
+<span class="sourceLineNo">634</span>    }<a name="line.634"></a>
+<span class="sourceLineNo">635</span><a name="line.635"></a>
+<span class="sourceLineNo">636</span>    /**<a name="line.636"></a>
+<span class="sourceLineNo">637</span>     * Return the number of additional elements that this queue can ideally<a name="line.637"></a>
+<span class="sourceLineNo">638</span>     * (in the absence of memory or resource constraints) accept without<a name="line.638"></a>
+<span class="sourceLineNo">639</span>     * blocking, or &lt;tt&gt;Integer.MAX_VALUE&lt;/tt&gt; if there is no intrinsic<a name="line.639"></a>
+<span class="sourceLineNo">640</span>     * limit.<a name="line.640"></a>
+<span class="sourceLineNo">641</span>     *<a name="line.641"></a>
+<span class="sourceLineNo">642</span>     * &lt;p&gt;Note that you &lt;em&gt;cannot&lt;/em&gt; always tell if an attempt to insert<a name="line.642"></a>
+<span class="sourceLineNo">643</span>     * an element will succeed by inspecting &lt;tt&gt;remainingCapacity&lt;/tt&gt;<a name="line.643"></a>
+<span class="sourceLineNo">644</span>     * because it may be the case that another thread is about to<a name="line.644"></a>
+<span class="sourceLineNo">645</span>     * insert or remove an element.<a name="line.645"></a>
+<span class="sourceLineNo">646</span>     * &lt;p/&gt;<a name="line.646"></a>
+<span class="sourceLineNo">647</span>     * NOTE: This method is to fulfill the &lt;tt&gt;BlockingQueue&lt;tt/&gt; interface. Not implemented in the most optimal way.<a name="line.647"></a>
+<span class="sourceLineNo">648</span>     *<a name="line.648"></a>
+<span class="sourceLineNo">649</span>     * @return the remaining capacity<a name="line.649"></a>
+<span class="sourceLineNo">650</span>     */<a name="line.650"></a>
+<span class="sourceLineNo">651</span>    @Override<a name="line.651"></a>
+<span class="sourceLineNo">652</span>    public int remainingCapacity() {<a name="line.652"></a>
+<span class="sourceLineNo">653</span>        return (maxSize == -1) ? -1 : maxSize - size();<a name="line.653"></a>
+<span class="sourceLineNo">654</span>    }<a name="line.654"></a>
+<span class="sourceLineNo">655</span><a name="line.655"></a>
+<span class="sourceLineNo">656</span>    /**<a name="line.656"></a>
+<span class="sourceLineNo">657</span>     * Remove all available elements from this queue and adds them<a name="line.657"></a>
+<span class="sourceLineNo">658</span>     * to the given collection.  This operation may be more<a name="line.658"></a>
+<span class="sourceLineNo">659</span>     * efficient than repeatedly polling this queue.  A failure<a name="line.659"></a>
+<span class="sourceLineNo">660</span>     * encountered while attempting to add elements to<a name="line.660"></a>
+<span class="sourceLineNo">661</span>     * collection &lt;tt&gt;c&lt;/tt&gt; may result in elements being in neither,<a name="line.661"></a>
+<span class="sourceLineNo">662</span>     * either or both collections when the associated exception is<a name="line.662"></a>
+<span class="sourceLineNo">663</span>     * thrown.  Attempt to drain a queue to itself result in<a name="line.663"></a>
+<span class="sourceLineNo">664</span>     * &lt;tt&gt;IllegalArgumentException&lt;/tt&gt;. Further, the behavior of<a name="line.664"></a>
+<span class="sourceLineNo">665</span>     * this operation is undefined if the specified collection is<a name="line.665"></a>
+<span class="sourceLineNo">666</span>     * modified while the operation is in progress.<a name="line.666"></a>
+<span class="sourceLineNo">667</span>     * &lt;p/&gt;<a name="line.667"></a>
+<span class="sourceLineNo">668</span>     * NOTE: This method is to fulfill the &lt;tt&gt;BlockingQueue&lt;tt/&gt; interface. Not implemented in the most optimal way.<a name="line.668"></a>
+<span class="sourceLineNo">669</span>     *<a name="line.669"></a>
+<span class="sourceLineNo">670</span>     * @param c the collection to transfer elements into<a name="line.670"></a>
+<span class="sourceLineNo">671</span>     * @return the number of elements transferred<a name="line.671"></a>
+<span class="sourceLineNo">672</span>     * @throws UnsupportedOperationException if addition of elements<a name="line.672"></a>
+<span class="sourceLineNo">673</span>     *         is not supported by the specified collection<a name="line.673"></a>
+<span class="sourceLineNo">674</span>     * @throws ClassCastException if the class of an element of this queue<a name="line.674"></a>
+<span class="sourceLineNo">675</span>     *         prevents it from being added to the specified collection<a name="line.675"></a>
+<span class="sourceLineNo">676</span>     * @throws NullPointerException if the specified collection is null<a name="line.676"></a>
+<span class="sourceLineNo">677</span>     * @throws IllegalArgumentException if the specified collection is this<a name="line.677"></a>
+<span class="sourceLineNo">678</span>     *         queue, or some property of an element of this queue prevents<a name="line.678"></a>
+<span class="sourceLineNo">679</span>     *         it from being added to the specified collection<a name="line.679"></a>
+<span class="sourceLineNo">680</span>     */<a name="line.680"></a>
+<span class="sourceLineNo">681</span>    @Override<a name="line.681"></a>
+<span class="sourceLineNo">682</span>    public int drainTo(Collection&lt;? super QueueElement&lt;E&gt;&gt; c) {<a name="line.682"></a>
+<span class="sourceLineNo">683</span>        int count = 0;<a name="line.683"></a>
+<span class="sourceLineNo">684</span>        for (DelayQueue&lt;QueueElement&lt;E&gt;&gt; q : queues) {<a name="line.684"></a>
+<span class="sourceLineNo">685</span>            count += q.drainTo(c);<a name="line.685"></a>
+<span class="sourceLineNo">686</span>        }<a name="line.686"></a>
+<span class="sourceLineNo">687</span>        return count;<a name="line.687"></a>
+<span class="sourceLineNo">688</span>    }<a name="line.688"></a>
+<span class="sourceLineNo">689</span><a name="line.689"></a>
+<span class="sourceLineNo">690</span>    /**<a name="line.690"></a>
+<span class="sourceLineNo">691</span>     * Remove at most the given number of available elements from<a name="line.691"></a>
+<span class="sourceLineNo">692</span>     * this queue and adds them to the given collection.  A failure<a name="line.692"></a>
+<span class="sourceLineNo">693</span>     * encountered while attempting to add elements to<a name="line.693"></a>
+<span class="sourceLineNo">694</span>     * collection &lt;tt&gt;c&lt;/tt&gt; may result in elements being in neither,<a name="line.694"></a>
+<span class="sourceLineNo">695</span>     * either or both collections when the associated exception is<a name="line.695"></a>
+<span class="sourceLineNo">696</span>     * thrown.  Attempt to drain a queue to itself result in<a name="line.696"></a>
+<span class="sourceLineNo">697</span>     * &lt;tt&gt;IllegalArgumentException&lt;/tt&gt;. Further, the behavior of<a name="line.697"></a>
+<span class="sourceLineNo">698</span>     * this operation is undefined if the specified collection is<a name="line.698"></a>
+<span class="sourceLineNo">699</span>     * modified while the operation is in progress.<a name="line.699"></a>
+<span class="sourceLineNo">700</span>     * &lt;p/&gt;<a name="line.700"></a>
+<span class="sourceLineNo">701</span>     * NOTE: This method is to fulfill the &lt;tt&gt;BlockingQueue&lt;tt/&gt; interface. Not implemented in the most optimal way.<a name="line.701"></a>
+<span class="sourceLineNo">702</span>     *<a name="line.702"></a>
+<span class="sourceLineNo">703</span>     * @param c the collection to transfer elements into<a name="line.703"></a>
+<span class="sourceLineNo">704</span>     * @param maxElements the maximum number of elements to transfer<a name="line.704"></a>
+<span class="sourceLineNo">705</span>     * @return the number of elements transferred<a name="line.705"></a>
+<span class="sourceLineNo">706</span>     * @throws UnsupportedOperationException if addition of elements<a name="line.706"></a>
+<span class="sourceLineNo">707</span>     *         is not supported by the specified collection<a name="line.707"></a>
+<span class="sourceLineNo">708</span>     * @throws ClassCastException if the class of an element of this queue<a name="line.708"></a>
+<span class="sourceLineNo">709</span>     *         prevents it from being added to the specified collection<a name="line.709"></a>
+<span class="sourceLineNo">710</span>     * @throws NullPointerException if the specified collection is null<a name="line.710"></a>
+<span class="sourceLineNo">711</span>     * @throws IllegalArgumentException if the specified collection is this<a name="line.711"></a>
+<span class="sourceLineNo">712</span>     *         queue, or some property of an element of this queue prevents<a name="line.712"></a>
+<span class="sourceLineNo">713</span>     *         it from being added to the specified collection<a name="line.713"></a>
+<span class="sourceLineNo">714</span>     */<a name="line.714"></a>
+<span class="sourceLineNo">715</span>    @Override<a name="line.715"></a>
+<span class="sourceLineNo">716</span>    public int drainTo(Collection&lt;? super QueueElement&lt;E&gt;&gt; c, int maxElements) {<a name="line.716"></a>
+<span class="sourceLineNo">717</span>        int left = maxElements;<a name="line.717"></a>
+<span class="sourceLineNo">718</span>        int count = 0;<a name="line.718"></a>
+<span class="sourceLineNo">719</span>        for (DelayQueue&lt;QueueElement&lt;E&gt;&gt; q : queues) {<a name="line.719"></a>
+<span class="sourceLineNo">720</span>            int drained = q.drainTo(c, left);<a name="line.720"></a>
+<span class="sourceLineNo">721</span>            count += drained;<a name="line.721"></a>
+<span class="sourceLineNo">722</span>            left -= drained;<a name="line.722"></a>
+<span class="sourceLineNo">723</span>        }<a name="line.723"></a>
+<span class="sourceLineNo">724</span>        return count;<a name="line.724"></a>
+<span class="sourceLineNo">725</span>    }<a name="line.725"></a>
+<span class="sourceLineNo">726</span><a name="line.726"></a>
+<span class="sourceLineNo">727</span>    /**<a name="line.727"></a>
+<span class="sourceLineNo">728</span>     * Removes all of the elements from this queue. The queue will be empty after this call returns.<a name="line.728"></a>
+<span class="sourceLineNo">729</span>     */<a name="line.729"></a>
+<span class="sourceLineNo">730</span>    @Override<a name="line.730"></a>
+<span class="sourceLineNo">731</span>    public void clear() {<a name="line.731"></a>
+<span class="sourceLineNo">732</span>        for (DelayQueue&lt;QueueElement&lt;E&gt;&gt; q : queues) {<a name="line.732"></a>
+<span class="sourceLineNo">733</span>            q.clear();<a name="line.733"></a>
+<span class="sourceLineNo">734</span>        }<a name="line.734"></a>
+<span class="sourceLineNo">735</span>    }<a name="line.735"></a>
+<span class="sourceLineNo">736</span>}<a name="line.736"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

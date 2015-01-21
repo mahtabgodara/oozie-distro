@@ -1,0 +1,28 @@
+-classpath
+'/home/hduser/softwares/oozie-4.0.1/client/target/classes:/home/hduser/.m2/repository/org/fusesource/hawtbuf/hawtbuf/1.9/hawtbuf-1.9.jar:/home/hduser/.m2/repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar:/home/hduser/.m2/repository/org/apache/activemq/activemq-client/5.8.0/activemq-client-5.8.0.jar:/home/hduser/.m2/repository/commons-cli/commons-cli/1.2/commons-cli-1.2.jar:/home/hduser/.m2/repository/org/apache/hadoop/hadoop-auth/2.0.2-alpha/hadoop-auth-2.0.2-alpha.jar:/home/hduser/.m2/repository/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar:/home/hduser/.m2/repository/org/slf4j/slf4j-api/1.6.6/slf4j-api-1.6.6.jar:/home/hduser/.m2/repository/org/slf4j/slf4j-simple/1.6.6/slf4j-simple-1.6.6.jar:/home/hduser/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.8.8/jackson-core-asl-1.8.8.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/../lib/tools.jar:/home/hduser/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.8.8/jackson-mapper-asl-1.8.8.jar:/home/hduser/.m2/repository/com/googlecode/json-simple/json-simple/1.1/json-simple-1.1.jar:/home/hduser/.m2/repository/com/google/guava/guava/11.0.2/guava-11.0.2.jar:/home/hduser/.m2/repository/xerces/xercesImpl/2.10.0/xercesImpl-2.10.0.jar:/home/hduser/.m2/repository/org/apache/geronimo/specs/geronimo-j2ee-management_1.1_spec/1.0.1/geronimo-j2ee-management_1.1_spec-1.0.1.jar:/home/hduser/.m2/repository/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar:/home/hduser/.m2/repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar'
+-encoding
+'UTF-8'
+-protected
+-quiet
+-sourcepath
+'/home/hduser/softwares/oozie-4.0.1/client/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2015 <a href="http://www.apache.org">Apache Software Foundation</a>. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'/home/hduser/softwares/oozie-4.0.1/client/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Apache Oozie Client 4.0.1 API'
+-group
+'Client API' 'org.apache.oozie.client'
+-link
+'http://java.sun.com/javase/6/docs/api'
+-linksource
+-use
+-version
+-windowtitle
+'Apache Oozie Client 4.0.1 API'

@@ -1,0 +1,92 @@
+Jan 20, 2015 3:26:54 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: 
+Jan 20, 2015 3:26:55 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-11000
+Jan 20, 2015 3:26:55 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 753 ms
+Jan 20, 2015 3:26:55 PM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Jan 20, 2015 3:26:55 PM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.37
+Jan 20, 2015 3:26:55 PM org.apache.catalina.startup.HostConfig deployWAR
+INFO: Deploying web application archive oozie.war
+Jan 20, 2015 3:27:02 PM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Jan 20, 2015 3:27:02 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-11000
+Jan 20, 2015 3:27:02 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 7696 ms
+Jan 20, 2015 3:27:27 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-11000
+Jan 20, 2015 3:27:28 PM org.apache.catalina.core.StandardService stop
+INFO: Stopping service Catalina
+Jan 20, 2015 3:27:28 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: The web application [/oozie] registered the JDBC driver [org.apache.derby.jdbc.AutoloadedDriver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Jan 20, 2015 3:27:28 PM org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+SEVERE: The web application [/oozie] appears to have started a thread named [FileWatchdog] but has failed to stop it. This is very likely to create a memory leak.
+Jan 20, 2015 3:27:28 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [org.apache.oozie.util.XLog$Info$1] (value [org.apache.oozie.util.XLog$Info$1@19762c8]) and a value of type [org.apache.oozie.util.XLog.Info] (value [org.apache.oozie.util.XLog$Info@1d651e7]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:27:28 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [org.apache.derby.iapi.sql.dictionary.TableDescriptor$1] (value [org.apache.derby.iapi.sql.dictionary.TableDescriptor$1@19b3a90]) and a value of type [java.util.WeakHashMap] (value [{={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 16, 17, 18, 19, 20, 21}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17, 18}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24}, =null, =null, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 26, 27, 29, 30, 31, 32}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, =null, ={1, 2, 3, 4, 5, 6, 7, 8, 9}}]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:27:28 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [java.lang.ThreadLocal] (value [java.lang.ThreadLocal@be1bb4]) and a value of type [org.apache.derby.iapi.services.context.ContextManager] (value [org.apache.derby.iapi.services.context.ContextManager@c710ba]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:27:28 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [org.apache.hadoop.io.Text$1] (value [org.apache.hadoop.io.Text$1@10cdd5e]) and a value of type [sun.nio.cs.UTF_8.Encoder] (value [sun.nio.cs.UTF_8$Encoder@199825b]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:27:28 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [java.lang.ThreadLocal] (value [java.lang.ThreadLocal@be1bb4]) and a value of type [org.apache.derby.iapi.services.context.ContextManager] (value [org.apache.derby.iapi.services.context.ContextManager@1b8ebe3]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:27:29 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-11000
+Jan 20, 2015 3:28:19 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: 
+Jan 20, 2015 3:28:19 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-11000
+Jan 20, 2015 3:28:19 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 345 ms
+Jan 20, 2015 3:28:19 PM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Jan 20, 2015 3:28:19 PM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.37
+Jan 20, 2015 3:28:19 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor oozie.xml
+Jan 20, 2015 3:28:22 PM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Jan 20, 2015 3:28:22 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-11000
+Jan 20, 2015 3:28:22 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 3465 ms
+Jan 20, 2015 3:35:07 PM org.apache.jasper.xmlparser.MyEntityResolver resolveEntity
+SEVERE: Invalid PUBLIC ID: null
+Jan 20, 2015 3:36:07 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-11000
+Jan 20, 2015 3:36:08 PM org.apache.catalina.core.StandardService stop
+INFO: Stopping service Catalina
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: The web application [/oozie] registered the JDBC driver [org.apache.derby.jdbc.AutoloadedDriver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+SEVERE: The web application [/oozie] appears to have started a thread named [FileWatchdog] but has failed to stop it. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [org.apache.oozie.util.XLog$Info$1] (value [org.apache.oozie.util.XLog$Info$1@16cc27f]) and a value of type [org.apache.oozie.util.XLog.Info] (value [org.apache.oozie.util.XLog$Info@1553d4d]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [org.apache.derby.iapi.sql.dictionary.TableDescriptor$1] (value [org.apache.derby.iapi.sql.dictionary.TableDescriptor$1@12b9425]) and a value of type [java.util.WeakHashMap] (value [{={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 16, 17, 18, 19, 20, 21}, =null, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17, 18}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23}, =null, =null, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}, ={1, 2, 3, 4, 5, 6, 7, 8, 9}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 26, 27, 29, 30, 31, 32}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24}}]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [java.lang.ThreadLocal] (value [java.lang.ThreadLocal@c92e4c]) and a value of type [org.apache.derby.iapi.services.context.ContextManager] (value [org.apache.derby.iapi.services.context.ContextManager@1f105de]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [org.apache.hadoop.io.Text$1] (value [org.apache.hadoop.io.Text$1@1fea903]) and a value of type [sun.nio.cs.UTF_8.Encoder] (value [sun.nio.cs.UTF_8$Encoder@a28e2]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [java.lang.ThreadLocal] (value [java.lang.ThreadLocal@c92e4c]) and a value of type [org.apache.derby.iapi.services.context.ContextManager] (value [org.apache.derby.iapi.services.context.ContextManager@1f105de]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [org.apache.hadoop.io.Text$1] (value [org.apache.hadoop.io.Text$1@1fea903]) and a value of type [sun.nio.cs.UTF_8.Encoder] (value [sun.nio.cs.UTF_8$Encoder@1021ddc]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [org.apache.derby.iapi.sql.dictionary.TableDescriptor$1] (value [org.apache.derby.iapi.sql.dictionary.TableDescriptor$1@12b9425]) and a value of type [java.util.WeakHashMap] (value [{=null, =null, ={1, 13, 17, 18, 19}, ={1, 15}, =null}]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [java.lang.ThreadLocal] (value [java.lang.ThreadLocal@c92e4c]) and a value of type [org.apache.derby.iapi.services.context.ContextManager] (value [org.apache.derby.iapi.services.context.ContextManager@4898ea]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [org.apache.derby.iapi.sql.dictionary.TableDescriptor$1] (value [org.apache.derby.iapi.sql.dictionary.TableDescriptor$1@12b9425]) and a value of type [java.util.WeakHashMap] (value [{={1, 9}, ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}}]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [java.lang.ThreadLocal] (value [java.lang.ThreadLocal@c92e4c]) and a value of type [org.apache.derby.iapi.services.context.ContextManager] (value [org.apache.derby.iapi.services.context.ContextManager@1f105de]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [org.apache.derby.iapi.sql.dictionary.TableDescriptor$1] (value [org.apache.derby.iapi.sql.dictionary.TableDescriptor$1@12b9425]) and a value of type [java.util.WeakHashMap] (value [{={1, 9}}]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.catalina.loader.WebappClassLoader checkThreadLocalMapForLeaks
+SEVERE: The web application [/oozie] created a ThreadLocal with key of type [java.lang.ThreadLocal] (value [java.lang.ThreadLocal@c92e4c]) and a value of type [org.apache.derby.iapi.services.context.ContextManager] (value [org.apache.derby.iapi.services.context.ContextManager@15dcfa4]) but failed to remove it when the web application was stopped. This is very likely to create a memory leak.
+Jan 20, 2015 3:36:08 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-11000

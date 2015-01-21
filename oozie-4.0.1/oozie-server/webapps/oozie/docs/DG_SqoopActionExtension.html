@@ -1,0 +1,438 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Oozie - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Oozie
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2015-01-20
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                                                <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <p></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<hr />
+<a name="Oozie_Sqoop_Action_Extension"></a>
+<div class="section"><h2> Oozie Sqoop Action Extension</h2>
+<p><ul><ul><li><a href="#Sqoop_Action">Sqoop Action</a>
+<ul><li><a href="#Sqoop_Action_Counters">Sqoop Action Counters</a>
+</li>
+<li><a href="#Sqoop_Action_Logging">Sqoop Action Logging</a>
+</li>
+</ul>
+</li>
+<li><a href="#Appendix_Sqoop_XML-Schema">Appendix, Sqoop XML-Schema</a>
+<ul><li><a href="#AE.A_Appendix_A_Sqoop_XML-Schema">AE.A Appendix A, Sqoop XML-Schema</a>
+<ul><li><a href="#Sqoop_Action_Schema_Version_0.3">Sqoop Action Schema Version 0.3</a>
+</li>
+<li><a href="#Sqoop_Action_Schema_Version_0.2">Sqoop Action Schema Version 0.2</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</p>
+<a name="Sqoop_Action"></a>
+<div class="section"><h3>Sqoop Action</h3>
+<p><b>IMPORTANT:</b>
+ The Sqoop action requires Apache Hadoop 0.23.</p>
+<p>The <tt>sqoop</tt>
+ action runs a Sqoop job.</p>
+<p>The workflow job will wait until the Sqoop job completes before
+continuing to the next action.</p>
+<p>To run the Sqoop job, you have to configure the <tt>sqoop</tt>
+ action with the
+=job-tracker=, <tt>name-node</tt>
+ and Sqoop <tt>command</tt>
+ or <tt>arg</tt>
+ elements as
+well as configuration.</p>
+<p>A <tt>sqoop</tt>
+ action can be configured to create or delete HDFS directories
+before starting the Sqoop job.</p>
+<p>Sqoop configuration can be specified with a file, using the <tt>job-xml</tt>
+
+element, and inline, using the <tt>configuration</tt>
+ elements.</p>
+<p>Oozie EL expressions can be used in the inline configuration. Property
+values specified in the <tt>configuration</tt>
+ element override values specified
+in the <tt>job-xml</tt>
+ file.</p>
+<p>Note that Hadoop <tt>mapred.job.tracker</tt>
+ and <tt>fs.default.name</tt>
+ properties
+must not be present in the inline configuration.</p>
+<p>As with Hadoop <tt>map-reduce</tt>
+ jobs, it is possible to add files and
+archives in order to make them available to the Sqoop job. Refer to the
+[WorkflowFunctionalSpec#FilesAchives][Adding Files and Archives for the Job]
+section for more information about this feature.</p>
+<p><b>Syntax:</b>
+</p>
+<p><pre>
+&lt;workflow-app name=&quot;[WF-DEF-NAME]&quot; xmlns=&quot;uri:oozie:workflow:0.1&quot;&gt;
+    ...
+    &lt;action name=&quot;[NODE-NAME]&quot;&gt;
+        &lt;sqoop xmlns=&quot;uri:oozie:sqoop-action:0.2&quot;&gt;
+            &lt;job-tracker&gt;[JOB-TRACKER]&lt;/job-tracker&gt;
+            &lt;name-node&gt;[NAME-NODE]&lt;/name-node&gt;
+            &lt;prepare&gt;
+               &lt;delete path=&quot;[PATH]&quot;/&gt;
+               ...
+               &lt;mkdir path=&quot;[PATH]&quot;/&gt;
+               ...
+            &lt;/prepare&gt;
+            &lt;configuration&gt;
+                &lt;property&gt;
+                    &lt;name&gt;[PROPERTY-NAME]&lt;/name&gt;
+                    &lt;value&gt;[PROPERTY-VALUE]&lt;/value&gt;
+                &lt;/property&gt;
+                ...
+            &lt;/configuration&gt;
+            &lt;command&gt;[SQOOP-COMMAND]&lt;/command&gt;
+            &lt;arg&gt;[SQOOP-ARGUMENT]&lt;/arg&gt;
+            ...
+            &lt;file&gt;[FILE-PATH]&lt;/file&gt;
+            ...
+            &lt;archive&gt;[FILE-PATH]&lt;/archive&gt;
+            ...
+        &lt;/sqoop&gt;
+        &lt;ok to=&quot;[NODE-NAME]&quot;/&gt;
+        &lt;error to=&quot;[NODE-NAME]&quot;/&gt;
+    &lt;/action&gt;
+    ...
+&lt;/workflow-app&gt;
+</pre></p>
+<p>The <tt>prepare</tt>
+ element, if present, indicates a list of paths to delete
+or create before starting the job. Specified paths must start with <tt><a href="./hdfs://HOST:PORT.html">hdfs://HOST:PORT</a>
+</tt>
+.</p>
+<p>The <tt>job-xml</tt>
+ element, if present, specifies a file containing configuration
+for the Sqoop job. As of schema 0.3, multiple <tt>job-xml</tt>
+ elements are allowed in order to 
+specify multiple <tt>job.xml</tt>
+ files.</p>
+<p>The <tt>configuration</tt>
+ element, if present, contains configuration
+properties that are passed to the Sqoop job.</p>
+<p><b>Sqoop command</b>
+</p>
+<p>The Sqoop command can be specified either using the <tt>command</tt>
+ element or multiple <tt>arg</tt>
+
+elements.</p>
+<p>When using the <tt>command</tt>
+ element, Oozie will split the command on every space
+into multiple arguments.</p>
+<p>When using the <tt>arg</tt>
+ elements, Oozie will pass each argument value as an argument to Sqoop.</p>
+<p>The <tt>arg</tt>
+ variant should be used when there are spaces within a single argument.</p>
+<p>Consult the Sqoop documentation for a complete list of valid Sqoop commands.</p>
+<p>All the above elements can be parameterized (templatized) using EL
+expressions.</p>
+<p><b>Examples:</b>
+</p>
+<p>Using the <tt>command</tt>
+ element:</p>
+<p><pre>
+&lt;workflow-app name=&quot;sample-wf&quot; xmlns=&quot;uri:oozie:workflow:0.1&quot;&gt;
+    ...
+    &lt;action name=&quot;myfirsthivejob&quot;&gt;
+        &lt;sqoop xmlns=&quot;uri:oozie:sqoop-action:0.2&quot;&gt;
+            &lt;job-traker&gt;foo:8021&lt;/job-tracker&gt;
+            &lt;name-node&gt;bar:8020&lt;/name-node&gt;
+            &lt;prepare&gt;
+                &lt;delete path=&quot;${jobOutput}&quot;/&gt;
+            &lt;/prepare&gt;
+            &lt;configuration&gt;
+                &lt;property&gt;
+                    &lt;name&gt;mapred.compress.map.output&lt;/name&gt;
+                    &lt;value&gt;true&lt;/value&gt;
+                &lt;/property&gt;
+            &lt;/configuration&gt;
+            &lt;command&gt;import  --connect jdbc:hsqldb:file:db.hsqldb --table TT --target-dir hdfs://localhost:8020/user/tucu/foo -m 1&lt;/command&gt;
+        &lt;/sqoop&gt;
+        &lt;ok to=&quot;myotherjob&quot;/&gt;
+        &lt;error to=&quot;errorcleanup&quot;/&gt;
+    &lt;/action&gt;
+    ...
+&lt;/workflow-app&gt;
+</pre></p>
+<p>The same Sqoop action using <tt>arg</tt>
+ elements:</p>
+<p><pre>
+&lt;workflow-app name=&quot;sample-wf&quot; xmlns=&quot;uri:oozie:workflow:0.1&quot;&gt;
+    ...
+    &lt;action name=&quot;myfirsthivejob&quot;&gt;
+        &lt;sqoop xmlns=&quot;uri:oozie:sqoop-action:0.2&quot;&gt;
+            &lt;job-traker&gt;foo:8021&lt;/job-tracker&gt;
+            &lt;name-node&gt;bar:8020&lt;/name-node&gt;
+            &lt;prepare&gt;
+                &lt;delete path=&quot;${jobOutput}&quot;/&gt;
+            &lt;/prepare&gt;
+            &lt;configuration&gt;
+                &lt;property&gt;
+                    &lt;name&gt;mapred.compress.map.output&lt;/name&gt;
+                    &lt;value&gt;true&lt;/value&gt;
+                &lt;/property&gt;
+            &lt;/configuration&gt;
+            &lt;arg&gt;import&lt;/arg&gt;
+            &lt;arg&gt;--connect&lt;/arg&gt;
+            &lt;arg&gt;jdbc:hsqldb:file:db.hsqldb&lt;/arg&gt;
+            &lt;arg&gt;--table&lt;/arg&gt;
+            &lt;arg&gt;TT&lt;/arg&gt;
+            &lt;arg&gt;--target-dir&lt;/arg&gt;
+            &lt;arg&gt;hdfs://localhost:8020/user/tucu/foo&lt;/arg&gt;
+            &lt;arg&gt;-m&lt;/arg&gt;
+            &lt;arg&gt;1&lt;/arg&gt;
+        &lt;/sqoop&gt;
+        &lt;ok to=&quot;myotherjob&quot;/&gt;
+        &lt;error to=&quot;errorcleanup&quot;/&gt;
+    &lt;/action&gt;
+    ...
+&lt;/workflow-app&gt;
+</pre></p>
+<p>NOTE: The <tt>arg</tt>
+ elements syntax, while more verbose, allows to have spaces in a single argument, something useful when
+using free from queries.</p>
+<a name="Sqoop_Action_Counters"></a>
+<div class="section"><h4>Sqoop Action Counters</h4>
+<p>The counters of the map-reduce job run by the Sqoop action are available to be used in the workflow via the
+<a href="./WorkflowFunctionalSpec.html#HadoopCountersEL">hadoop:counters() EL function</a>
+.</p>
+<p>If the Sqoop action run an import all command, the <tt>hadoop:counters()</tt>
+ EL will return the aggregated counters
+of all map-reduce jobs run by the Sqoop import all command.</p>
+<a name="Sqoop_Action_Logging"></a>
+</div>
+<div class="section"><h4>Sqoop Action Logging</h4>
+<p>Sqoop action logs are redirected to the Oozie Launcher map-reduce job task STDOUT/STDERR that runs Sqoop.</p>
+<p>From Oozie web-console, from the Sqoop action pop up using the 'Console URL' link, it is possible
+to navigate to the Oozie Launcher map-reduce job task logs via the Hadoop job-tracker web-console.</p>
+<p>The logging level of the Sqoop action can set in the Sqoop action configuration using the
+property <tt>oozie.sqoop.log.level</tt>
+. The default value is <tt>INFO</tt>
+.</p>
+<a name="Appendix_Sqoop_XML-Schema"></a>
+</div>
+</div>
+<div class="section"><h3>Appendix, Sqoop XML-Schema</h3>
+<a name="AE.A_Appendix_A_Sqoop_XML-Schema"></a>
+<div class="section"><h4>AE.A Appendix A, Sqoop XML-Schema</h4>
+<a name="Sqoop_Action_Schema_Version_0.3"></a>
+<div class="section"><h5>Sqoop Action Schema Version 0.3</h5>
+<p><pre>
+&lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+           xmlns:sqoop=&quot;uri:oozie:sqoop-action:0.3&quot; elementFormDefault=&quot;qualified&quot;
+           targetNamespace=&quot;uri:oozie:sqoop-action:0.3&quot;&gt;    &lt;xs:element name=&quot;sqoop&quot; type=&quot;sqoop:ACTION&quot;/&gt;
+    &lt;xs:complexType name=&quot;ACTION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;job-tracker&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;name-node&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;prepare&quot; type=&quot;sqoop:PREPARE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;job-xml&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;configuration&quot; type=&quot;sqoop:CONFIGURATION&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:choice&gt;
+                &lt;xs:element name=&quot;command&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+                &lt;xs:element name=&quot;arg&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;/xs:choice&gt;
+            &lt;xs:element name=&quot;file&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;archive&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+    &lt;xs:complexType name=&quot;CONFIGURATION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;property&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;unbounded&quot;&gt;
+                &lt;xs:complexType&gt;
+                    &lt;xs:sequence&gt;
+                        &lt;xs:element name=&quot;name&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;value&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;description&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                    &lt;/xs:sequence&gt;
+                &lt;/xs:complexType&gt;
+            &lt;/xs:element&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+    &lt;xs:complexType name=&quot;PREPARE&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;delete&quot; type=&quot;sqoop:DELETE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;mkdir&quot; type=&quot;sqoop:MKDIR&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+    &lt;xs:complexType name=&quot;DELETE&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+    &lt;xs:complexType name=&quot;MKDIR&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+&lt;/xs:schema&gt;
+</pre>
+</p>
+<a name="Sqoop_Action_Schema_Version_0.2"></a>
+</div>
+<div class="section"><h5>Sqoop Action Schema Version 0.2</h5>
+<p><pre>
+&lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+           xmlns:sqoop=&quot;uri:oozie:sqoop-action:0.2&quot; elementFormDefault=&quot;qualified&quot;
+           targetNamespace=&quot;uri:oozie:sqoop-action:0.2&quot;&gt;    &lt;xs:element name=&quot;sqoop&quot; type=&quot;sqoop:ACTION&quot;/&gt;
+.
+    &lt;xs:complexType name=&quot;ACTION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;job-tracker&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;name-node&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;prepare&quot; type=&quot;sqoop:PREPARE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;job-xml&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;configuration&quot; type=&quot;sqoop:CONFIGURATION&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:choice&gt;
+                &lt;xs:element name=&quot;command&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+                &lt;xs:element name=&quot;arg&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;/xs:choice&gt;
+            &lt;xs:element name=&quot;file&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;archive&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;CONFIGURATION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;property&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;unbounded&quot;&gt;
+                &lt;xs:complexType&gt;
+                    &lt;xs:sequence&gt;
+                        &lt;xs:element name=&quot;name&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;value&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;description&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                    &lt;/xs:sequence&gt;
+                &lt;/xs:complexType&gt;
+            &lt;/xs:element&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;PREPARE&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;delete&quot; type=&quot;sqoop:DELETE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;mkdir&quot; type=&quot;sqoop:MKDIR&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;DELETE&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;MKDIR&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+.
+&lt;/xs:schema&gt;
+</pre>
+</p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<p></p>
+</div>
+</div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2015
+    
+          Apache Software Foundation
+          
+  
+
+  
+    
+  
+  
+    
+   - <a href="http://maven.apache.org/privacy-policy.html">Privacy Policy</a></div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

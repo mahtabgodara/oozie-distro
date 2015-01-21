@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Oozie - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Oozie
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2015-01-20
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                                                <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <p></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<hr />
+<a name="Oozie_Ssh_Action_Extension"></a>
+<div class="section"><h2> Oozie Ssh Action Extension</h2>
+<p><ul><ul><li><a href="#Ssh_Action">Ssh Action</a>
+</li>
+<li><a href="#Appendix_Ssh_XML-Schema">Appendix, Ssh XML-Schema</a>
+<ul><li><a href="#AE.A_Appendix_A_Ssh_XML-Schema">AE.A Appendix A, Ssh XML-Schema</a>
+<ul><li><a href="#Ssh_Action_Schema_Version_0.2">Ssh Action Schema Version 0.2</a>
+</li>
+<li><a href="#Ssh_Action_Schema_Version_0.1">Ssh Action Schema Version 0.1</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</p>
+<a name="Ssh_Action"></a>
+<div class="section"><h3>Ssh Action</h3>
+<p>The <tt>ssh</tt>
+ action starts a shell command on a remote machine as a remote secure shell in background. The workflow job
+will wait until the remote shell command completes before continuing to the next action.</p>
+<p>The shell command must be present in the remote machine and it must be available for execution via the command path.</p>
+<p>The shell command is executed in the home directory of the specified user in the remote host.</p>
+<p>The output (STDOUT) of the ssh job can be made available to the workflow job after the ssh job ends. This information
+could be used from within decision nodes. If the output of the ssh job is made available to the workflow job the shell
+command must follow the following requirements:</p>
+<p><ul><li>The format of the output must be a valid Java Properties file.</li>
+<li>The size of the output must not exceed 2KB.</li>
+</ul>
+</p>
+<p><b>Syntax:</b>
+</p>
+<p><pre>
+&lt;workflow-app name=&quot;[WF-DEF-NAME]&quot; xmlns=&quot;uri:oozie:workflow:0.1&quot;&gt;
+    ...
+    &lt;action name=&quot;[NODE-NAME]&quot;&gt;
+        &lt;ssh xmlns=&quot;uri:oozie:ssh-action:0.1&quot;&gt;
+            &lt;host&gt;[USER]@[HOST]&lt;/host&gt;
+            &lt;command&gt;[SHELL]&lt;/command&gt;
+            &lt;args&gt;[ARGUMENTS]&lt;/args&gt;
+            ...
+            &lt;capture-output/&gt;
+        &lt;/ssh&gt;
+        &lt;ok to=&quot;[NODE-NAME]&quot;/&gt;
+        &lt;error to=&quot;[NODE-NAME]&quot;/&gt;
+    &lt;/action&gt;
+    ...
+&lt;/workflow-app&gt;
+</pre></p>
+<p>The <tt>host</tt>
+ indicates the user and host where the shell will be executed.</p>
+<p><b>IMPORTANT:</b>
+ The <tt>oozie.action.ssh.allow.user.at.host</tt>
+ property, in the <tt>oozie-site.xml</tt>
+ configuration, indicates if
+an alternate user than the one submitting the job can be used for the ssh invocation. By default this property is set
+tot <tt>true</tt>
+.</p>
+<p>The <tt>command</tt>
+ element indicates the shell command to execute.</p>
+<p>The <tt>args</tt>
+ element, if present, contains parameters to be passed to the shell command. If more than one <tt>args</tt>
+ element
+is present they are concatenated in order. When an <tt>args</tt>
+ element contains a space, even when quoted, it will be considered as
+separate arguments (i.e. &quot;Hello World&quot; becomes &quot;Hello&quot; and &quot;World&quot;).  Starting with ssh schema 0.2, you can use the <tt>arg</tt>
+ element
+(note that this is different than the <tt>args</tt>
+ element) to specify arguments that have a space in them (i.e. &quot;Hello World&quot; is
+preserved as &quot;Hello World&quot;).  You can use either <tt>args</tt>
+ elements, <tt>arg</tt>
+ elements, or neither; but not both in the same action.</p>
+<p>If the <tt>capture-output</tt>
+ element is present, it indicates Oozie to capture output of the STDOUT of the ssh command
+execution. The ssh command output must be in Java Properties file format and it must not exceed 2KB. From within the
+workflow definition, the output of an ssh action node is accessible via the <tt>String action:output(String node,
+String key)</tt>
+ function (Refer to section '4.2.6 Action EL Functions').</p>
+<p>The configuration of the <tt>ssh</tt>
+ action can be parameterized (templatized) using EL expressions.</p>
+<p><b>Example:</b>
+</p>
+<p><pre>
+&lt;workflow-app name=&quot;sample-wf&quot; xmlns=&quot;uri:oozie:workflow:0.1&quot;&gt;
+    ...
+    &lt;action name=&quot;myssjob&quot;&gt;
+        &lt;ssh xmlns=&quot;uri:oozie:ssh-action:0.1&quot;&gt;
+            &lt;host&gt;foo@bar.com&lt;host&gt;
+            &lt;command&gt;uploaddata&lt;/command&gt;
+            &lt;args&gt;jdbc:derby://bar.com:1527/myDB&lt;/args&gt;
+            &lt;args&gt;hdfs://foobar.com:8020/usr/tucu/myData&lt;/args&gt;
+        &lt;/ssh&gt;
+        &lt;ok to=&quot;myotherjob&quot;/&gt;
+        &lt;error to=&quot;errorcleanup&quot;/&gt;
+    &lt;/action&gt;
+    ...
+&lt;/workflow-app&gt;
+</pre></p>
+<p>In the above example, the <tt>uploaddata</tt>
+ shell command is executed with two arguments, <tt>jdbc:derby://foo.com:1527/myDB</tt>
+
+and <tt><a href="./hdfs://foobar.com:8020/usr/tucu/myData.html">hdfs://foobar.com:8020/usr/tucu/myData</a>
+</tt>
+.</p>
+<p>The <tt>uploaddata</tt>
+ shell must be available in the remote host and available in the command path.</p>
+<p>The output of the command will be ignored because the <tt>capture-output</tt>
+ element is not present.</p>
+<a name="Appendix_Ssh_XML-Schema"></a>
+</div>
+<div class="section"><h3>Appendix, Ssh XML-Schema</h3>
+<a name="AE.A_Appendix_A_Ssh_XML-Schema"></a>
+<div class="section"><h4>AE.A Appendix A, Ssh XML-Schema</h4>
+<a name="Ssh_Action_Schema_Version_0.2"></a>
+<div class="section"><h5>Ssh Action Schema Version 0.2</h5>
+<p><pre>
+&lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+           xmlns:ssh=&quot;uri:oozie:ssh-action:0.2&quot; elementFormDefault=&quot;qualified&quot;
+           targetNamespace=&quot;uri:oozie:ssh-action:0.2&quot;&gt;
+.
+    &lt;xs:element name=&quot;ssh&quot; type=&quot;ssh:ACTION&quot;/&gt;
+.
+    &lt;xs:complexType name=&quot;ACTION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;host&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;command&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:choice&gt;
+              &lt;xs:element name=&quot;args&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+              &lt;xs:element name=&quot;arg&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;/xs:choice&gt;
+            &lt;xs:element name=&quot;capture-output&quot; type=&quot;ssh:FLAG&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;FLAG&quot;/&gt;
+.
+&lt;/xs:schema&gt;
+</pre></p>
+<a name="Ssh_Action_Schema_Version_0.1"></a>
+</div>
+<div class="section"><h5>Ssh Action Schema Version 0.1</h5>
+<p><pre>
+&lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+           xmlns:ssh=&quot;uri:oozie:ssh-action:0.1&quot; elementFormDefault=&quot;qualified&quot;
+           targetNamespace=&quot;uri:oozie:ssh-action:0.1&quot;&gt;
+.
+    &lt;xs:element name=&quot;ssh&quot; type=&quot;ssh:ACTION&quot;/&gt;
+.
+    &lt;xs:complexType name=&quot;ACTION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;host&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;command&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;args&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;capture-output&quot; type=&quot;ssh:FLAG&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;FLAG&quot;/&gt;
+.
+&lt;/xs:schema&gt;
+</pre></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<p></p>
+</div>
+</div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2015
+    
+          Apache Software Foundation
+          
+  
+
+  
+    
+  
+  
+    
+   - <a href="http://maven.apache.org/privacy-policy.html">Privacy Policy</a></div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

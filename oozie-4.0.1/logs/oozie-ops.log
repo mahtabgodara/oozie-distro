@@ -1,0 +1,70 @@
+2015-01-20 15:22:03,550  INFO oozieops:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:03,739  INFO oozieops:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:06,059  INFO oozieops:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:06,105  INFO oozieops:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:06,227  INFO oozieops:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:06,243  INFO oozieops:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:06,269  INFO oozieops:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:06,283  INFO oozieops:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:07,618  INFO oozieops:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:07,636  INFO oozieops:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:11,799  INFO oozieops:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:11,817  INFO oozieops:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:11,914  INFO oozieops:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:11,924  INFO oozieops:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:23:04,942  INFO oozieops:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:23:05,136  INFO oozieops:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:23:06,630  INFO oozieops:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:23:06,670  INFO oozieops:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:26:59,545  INFO oozieops:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:26:59,757  INFO oozieops:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:26:59,810  WARN oozieops:542 - USER[-] GROUP[-] Configuration property [oozie.service.ELService.ext.constants.job-submit] not found, using default []
+2015-01-20 15:26:59,810  WARN oozieops:542 - USER[-] GROUP[-] Configuration property [oozie.service.ELService.ext.functions.job-submit] not found, using default []
+2015-01-20 15:28:19,690  INFO oozieops:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:28:19,888  INFO oozieops:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:28:19,943  WARN oozieops:542 - USER[-] GROUP[-] Configuration property [oozie.service.ELService.ext.constants.job-submit] not found, using default []
+2015-01-20 15:28:19,943  WARN oozieops:542 - USER[-] GROUP[-] Configuration property [oozie.service.ELService.ext.functions.job-submit] not found, using default []

@@ -1,0 +1,273 @@
+2015-01-20 15:22:03,549  INFO XLogService:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:03,551  INFO XLogService:539 - Log4j configuration file [oozie-log4j.properties]
+2015-01-20 15:22:03,551  INFO XLogService:539 - Log4j configuration file loaded from [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:03,551  INFO XLogService:539 - Log4j reload interval [10 sec]
+2015-01-20 15:22:03,559  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie home dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1]
+2015-01-20 15:22:03,559  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:03,559  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf file [oozie-site.xml]
+2015-01-20 15:22:03,738  WARN Services:542 - USER[-] GROUP[-] System ID [oozie-hdus] exceeds maximum length [10], trimming
+2015-01-20 15:22:03,739  INFO Services:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:03,742  INFO Services:539 - USER[-] GROUP[-] Initialized runtime directory [/tmp/oozie-hdus6377827804722597093.dir]
+2015-01-20 15:22:06,059  INFO XLogService:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:06,059  INFO XLogService:539 - Log4j configuration file [oozie-log4j.properties]
+2015-01-20 15:22:06,059  INFO XLogService:539 - Log4j configuration file loaded from [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:06,061  INFO XLogService:539 - Log4j reload interval [10 sec]
+2015-01-20 15:22:06,062  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie home dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1]
+2015-01-20 15:22:06,062  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:06,062  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf file [oozie-site.xml]
+2015-01-20 15:22:06,096  WARN Services:542 - USER[-] GROUP[-] System ID [oozie-hdus] exceeds maximum length [10], trimming
+2015-01-20 15:22:06,105  INFO Services:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:06,105  INFO Services:539 - USER[-] GROUP[-] Initialized runtime directory [/tmp/oozie-hdus3164389588090438805.dir]
+2015-01-20 15:22:06,227  INFO XLogService:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:06,227  INFO XLogService:539 - Log4j configuration file [oozie-log4j.properties]
+2015-01-20 15:22:06,227  INFO XLogService:539 - Log4j configuration file loaded from [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:06,227  INFO XLogService:539 - Log4j reload interval [10 sec]
+2015-01-20 15:22:06,228  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie home dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1]
+2015-01-20 15:22:06,228  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:06,228  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf file [oozie-site.xml]
+2015-01-20 15:22:06,242  WARN Services:542 - USER[-] GROUP[-] System ID [oozie-hdus] exceeds maximum length [10], trimming
+2015-01-20 15:22:06,242  INFO Services:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:06,243  INFO Services:539 - USER[-] GROUP[-] Initialized runtime directory [/tmp/oozie-hdus5781577814546840440.dir]
+2015-01-20 15:22:06,269  INFO XLogService:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:06,269  INFO XLogService:539 - Log4j configuration file [oozie-log4j.properties]
+2015-01-20 15:22:06,269  INFO XLogService:539 - Log4j configuration file loaded from [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:06,269  INFO XLogService:539 - Log4j reload interval [10 sec]
+2015-01-20 15:22:06,270  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie home dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1]
+2015-01-20 15:22:06,270  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:06,270  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf file [oozie-site.xml]
+2015-01-20 15:22:06,282  WARN Services:542 - USER[-] GROUP[-] System ID [oozie-hdus] exceeds maximum length [10], trimming
+2015-01-20 15:22:06,282  INFO Services:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:06,283  INFO Services:539 - USER[-] GROUP[-] Initialized runtime directory [/tmp/oozie-hdus5563831945522460175.dir]
+2015-01-20 15:22:07,618  INFO XLogService:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:07,618  INFO XLogService:539 - Log4j configuration file [oozie-log4j.properties]
+2015-01-20 15:22:07,618  INFO XLogService:539 - Log4j configuration file loaded from [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:07,619  INFO XLogService:539 - Log4j reload interval [10 sec]
+2015-01-20 15:22:07,619  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie home dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1]
+2015-01-20 15:22:07,619  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:07,619  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf file [oozie-site.xml]
+2015-01-20 15:22:07,630  WARN Services:542 - USER[-] GROUP[-] System ID [oozie-hdus] exceeds maximum length [10], trimming
+2015-01-20 15:22:07,636  INFO Services:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:07,636  INFO Services:539 - USER[-] GROUP[-] Initialized runtime directory [/tmp/oozie-hdus2005956814279056325.dir]
+2015-01-20 15:22:11,799  INFO XLogService:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:11,800  INFO XLogService:539 - Log4j configuration file [oozie-log4j.properties]
+2015-01-20 15:22:11,800  INFO XLogService:539 - Log4j configuration file loaded from [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:11,800  INFO XLogService:539 - Log4j reload interval [10 sec]
+2015-01-20 15:22:11,800  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie home dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1]
+2015-01-20 15:22:11,800  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:11,800  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf file [oozie-site.xml]
+2015-01-20 15:22:11,817  WARN Services:542 - USER[-] GROUP[-] System ID [oozie-hdus] exceeds maximum length [10], trimming
+2015-01-20 15:22:11,817  INFO Services:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:11,817  INFO Services:539 - USER[-] GROUP[-] Initialized runtime directory [/tmp/oozie-hdus6200654302160880083.dir]
+2015-01-20 15:22:11,914  INFO XLogService:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:22:11,914  INFO XLogService:539 - Log4j configuration file [oozie-log4j.properties]
+2015-01-20 15:22:11,915  INFO XLogService:539 - Log4j configuration file loaded from [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:11,915  INFO XLogService:539 - Log4j reload interval [10 sec]
+2015-01-20 15:22:11,915  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie home dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1]
+2015-01-20 15:22:11,915  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:22:11,915  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf file [oozie-site.xml]
+2015-01-20 15:22:11,923  WARN Services:542 - USER[-] GROUP[-] System ID [oozie-hdus] exceeds maximum length [10], trimming
+2015-01-20 15:22:11,924  INFO Services:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:22:11,925  INFO Services:539 - USER[-] GROUP[-] Initialized runtime directory [/tmp/oozie-hdus247372604973778610.dir]
+2015-01-20 15:23:04,940  INFO XLogService:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:23:04,943  INFO XLogService:539 - Log4j configuration file [oozie-log4j.properties]
+2015-01-20 15:23:04,943  INFO XLogService:539 - Log4j configuration file loaded from [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:23:04,943  INFO XLogService:539 - Log4j reload interval [10 sec]
+2015-01-20 15:23:04,951  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie home dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1]
+2015-01-20 15:23:04,951  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:23:04,951  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf file [oozie-site.xml]
+2015-01-20 15:23:05,135  WARN Services:542 - USER[-] GROUP[-] System ID [oozie-hdus] exceeds maximum length [10], trimming
+2015-01-20 15:23:05,136  INFO Services:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:23:05,138  INFO Services:539 - USER[-] GROUP[-] Initialized runtime directory [/tmp/oozie-hdus8353947127580237464.dir]
+2015-01-20 15:23:06,630  INFO XLogService:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:23:06,630  INFO XLogService:539 - Log4j configuration file [oozie-log4j.properties]
+2015-01-20 15:23:06,630  INFO XLogService:539 - Log4j configuration file loaded from [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:23:06,631  INFO XLogService:539 - Log4j reload interval [10 sec]
+2015-01-20 15:23:06,632  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie home dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1]
+2015-01-20 15:23:06,632  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:23:06,632  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf file [oozie-site.xml]
+2015-01-20 15:23:06,669  WARN Services:542 - USER[-] GROUP[-] System ID [oozie-hdus] exceeds maximum length [10], trimming
+2015-01-20 15:23:06,670  INFO Services:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:23:06,670  INFO Services:539 - USER[-] GROUP[-] Initialized runtime directory [/tmp/oozie-hdus3002393347658565647.dir]
+2015-01-20 15:26:59,543  INFO XLogService:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:26:59,545  INFO XLogService:539 - Log4j configuration file [oozie-log4j.properties]
+2015-01-20 15:26:59,545  INFO XLogService:539 - Log4j configuration file loaded from [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:26:59,545  INFO XLogService:539 - Log4j reload interval [10 sec]
+2015-01-20 15:26:59,556  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie home dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1]
+2015-01-20 15:26:59,557  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:26:59,557  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf file [oozie-site.xml]
+2015-01-20 15:26:59,748  INFO ConfigurationService:539 - USER[-] GROUP[-] Configuration change via System Property, [oozie.base.url]=[http://ubuntu-VirtualBox:11000/oozie]
+2015-01-20 15:26:59,752  WARN ConfigurationService:542 - USER[-] GROUP[-] System property [oozie.https.keystore.pass] no defined in Oozie configuration, ignored
+2015-01-20 15:26:59,753  WARN ConfigurationService:542 - USER[-] GROUP[-] System property [oozie.admin.port] no defined in Oozie configuration, ignored
+2015-01-20 15:26:59,753  WARN ConfigurationService:542 - USER[-] GROUP[-] System property [oozie.https.port] no defined in Oozie configuration, ignored
+2015-01-20 15:26:59,753  WARN ConfigurationService:542 - USER[-] GROUP[-] System property [oozie.https.keystore.file] no defined in Oozie configuration, ignored
+2015-01-20 15:26:59,756  WARN Services:542 - USER[-] GROUP[-] System ID [oozie-hdus] exceeds maximum length [10], trimming
+2015-01-20 15:26:59,757  INFO Services:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:26:59,758  INFO Services:539 - USER[-] GROUP[-] Initialized runtime directory [/home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/temp/oozie-hdus7267828762422267182.dir]
+2015-01-20 15:26:59,809  WARN ConfigurationService:542 - USER[-] GROUP[-] Configuration property [oozie.service.ELService.ext.constants.job-submit] not found, using default []
+2015-01-20 15:26:59,810  WARN ConfigurationService:542 - USER[-] GROUP[-] Configuration property [oozie.service.ELService.ext.functions.job-submit] not found, using default []
+2015-01-20 15:26:59,839  WARN ConfigUtils:542 - USER[-] GROUP[-] Using a deprecated configuration property [oozie.service.AuthorizationService.security.enabled], should use [oozie.service.AuthorizationService.authorization.enabled].  Please delete the deprecated property in order for the new property to take effect.
+2015-01-20 15:26:59,839  WARN AuthorizationService:542 - USER[-] GROUP[-] Oozie running with authorization disabled
+2015-01-20 15:26:59,840  INFO HadoopAccessorService:539 - USER[-] GROUP[-] JOB_TRACKER_WHITELIST :[ ], Total entries :0
+2015-01-20 15:26:59,840  INFO HadoopAccessorService:539 - USER[-] GROUP[-] NAME_NODE_WHITELIST :[ ], Total entries :0
+2015-01-20 15:26:59,840  INFO HadoopAccessorService:539 - USER[-] GROUP[-] Oozie Kerberos Authentication [disabled]
+2015-01-20 15:26:59,955  INFO URIHandlerService:539 - USER[-] GROUP[-] Loaded urihandlers [org.apache.oozie.dependency.FSURIHandler]
+2015-01-20 15:26:59,956  INFO URIHandlerService:539 - USER[-] GROUP[-] Loaded default urihandler org.apache.oozie.dependency.FSURIHandler
+2015-01-20 15:27:02,417  INFO JPAService:539 - USER[-] GROUP[-] TOKEN[-] APP[-] JOB[-] ACTION[-] All entities initialized
+2015-01-20 15:27:02,418  INFO JPAService:539 - USER[-] GROUP[-] TOKEN[-] APP[-] JOB[-] ACTION[-] JPA configuration: DriverClassName=org.apache.derby.jdbc.EmbeddedDriver,Url=jdbc:derby:/home/hduser/softwares/oozie-dist/oozie-4.0.1/data/oozie-db;create=true,Username=sa,Password=***,MaxActive=10,TestOnBorrow=false,TestOnReturn=false,TestWhileIdle=false
+2015-01-20 15:27:02,608  INFO Services:539 - Initialized
+2015-01-20 15:27:02,614  INFO Services:539 - Running with JARs for Hadoop version [1.1.1]
+2015-01-20 15:27:02,614  INFO Services:539 - Oozie System ID [oozie-hdus] started!
+2015-01-20 15:27:12,599  INFO PauseTransitService:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:27:12,603  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:27:12,620  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running coordinator status service first instance
+2015-01-20 15:27:13,000  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running bundle status service first instance
+2015-01-20 15:27:13,011  INFO CoordMaterializeTriggerService$CoordMaterializeTriggerRunnable:539 - USER[-] GROUP[-] TOKEN[-] APP[-] JOB[-] ACTION[-] CoordMaterializeTriggerService - Curr Date= Tue Jan 20 15:32:12 CET 2015, Num jobs to materialize = 0
+2015-01-20 15:27:13,111  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:27:13,161  INFO PauseTransitService:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:27:28,706  INFO Services:539 - Shutdown
+2015-01-20 15:28:19,688  INFO XLogService:539 - 
+ ******************************************************************************* 
+  STARTUP MSG: Oozie BUILD_VERSION [4.0.1] compiled by [hduser] on [2015.01.20-13:33:43GMT]
+  STARTUP MSG:       revision [unavailable]@[unavailable]
+*******************************************************************************
+2015-01-20 15:28:19,690  INFO XLogService:539 - Log4j configuration file [oozie-log4j.properties]
+2015-01-20 15:28:19,690  INFO XLogService:539 - Log4j configuration file loaded from [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:28:19,690  INFO XLogService:539 - Log4j reload interval [10 sec]
+2015-01-20 15:28:19,696  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie home dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1]
+2015-01-20 15:28:19,696  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf dir  [/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf]
+2015-01-20 15:28:19,697  INFO ConfigurationService:539 - USER[-] GROUP[-] Oozie conf file [oozie-site.xml]
+2015-01-20 15:28:19,880  INFO ConfigurationService:539 - USER[-] GROUP[-] Configuration change via System Property, [oozie.base.url]=[http://ubuntu-VirtualBox:11000/oozie]
+2015-01-20 15:28:19,884  WARN ConfigurationService:542 - USER[-] GROUP[-] System property [oozie.https.keystore.pass] no defined in Oozie configuration, ignored
+2015-01-20 15:28:19,884  WARN ConfigurationService:542 - USER[-] GROUP[-] System property [oozie.admin.port] no defined in Oozie configuration, ignored
+2015-01-20 15:28:19,884  WARN ConfigurationService:542 - USER[-] GROUP[-] System property [oozie.https.port] no defined in Oozie configuration, ignored
+2015-01-20 15:28:19,884  WARN ConfigurationService:542 - USER[-] GROUP[-] System property [oozie.https.keystore.file] no defined in Oozie configuration, ignored
+2015-01-20 15:28:19,887  WARN Services:542 - USER[-] GROUP[-] System ID [oozie-hdus] exceeds maximum length [10], trimming
+2015-01-20 15:28:19,888  INFO Services:539 - USER[-] GROUP[-] Exiting null Entering NORMAL
+2015-01-20 15:28:19,890  INFO Services:539 - USER[-] GROUP[-] Initialized runtime directory [/home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/temp/oozie-hdus8305001014288675101.dir]
+2015-01-20 15:28:19,943  WARN ConfigurationService:542 - USER[-] GROUP[-] Configuration property [oozie.service.ELService.ext.constants.job-submit] not found, using default []
+2015-01-20 15:28:19,943  WARN ConfigurationService:542 - USER[-] GROUP[-] Configuration property [oozie.service.ELService.ext.functions.job-submit] not found, using default []
+2015-01-20 15:28:19,975  WARN ConfigUtils:542 - USER[-] GROUP[-] Using a deprecated configuration property [oozie.service.AuthorizationService.security.enabled], should use [oozie.service.AuthorizationService.authorization.enabled].  Please delete the deprecated property in order for the new property to take effect.
+2015-01-20 15:28:19,975  WARN AuthorizationService:542 - USER[-] GROUP[-] Oozie running with authorization disabled
+2015-01-20 15:28:19,976  INFO HadoopAccessorService:539 - USER[-] GROUP[-] JOB_TRACKER_WHITELIST :[ ], Total entries :0
+2015-01-20 15:28:19,976  INFO HadoopAccessorService:539 - USER[-] GROUP[-] NAME_NODE_WHITELIST :[ ], Total entries :0
+2015-01-20 15:28:19,976  INFO HadoopAccessorService:539 - USER[-] GROUP[-] Oozie Kerberos Authentication [disabled]
+2015-01-20 15:28:20,070  INFO URIHandlerService:539 - USER[-] GROUP[-] Loaded urihandlers [org.apache.oozie.dependency.FSURIHandler]
+2015-01-20 15:28:20,070  INFO URIHandlerService:539 - USER[-] GROUP[-] Loaded default urihandler org.apache.oozie.dependency.FSURIHandler
+2015-01-20 15:28:22,435  INFO JPAService:539 - USER[-] GROUP[-] TOKEN[-] APP[-] JOB[-] ACTION[-] All entities initialized
+2015-01-20 15:28:22,437  INFO JPAService:539 - USER[-] GROUP[-] TOKEN[-] APP[-] JOB[-] ACTION[-] JPA configuration: DriverClassName=org.apache.derby.jdbc.EmbeddedDriver,Url=jdbc:derby:/home/hduser/softwares/oozie-dist/oozie-4.0.1/data/oozie-db;create=true,Username=sa,Password=***,MaxActive=10,TestOnBorrow=false,TestOnReturn=false,TestWhileIdle=false
+2015-01-20 15:28:22,624  INFO Services:539 - Initialized
+2015-01-20 15:28:22,627  INFO Services:539 - Running with JARs for Hadoop version [1.1.1]
+2015-01-20 15:28:22,627  INFO Services:539 - Oozie System ID [oozie-hdus] started!
+2015-01-20 15:28:32,629  INFO PauseTransitService:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:28:32,630  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:28:32,639  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running coordinator status service first instance
+2015-01-20 15:28:33,036  INFO CoordMaterializeTriggerService$CoordMaterializeTriggerRunnable:539 - USER[-] GROUP[-] TOKEN[-] APP[-] JOB[-] ACTION[-] CoordMaterializeTriggerService - Curr Date= Tue Jan 20 15:33:32 CET 2015, Num jobs to materialize = 0
+2015-01-20 15:28:33,040  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running bundle status service first instance
+2015-01-20 15:28:33,127  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:28:33,204  INFO PauseTransitService:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:29:33,128  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:29:33,129  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running coordinator status service from last instance time =  2015-01-20T14:28Z
+2015-01-20 15:29:33,155  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running bundle status service from last instance time =  2015-01-20T14:28Z
+2015-01-20 15:29:33,162  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:29:33,215  INFO PauseTransitService:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:29:33,226  INFO PauseTransitService:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:30:33,163  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:30:33,164  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running coordinator status service from last instance time =  2015-01-20T14:29Z
+2015-01-20 15:30:33,169  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running bundle status service from last instance time =  2015-01-20T14:29Z
+2015-01-20 15:30:33,170  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:30:33,229  INFO PauseTransitService:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:30:33,249  INFO PauseTransitService:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:31:33,170  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:31:33,171  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running coordinator status service from last instance time =  2015-01-20T14:30Z
+2015-01-20 15:31:33,175  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running bundle status service from last instance time =  2015-01-20T14:30Z
+2015-01-20 15:31:33,177  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:31:33,254  INFO PauseTransitService:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:31:33,267  INFO PauseTransitService:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:32:33,178  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:32:33,179  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running coordinator status service from last instance time =  2015-01-20T14:31Z
+2015-01-20 15:32:33,181  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running bundle status service from last instance time =  2015-01-20T14:31Z
+2015-01-20 15:32:33,182  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:32:33,269  INFO PauseTransitService:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:32:33,276  INFO PauseTransitService:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:33:33,044  INFO CoordMaterializeTriggerService$CoordMaterializeTriggerRunnable:539 - USER[-] GROUP[-] TOKEN[-] APP[-] JOB[-] ACTION[-] CoordMaterializeTriggerService - Curr Date= Tue Jan 20 15:38:33 CET 2015, Num jobs to materialize = 0
+2015-01-20 15:33:33,182  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:33:33,183  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running coordinator status service from last instance time =  2015-01-20T14:32Z
+2015-01-20 15:33:33,187  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running bundle status service from last instance time =  2015-01-20T14:32Z
+2015-01-20 15:33:33,188  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:33:33,277  INFO PauseTransitService:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:33:33,282  INFO PauseTransitService:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:34:06,774  INFO ActionStartXCommand:539 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@:start:] Start action [0000000-150120152819942-oozie-hdus-W@:start:] with user-retry state : userRetryCount [0], userRetryMax [0], userRetryInterval [10]
+2015-01-20 15:34:06,785  WARN ActionStartXCommand:542 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@:start:] [***0000000-150120152819942-oozie-hdus-W@:start:***]Action status=DONE
+2015-01-20 15:34:06,786  WARN ActionStartXCommand:542 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@:start:] [***0000000-150120152819942-oozie-hdus-W@:start:***]Action updated in DB!
+2015-01-20 15:34:06,943  INFO ActionStartXCommand:539 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@mr-node] Start action [0000000-150120152819942-oozie-hdus-W@mr-node] with user-retry state : userRetryCount [0], userRetryMax [0], userRetryInterval [10]
+2015-01-20 15:34:07,071  WARN MapReduceActionExecutor:542 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@mr-node] credentials is null for the action
+2015-01-20 15:34:07,254  WARN JobClient:729 - Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same.
+2015-01-20 15:34:07,277  WARN JobClient:846 - No job jar file set.  User classes may not be found. See JobConf(Class) or JobConf#setJar(String).
+2015-01-20 15:34:07,363  WARN NativeCodeLoader:52 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2015-01-20 15:34:07,364  WARN LoadSnappy:46 - Snappy native library not loaded
+2015-01-20 15:34:07,668  INFO MapReduceActionExecutor:539 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@mr-node] checking action, external ID [job_201501201530_0001] status [RUNNING]
+2015-01-20 15:34:07,674  WARN ActionStartXCommand:542 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@mr-node] [***0000000-150120152819942-oozie-hdus-W@mr-node***]Action status=RUNNING
+2015-01-20 15:34:07,674  WARN ActionStartXCommand:542 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@mr-node] [***0000000-150120152819942-oozie-hdus-W@mr-node***]Action updated in DB!
+2015-01-20 15:34:14,017  INFO CallbackServlet:539 - USER[-] GROUP[-] TOKEN[-] APP[-] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@mr-node] callback for action [0000000-150120152819942-oozie-hdus-W@mr-node]
+2015-01-20 15:34:14,158  INFO MapReduceActionExecutor:539 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@mr-node] External ID swap, old ID [job_201501201530_0001] new ID [job_201501201530_0002]
+2015-01-20 15:34:14,166  INFO MapReduceActionExecutor:539 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@mr-node] checking action, external ID [job_201501201530_0001] status [RUNNING]
+2015-01-20 15:34:25,172  INFO CallbackServlet:539 - USER[-] GROUP[-] TOKEN[-] APP[-] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@mr-node] callback for action [0000000-150120152819942-oozie-hdus-W@mr-node]
+2015-01-20 15:34:25,258  INFO MapReduceActionExecutor:539 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@mr-node] action completed, external ID [job_201501201530_0001]
+2015-01-20 15:34:25,264  INFO MapReduceActionExecutor:539 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@mr-node] action produced output
+2015-01-20 15:34:25,364  INFO ActionStartXCommand:539 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@end] Start action [0000000-150120152819942-oozie-hdus-W@end] with user-retry state : userRetryCount [0], userRetryMax [0], userRetryInterval [10]
+2015-01-20 15:34:25,365  WARN ActionStartXCommand:542 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@end] [***0000000-150120152819942-oozie-hdus-W@end***]Action status=DONE
+2015-01-20 15:34:25,365  WARN ActionStartXCommand:542 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[0000000-150120152819942-oozie-hdus-W@end] [***0000000-150120152819942-oozie-hdus-W@end***]Action updated in DB!
+2015-01-20 15:34:25,457  WARN CoordActionUpdateXCommand:542 - USER[hduser] GROUP[-] TOKEN[] APP[map-reduce-wf] JOB[0000000-150120152819942-oozie-hdus-W] ACTION[-] E1100: Command precondition does not hold before execution, [, coord action is null], Error Code: E1100
+2015-01-20 15:34:33,189  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:34:33,189  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running coordinator status service from last instance time =  2015-01-20T14:33Z
+2015-01-20 15:34:33,192  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running bundle status service from last instance time =  2015-01-20T14:33Z
+2015-01-20 15:34:33,193  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:34:33,282  INFO PauseTransitService:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:34:33,290  INFO PauseTransitService:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:35:33,193  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:35:33,194  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running coordinator status service from last instance time =  2015-01-20T14:34Z
+2015-01-20 15:35:33,196  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Running bundle status service from last instance time =  2015-01-20T14:34Z
+2015-01-20 15:35:33,200  INFO StatusTransitService$StatusTransitRunnable:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.StatusTransitService]
+2015-01-20 15:35:33,290  INFO PauseTransitService:539 - USER[-] GROUP[-] Acquired lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:35:33,295  INFO PauseTransitService:539 - USER[-] GROUP[-] Released lock for [org.apache.oozie.service.PauseTransitService]
+2015-01-20 15:36:08,435  INFO Services:539 - Shutdown

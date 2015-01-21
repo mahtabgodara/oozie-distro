@@ -1,0 +1,582 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * or more contributor license agreements.  See the NOTICE file<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * distributed with this work for additional information<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * regarding copyright ownership.  The ASF licenses this file<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * to you under the Apache License, Version 2.0 (the<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * "License"); you may not use this file except in compliance<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * with the License.  You may obtain a copy of the License at<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.10"></a>
+<span class="sourceLineNo">011</span> *<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * Unless required by applicable law or agreed to in writing, software<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * See the License for the specific language governing permissions and<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * limitations under the License.<a name="line.16"></a>
+<span class="sourceLineNo">017</span> */<a name="line.17"></a>
+<span class="sourceLineNo">018</span>package org.apache.oozie.service;<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.io.IOException;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.io.StringReader;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.util.ArrayList;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.util.Date;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.util.List;<a name="line.24"></a>
+<span class="sourceLineNo">025</span><a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.apache.hadoop.conf.Configuration;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.apache.oozie.BundleActionBean;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.oozie.BundleJobBean;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.apache.oozie.CoordinatorActionBean;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.oozie.CoordinatorJobBean;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.apache.oozie.ErrorCode;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.apache.oozie.WorkflowActionBean;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.apache.oozie.client.Job;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.apache.oozie.client.OozieClient;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.apache.oozie.command.CommandException;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.apache.oozie.command.coord.CoordActionInputCheckXCommand;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.apache.oozie.command.coord.CoordActionReadyXCommand;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import org.apache.oozie.command.coord.CoordActionStartXCommand;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.apache.oozie.command.coord.CoordKillXCommand;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.apache.oozie.command.coord.CoordPushDependencyCheckXCommand;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.apache.oozie.command.coord.CoordResumeXCommand;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.apache.oozie.command.coord.CoordSubmitXCommand;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.apache.oozie.command.coord.CoordSuspendXCommand;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import org.apache.oozie.command.wf.ActionEndXCommand;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import org.apache.oozie.command.wf.ActionStartXCommand;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import org.apache.oozie.command.wf.KillXCommand;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>import org.apache.oozie.command.wf.ResumeXCommand;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>import org.apache.oozie.command.wf.SignalXCommand;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>import org.apache.oozie.command.wf.SuspendXCommand;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>import org.apache.oozie.executor.jpa.BundleActionsGetWaitingOlderJPAExecutor;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>import org.apache.oozie.executor.jpa.BundleJobGetJPAExecutor;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>import org.apache.oozie.executor.jpa.CoordActionsGetForRecoveryJPAExecutor;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>import org.apache.oozie.executor.jpa.CoordActionsGetReadyGroupbyJobIDJPAExecutor;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>import org.apache.oozie.executor.jpa.CoordJobGetJPAExecutor;<a name="line.54"></a>
+<span class="sourceLineNo">055</span>import org.apache.oozie.executor.jpa.JPAExecutorException;<a name="line.55"></a>
+<span class="sourceLineNo">056</span>import org.apache.oozie.executor.jpa.WorkflowActionsGetPendingJPAExecutor;<a name="line.56"></a>
+<span class="sourceLineNo">057</span>import org.apache.oozie.util.JobUtils;<a name="line.57"></a>
+<span class="sourceLineNo">058</span>import org.apache.oozie.util.XCallable;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>import org.apache.oozie.util.XConfiguration;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>import org.apache.oozie.util.XLog;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>import org.apache.oozie.util.XmlUtils;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>import org.jdom.Attribute;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>import org.jdom.Element;<a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>/**<a name="line.65"></a>
+<span class="sourceLineNo">066</span> * The Recovery Service checks for pending actions and premater coordinator jobs older than a configured age and then<a name="line.66"></a>
+<span class="sourceLineNo">067</span> * queues them for execution.<a name="line.67"></a>
+<span class="sourceLineNo">068</span> */<a name="line.68"></a>
+<span class="sourceLineNo">069</span>public class RecoveryService implements Service {<a name="line.69"></a>
+<span class="sourceLineNo">070</span><a name="line.70"></a>
+<span class="sourceLineNo">071</span>    public static final String CONF_PREFIX = Service.CONF_PREFIX + "RecoveryService.";<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    public static final String CONF_PREFIX_WF_ACTIONS = Service.CONF_PREFIX + "wf.actions.";<a name="line.72"></a>
+<span class="sourceLineNo">073</span>    public static final String CONF_PREFIX_COORD = Service.CONF_PREFIX + "coord.";<a name="line.73"></a>
+<span class="sourceLineNo">074</span>    public static final String CONF_PREFIX_BUNDLE = Service.CONF_PREFIX + "bundle.";<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    /**<a name="line.75"></a>
+<span class="sourceLineNo">076</span>     * Time interval, in seconds, at which the recovery service will be scheduled to run.<a name="line.76"></a>
+<span class="sourceLineNo">077</span>     */<a name="line.77"></a>
+<span class="sourceLineNo">078</span>    public static final String CONF_SERVICE_INTERVAL = CONF_PREFIX + "interval";<a name="line.78"></a>
+<span class="sourceLineNo">079</span>    /**<a name="line.79"></a>
+<span class="sourceLineNo">080</span>     * The number of callables to be queued in a batch.<a name="line.80"></a>
+<span class="sourceLineNo">081</span>     */<a name="line.81"></a>
+<span class="sourceLineNo">082</span>    public static final String CONF_CALLABLE_BATCH_SIZE = CONF_PREFIX + "callable.batch.size";<a name="line.82"></a>
+<span class="sourceLineNo">083</span><a name="line.83"></a>
+<span class="sourceLineNo">084</span>    /**<a name="line.84"></a>
+<span class="sourceLineNo">085</span>     * Delay for the push missing dependencies in milliseconds.<a name="line.85"></a>
+<span class="sourceLineNo">086</span>     */<a name="line.86"></a>
+<span class="sourceLineNo">087</span>    public static final String CONF_PUSH_DEPENDENCY_INTERVAL = CONF_PREFIX + "push.dependency.interval";<a name="line.87"></a>
+<span class="sourceLineNo">088</span><a name="line.88"></a>
+<span class="sourceLineNo">089</span>    /**<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     * Age of actions to queue, in seconds.<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     */<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    public static final String CONF_WF_ACTIONS_OLDER_THAN = CONF_PREFIX_WF_ACTIONS + "older.than";<a name="line.92"></a>
+<span class="sourceLineNo">093</span>    /**<a name="line.93"></a>
+<span class="sourceLineNo">094</span>     * Age of coordinator jobs to recover, in seconds.<a name="line.94"></a>
+<span class="sourceLineNo">095</span>     */<a name="line.95"></a>
+<span class="sourceLineNo">096</span>    public static final String CONF_COORD_OLDER_THAN = CONF_PREFIX_COORD + "older.than";<a name="line.96"></a>
+<span class="sourceLineNo">097</span><a name="line.97"></a>
+<span class="sourceLineNo">098</span>    /**<a name="line.98"></a>
+<span class="sourceLineNo">099</span>     * Age of Bundle jobs to recover, in seconds.<a name="line.99"></a>
+<span class="sourceLineNo">100</span>     */<a name="line.100"></a>
+<span class="sourceLineNo">101</span>    public static final String CONF_BUNDLE_OLDER_THAN = CONF_PREFIX_BUNDLE + "older.than";<a name="line.101"></a>
+<span class="sourceLineNo">102</span><a name="line.102"></a>
+<span class="sourceLineNo">103</span>    private static final String INSTRUMENTATION_GROUP = "recovery";<a name="line.103"></a>
+<span class="sourceLineNo">104</span>    private static final String INSTR_RECOVERED_ACTIONS_COUNTER = "actions";<a name="line.104"></a>
+<span class="sourceLineNo">105</span>    private static final String INSTR_RECOVERED_COORD_ACTIONS_COUNTER = "coord_actions";<a name="line.105"></a>
+<span class="sourceLineNo">106</span>    private static final String INSTR_RECOVERED_BUNDLE_ACTIONS_COUNTER = "bundle_actions";<a name="line.106"></a>
+<span class="sourceLineNo">107</span><a name="line.107"></a>
+<span class="sourceLineNo">108</span><a name="line.108"></a>
+<span class="sourceLineNo">109</span>    /**<a name="line.109"></a>
+<span class="sourceLineNo">110</span>     * RecoveryRunnable is the Runnable which is scheduled to run with the configured interval, and takes care of the<a name="line.110"></a>
+<span class="sourceLineNo">111</span>     * queuing of commands.<a name="line.111"></a>
+<span class="sourceLineNo">112</span>     */<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    static class RecoveryRunnable implements Runnable {<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        private final long olderThan;<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        private final long coordOlderThan;<a name="line.115"></a>
+<span class="sourceLineNo">116</span>        private final long bundleOlderThan;<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        private long delay = 0;<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        private List&lt;XCallable&lt;?&gt;&gt; callables;<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        private List&lt;XCallable&lt;?&gt;&gt; delayedCallables;<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        private StringBuilder msg = null;<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        private JPAService jpaService = null;<a name="line.121"></a>
+<span class="sourceLineNo">122</span><a name="line.122"></a>
+<span class="sourceLineNo">123</span>        public RecoveryRunnable(long olderThan, long coordOlderThan,long bundleOlderThan) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>            this.olderThan = olderThan;<a name="line.124"></a>
+<span class="sourceLineNo">125</span>            this.coordOlderThan = coordOlderThan;<a name="line.125"></a>
+<span class="sourceLineNo">126</span>            this.bundleOlderThan = bundleOlderThan;<a name="line.126"></a>
+<span class="sourceLineNo">127</span>        }<a name="line.127"></a>
+<span class="sourceLineNo">128</span><a name="line.128"></a>
+<span class="sourceLineNo">129</span>        public void run() {<a name="line.129"></a>
+<span class="sourceLineNo">130</span>            XLog.Info.get().clear();<a name="line.130"></a>
+<span class="sourceLineNo">131</span>            XLog log = XLog.getLog(getClass());<a name="line.131"></a>
+<span class="sourceLineNo">132</span>            msg = new StringBuilder();<a name="line.132"></a>
+<span class="sourceLineNo">133</span>            jpaService = Services.get().get(JPAService.class);<a name="line.133"></a>
+<span class="sourceLineNo">134</span>            runWFRecovery();<a name="line.134"></a>
+<span class="sourceLineNo">135</span>            runCoordActionRecovery();<a name="line.135"></a>
+<span class="sourceLineNo">136</span>            runCoordActionRecoveryForReady();<a name="line.136"></a>
+<span class="sourceLineNo">137</span>            runBundleRecovery();<a name="line.137"></a>
+<span class="sourceLineNo">138</span>            log.debug("QUEUING [{0}] for potential recovery", msg.toString());<a name="line.138"></a>
+<span class="sourceLineNo">139</span>            boolean ret = false;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>            if (null != callables) {<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                ret = Services.get().get(CallableQueueService.class).queueSerial(callables);<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                if (ret == false) {<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                    log.warn("Unable to queue the callables commands for RecoveryService. "<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                            + "Most possibly command queue is full. Queue size is :"<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                            + Services.get().get(CallableQueueService.class).queueSize());<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                }<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                callables = null;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>            }<a name="line.148"></a>
+<span class="sourceLineNo">149</span>            if (null != delayedCallables) {<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                ret = Services.get().get(CallableQueueService.class).queueSerial(delayedCallables, this.delay);<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                if (ret == false) {<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                    log.warn("Unable to queue the delayedCallables commands for RecoveryService. "<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                            + "Most possibly Callable queue is full. Queue size is :"<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                            + Services.get().get(CallableQueueService.class).queueSize());<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                }<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                delayedCallables = null;<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                this.delay = 0;<a name="line.157"></a>
+<span class="sourceLineNo">158</span>            }<a name="line.158"></a>
+<span class="sourceLineNo">159</span>        }<a name="line.159"></a>
+<span class="sourceLineNo">160</span><a name="line.160"></a>
+<span class="sourceLineNo">161</span>        private void runBundleRecovery(){<a name="line.161"></a>
+<span class="sourceLineNo">162</span>            XLog.Info.get().clear();<a name="line.162"></a>
+<span class="sourceLineNo">163</span>            XLog log = XLog.getLog(getClass());<a name="line.163"></a>
+<span class="sourceLineNo">164</span>            List&lt;BundleActionBean&gt; bactions = null;<a name="line.164"></a>
+<span class="sourceLineNo">165</span>            try {<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                bactions = jpaService.execute(new BundleActionsGetWaitingOlderJPAExecutor(bundleOlderThan));<a name="line.166"></a>
+<span class="sourceLineNo">167</span>            }<a name="line.167"></a>
+<span class="sourceLineNo">168</span>            catch (JPAExecutorException ex) {<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                log.warn("Error reading bundle actions from database", ex);<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                return;<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            }<a name="line.171"></a>
+<span class="sourceLineNo">172</span>            msg.append(", BUNDLE_ACTIONS : " + bactions.size());<a name="line.172"></a>
+<span class="sourceLineNo">173</span>            for (BundleActionBean baction : bactions) {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                try {<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                    Services.get().get(InstrumentationService.class).get()<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                            .incr(INSTRUMENTATION_GROUP, INSTR_RECOVERED_BUNDLE_ACTIONS_COUNTER, 1);<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                    if (baction.getCoordId() == null) {<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                        log.error("CoordId is null for Bundle action " + baction.getBundleActionId());<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                        continue;<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                    }<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                    if (baction.getStatus() == Job.Status.PREP) {<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                        BundleJobBean bundleJob = null;<a name="line.182"></a>
+<span class="sourceLineNo">183</span><a name="line.183"></a>
+<span class="sourceLineNo">184</span>                        if (jpaService != null) {<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                            bundleJob = jpaService.execute(new BundleJobGetJPAExecutor(baction.getBundleId()));<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                        }<a name="line.186"></a>
+<span class="sourceLineNo">187</span>                        if (bundleJob != null) {<a name="line.187"></a>
+<span class="sourceLineNo">188</span>                            Element bAppXml = XmlUtils.parseXml(bundleJob.getJobXml());<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                            List&lt;Element&gt; coordElems = bAppXml.getChildren("coordinator", bAppXml.getNamespace());<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                            for (Element coordElem : coordElems) {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                                Attribute name = coordElem.getAttribute("name");<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                                if (name.getValue().equals(baction.getCoordName())) {<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                                    Configuration coordConf = mergeConfig(coordElem, bundleJob);<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                                    coordConf.set(OozieClient.BUNDLE_ID, baction.getBundleId());<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                                    queueCallable(new CoordSubmitXCommand(coordConf,<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                                            bundleJob.getId(), name.getValue()));<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                                }<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                            }<a name="line.198"></a>
+<span class="sourceLineNo">199</span>                        }<a name="line.199"></a>
+<span class="sourceLineNo">200</span><a name="line.200"></a>
+<span class="sourceLineNo">201</span>                    }<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                    else if (baction.getStatus() == Job.Status.KILLED) {<a name="line.202"></a>
+<span class="sourceLineNo">203</span>                        queueCallable(new CoordKillXCommand(baction.getCoordId()));<a name="line.203"></a>
+<span class="sourceLineNo">204</span>                    }<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                    else if (baction.getStatus() == Job.Status.SUSPENDED<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                            || baction.getStatus() == Job.Status.SUSPENDEDWITHERROR) {<a name="line.206"></a>
+<span class="sourceLineNo">207</span>                        queueCallable(new CoordSuspendXCommand(baction.getCoordId()));<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                    }<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                    else if (baction.getStatus() == Job.Status.RUNNING<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                            || baction.getStatus() == Job.Status.RUNNINGWITHERROR) {<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                        queueCallable(new CoordResumeXCommand(baction.getCoordId()));<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                    }<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                }<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                catch (Exception ex) {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                    log.error("Exception, {0}", ex.getMessage(), ex);<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                }<a name="line.216"></a>
+<span class="sourceLineNo">217</span>            }<a name="line.217"></a>
+<span class="sourceLineNo">218</span><a name="line.218"></a>
+<span class="sourceLineNo">219</span>        }<a name="line.219"></a>
+<span class="sourceLineNo">220</span><a name="line.220"></a>
+<span class="sourceLineNo">221</span>        /**<a name="line.221"></a>
+<span class="sourceLineNo">222</span>         * Recover coordinator actions that are staying in WAITING or SUBMITTED too long<a name="line.222"></a>
+<span class="sourceLineNo">223</span>         */<a name="line.223"></a>
+<span class="sourceLineNo">224</span>        private void runCoordActionRecovery() {<a name="line.224"></a>
+<span class="sourceLineNo">225</span>            XLog.Info.get().clear();<a name="line.225"></a>
+<span class="sourceLineNo">226</span>            XLog log = XLog.getLog(getClass());<a name="line.226"></a>
+<span class="sourceLineNo">227</span>            long pushMissingDepInterval = Services.get().getConf().getLong(CONF_PUSH_DEPENDENCY_INTERVAL, 200);<a name="line.227"></a>
+<span class="sourceLineNo">228</span>            long pushMissingDepDelay = pushMissingDepInterval;<a name="line.228"></a>
+<span class="sourceLineNo">229</span>            List&lt;CoordinatorActionBean&gt; cactions = null;<a name="line.229"></a>
+<span class="sourceLineNo">230</span>            try {<a name="line.230"></a>
+<span class="sourceLineNo">231</span>                cactions = jpaService.execute(new CoordActionsGetForRecoveryJPAExecutor(coordOlderThan));<a name="line.231"></a>
+<span class="sourceLineNo">232</span>            }<a name="line.232"></a>
+<span class="sourceLineNo">233</span>            catch (JPAExecutorException ex) {<a name="line.233"></a>
+<span class="sourceLineNo">234</span>                log.warn("Error reading coord actions from database", ex);<a name="line.234"></a>
+<span class="sourceLineNo">235</span>                return;<a name="line.235"></a>
+<span class="sourceLineNo">236</span>            }<a name="line.236"></a>
+<span class="sourceLineNo">237</span>            msg.append(", COORD_ACTIONS : " + cactions.size());<a name="line.237"></a>
+<span class="sourceLineNo">238</span>            for (CoordinatorActionBean caction : cactions) {<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                try {<a name="line.239"></a>
+<span class="sourceLineNo">240</span>                    Services.get().get(InstrumentationService.class).get()<a name="line.240"></a>
+<span class="sourceLineNo">241</span>                            .incr(INSTRUMENTATION_GROUP, INSTR_RECOVERED_COORD_ACTIONS_COUNTER, 1);<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                    if (caction.getStatus() == CoordinatorActionBean.Status.WAITING) {<a name="line.242"></a>
+<span class="sourceLineNo">243</span>                        queueCallable(new CoordActionInputCheckXCommand(caction.getId(), caction.getJobId()));<a name="line.243"></a>
+<span class="sourceLineNo">244</span>                        log.info("Recover a WAITING coord action and resubmit CoordActionInputCheckXCommand :"<a name="line.244"></a>
+<span class="sourceLineNo">245</span>                                + caction.getId());<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                        if (caction.getPushMissingDependencies() != null<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                                &amp;&amp; caction.getPushMissingDependencies().length() != 0) {<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                            queueCallable(new CoordPushDependencyCheckXCommand(caction.getId(), true, true),<a name="line.248"></a>
+<span class="sourceLineNo">249</span>                                    pushMissingDepDelay);<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                            pushMissingDepDelay = pushMissingDepDelay + pushMissingDepInterval;<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                            log.info("Recover a WAITING coord action and resubmit CoordPushDependencyCheckX :"<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                                    + caction.getId());<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                        }<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                    }<a name="line.254"></a>
+<span class="sourceLineNo">255</span>                    else if (caction.getStatus() == CoordinatorActionBean.Status.SUBMITTED) {<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                        CoordinatorJobBean coordJob = jpaService<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                                .execute(new CoordJobGetJPAExecutor(caction.getJobId()));<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                        queueCallable(new CoordActionStartXCommand(caction.getId(), coordJob.getUser(),<a name="line.258"></a>
+<span class="sourceLineNo">259</span>                                coordJob.getAppName(), caction.getJobId()));<a name="line.259"></a>
+<span class="sourceLineNo">260</span><a name="line.260"></a>
+<span class="sourceLineNo">261</span>                        log.info("Recover a SUBMITTED coord action and resubmit CoordActionStartCommand :"<a name="line.261"></a>
+<span class="sourceLineNo">262</span>                                + caction.getId());<a name="line.262"></a>
+<span class="sourceLineNo">263</span>                    }<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                    else if (caction.getStatus() == CoordinatorActionBean.Status.SUSPENDED) {<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                        if (caction.getExternalId() != null) {<a name="line.265"></a>
+<span class="sourceLineNo">266</span>                            queueCallable(new SuspendXCommand(caction.getExternalId()));<a name="line.266"></a>
+<span class="sourceLineNo">267</span>                            log.debug("Recover a SUSPENDED coord action and resubmit SuspendXCommand :"<a name="line.267"></a>
+<span class="sourceLineNo">268</span>                                    + caction.getId());<a name="line.268"></a>
+<span class="sourceLineNo">269</span>                        }<a name="line.269"></a>
+<span class="sourceLineNo">270</span>                    }<a name="line.270"></a>
+<span class="sourceLineNo">271</span>                    else if (caction.getStatus() == CoordinatorActionBean.Status.KILLED) {<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                        if (caction.getExternalId() != null) {<a name="line.272"></a>
+<span class="sourceLineNo">273</span>                            queueCallable(new KillXCommand(caction.getExternalId()));<a name="line.273"></a>
+<span class="sourceLineNo">274</span>                            log.debug("Recover a KILLED coord action and resubmit KillXCommand :" + caction.getId());<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                        }<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                    }<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                    else if (caction.getStatus() == CoordinatorActionBean.Status.RUNNING) {<a name="line.277"></a>
+<span class="sourceLineNo">278</span>                        if (caction.getExternalId() != null) {<a name="line.278"></a>
+<span class="sourceLineNo">279</span>                            queueCallable(new ResumeXCommand(caction.getExternalId()));<a name="line.279"></a>
+<span class="sourceLineNo">280</span>                            log.debug("Recover a RUNNING coord action and resubmit ResumeXCommand :" + caction.getId());<a name="line.280"></a>
+<span class="sourceLineNo">281</span>                        }<a name="line.281"></a>
+<span class="sourceLineNo">282</span>                    }<a name="line.282"></a>
+<span class="sourceLineNo">283</span>                }<a name="line.283"></a>
+<span class="sourceLineNo">284</span>                catch (Exception ex) {<a name="line.284"></a>
+<span class="sourceLineNo">285</span>                    log.error("Exception, {0}", ex.getMessage(), ex);<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                }<a name="line.286"></a>
+<span class="sourceLineNo">287</span>            }<a name="line.287"></a>
+<span class="sourceLineNo">288</span><a name="line.288"></a>
+<span class="sourceLineNo">289</span><a name="line.289"></a>
+<span class="sourceLineNo">290</span>        }<a name="line.290"></a>
+<span class="sourceLineNo">291</span><a name="line.291"></a>
+<span class="sourceLineNo">292</span>        /**<a name="line.292"></a>
+<span class="sourceLineNo">293</span>         * Recover coordinator actions that are staying in READY too long<a name="line.293"></a>
+<span class="sourceLineNo">294</span>         */<a name="line.294"></a>
+<span class="sourceLineNo">295</span>        private void runCoordActionRecoveryForReady() {<a name="line.295"></a>
+<span class="sourceLineNo">296</span>            XLog.Info.get().clear();<a name="line.296"></a>
+<span class="sourceLineNo">297</span>            XLog log = XLog.getLog(getClass());<a name="line.297"></a>
+<span class="sourceLineNo">298</span><a name="line.298"></a>
+<span class="sourceLineNo">299</span>            try {<a name="line.299"></a>
+<span class="sourceLineNo">300</span>                List&lt;String&gt; jobids = jpaService.execute(new CoordActionsGetReadyGroupbyJobIDJPAExecutor(coordOlderThan));<a name="line.300"></a>
+<span class="sourceLineNo">301</span>                msg.append(", COORD_READY_JOBS : " + jobids.size());<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                for (String jobid : jobids) {<a name="line.302"></a>
+<span class="sourceLineNo">303</span>                        queueCallable(new CoordActionReadyXCommand(jobid));<a name="line.303"></a>
+<span class="sourceLineNo">304</span><a name="line.304"></a>
+<span class="sourceLineNo">305</span>                    log.info("Recover READY coord actions for jobid :" + jobid);<a name="line.305"></a>
+<span class="sourceLineNo">306</span>                }<a name="line.306"></a>
+<span class="sourceLineNo">307</span>            }<a name="line.307"></a>
+<span class="sourceLineNo">308</span>            catch (Exception ex) {<a name="line.308"></a>
+<span class="sourceLineNo">309</span>                log.error("Exception, {0}", ex.getMessage(), ex);<a name="line.309"></a>
+<span class="sourceLineNo">310</span>            }<a name="line.310"></a>
+<span class="sourceLineNo">311</span>        }<a name="line.311"></a>
+<span class="sourceLineNo">312</span><a name="line.312"></a>
+<span class="sourceLineNo">313</span>        /**<a name="line.313"></a>
+<span class="sourceLineNo">314</span>         * Recover wf actions<a name="line.314"></a>
+<span class="sourceLineNo">315</span>         */<a name="line.315"></a>
+<span class="sourceLineNo">316</span>        private void runWFRecovery() {<a name="line.316"></a>
+<span class="sourceLineNo">317</span>            XLog.Info.get().clear();<a name="line.317"></a>
+<span class="sourceLineNo">318</span>            XLog log = XLog.getLog(getClass());<a name="line.318"></a>
+<span class="sourceLineNo">319</span>            // queue command for action recovery<a name="line.319"></a>
+<span class="sourceLineNo">320</span>            List&lt;WorkflowActionBean&gt; actions = null;<a name="line.320"></a>
+<span class="sourceLineNo">321</span>            try {<a name="line.321"></a>
+<span class="sourceLineNo">322</span>                actions = jpaService.execute(new WorkflowActionsGetPendingJPAExecutor(olderThan));<a name="line.322"></a>
+<span class="sourceLineNo">323</span>            }<a name="line.323"></a>
+<span class="sourceLineNo">324</span>            catch (JPAExecutorException ex) {<a name="line.324"></a>
+<span class="sourceLineNo">325</span>                log.warn("Exception while reading pending actions from storage", ex);<a name="line.325"></a>
+<span class="sourceLineNo">326</span>                return;<a name="line.326"></a>
+<span class="sourceLineNo">327</span>            }<a name="line.327"></a>
+<span class="sourceLineNo">328</span>            // log.debug("QUEUING[{0}] pending wf actions for potential recovery",<a name="line.328"></a>
+<span class="sourceLineNo">329</span>            // actions.size());<a name="line.329"></a>
+<span class="sourceLineNo">330</span>            msg.append(" WF_ACTIONS " + actions.size());<a name="line.330"></a>
+<span class="sourceLineNo">331</span><a name="line.331"></a>
+<span class="sourceLineNo">332</span>            for (WorkflowActionBean action : actions) {<a name="line.332"></a>
+<span class="sourceLineNo">333</span>                try {<a name="line.333"></a>
+<span class="sourceLineNo">334</span>                    Services.get().get(InstrumentationService.class).get()<a name="line.334"></a>
+<span class="sourceLineNo">335</span>                            .incr(INSTRUMENTATION_GROUP, INSTR_RECOVERED_ACTIONS_COUNTER, 1);<a name="line.335"></a>
+<span class="sourceLineNo">336</span>                    if (action.getStatus() == WorkflowActionBean.Status.PREP<a name="line.336"></a>
+<span class="sourceLineNo">337</span>                            || action.getStatus() == WorkflowActionBean.Status.START_MANUAL) {<a name="line.337"></a>
+<span class="sourceLineNo">338</span>                        queueCallable(new ActionStartXCommand(action.getId(), action.getType()));<a name="line.338"></a>
+<span class="sourceLineNo">339</span>                    }<a name="line.339"></a>
+<span class="sourceLineNo">340</span>                    else if (action.getStatus() == WorkflowActionBean.Status.START_RETRY) {<a name="line.340"></a>
+<span class="sourceLineNo">341</span>                        Date nextRunTime = action.getPendingAge();<a name="line.341"></a>
+<span class="sourceLineNo">342</span>                        queueCallable(new ActionStartXCommand(action.getId(), action.getType()), nextRunTime.getTime()<a name="line.342"></a>
+<span class="sourceLineNo">343</span>                                - System.currentTimeMillis());<a name="line.343"></a>
+<span class="sourceLineNo">344</span>                    }<a name="line.344"></a>
+<span class="sourceLineNo">345</span>                    else if (action.getStatus() == WorkflowActionBean.Status.DONE<a name="line.345"></a>
+<span class="sourceLineNo">346</span>                            || action.getStatus() == WorkflowActionBean.Status.END_MANUAL) {<a name="line.346"></a>
+<span class="sourceLineNo">347</span>                        queueCallable(new ActionEndXCommand(action.getId(), action.getType()));<a name="line.347"></a>
+<span class="sourceLineNo">348</span>                    }<a name="line.348"></a>
+<span class="sourceLineNo">349</span>                    else if (action.getStatus() == WorkflowActionBean.Status.END_RETRY) {<a name="line.349"></a>
+<span class="sourceLineNo">350</span>                        Date nextRunTime = action.getPendingAge();<a name="line.350"></a>
+<span class="sourceLineNo">351</span>                        queueCallable(new ActionEndXCommand(action.getId(), action.getType()), nextRunTime.getTime()<a name="line.351"></a>
+<span class="sourceLineNo">352</span>                                - System.currentTimeMillis());<a name="line.352"></a>
+<span class="sourceLineNo">353</span><a name="line.353"></a>
+<span class="sourceLineNo">354</span>                    }<a name="line.354"></a>
+<span class="sourceLineNo">355</span>                    else if (action.getStatus() == WorkflowActionBean.Status.OK<a name="line.355"></a>
+<span class="sourceLineNo">356</span>                            || action.getStatus() == WorkflowActionBean.Status.ERROR) {<a name="line.356"></a>
+<span class="sourceLineNo">357</span>                        queueCallable(new SignalXCommand(action.getJobId(), action.getId()));<a name="line.357"></a>
+<span class="sourceLineNo">358</span>                    }<a name="line.358"></a>
+<span class="sourceLineNo">359</span>                    else if (action.getStatus() == WorkflowActionBean.Status.USER_RETRY) {<a name="line.359"></a>
+<span class="sourceLineNo">360</span>                        queueCallable(new ActionStartXCommand(action.getId(), action.getType()));<a name="line.360"></a>
+<span class="sourceLineNo">361</span>                    }<a name="line.361"></a>
+<span class="sourceLineNo">362</span>                }<a name="line.362"></a>
+<span class="sourceLineNo">363</span>                catch (Exception ex) {<a name="line.363"></a>
+<span class="sourceLineNo">364</span>                    log.error("Exception, {0}", ex.getMessage(), ex);<a name="line.364"></a>
+<span class="sourceLineNo">365</span>                }<a name="line.365"></a>
+<span class="sourceLineNo">366</span>            }<a name="line.366"></a>
+<span class="sourceLineNo">367</span><a name="line.367"></a>
+<span class="sourceLineNo">368</span>        }<a name="line.368"></a>
+<span class="sourceLineNo">369</span><a name="line.369"></a>
+<span class="sourceLineNo">370</span>        /**<a name="line.370"></a>
+<span class="sourceLineNo">371</span>         * Adds callables to a list. If the number of callables in the list reaches {@link<a name="line.371"></a>
+<span class="sourceLineNo">372</span>         * RecoveryService#CONF_CALLABLE_BATCH_SIZE}, the entire batch is queued and the callables list is reset.<a name="line.372"></a>
+<span class="sourceLineNo">373</span>         *<a name="line.373"></a>
+<span class="sourceLineNo">374</span>         * @param callable the callable to queue.<a name="line.374"></a>
+<span class="sourceLineNo">375</span>         */<a name="line.375"></a>
+<span class="sourceLineNo">376</span>        private void queueCallable(XCallable&lt;?&gt; callable) {<a name="line.376"></a>
+<span class="sourceLineNo">377</span>            if (callables == null) {<a name="line.377"></a>
+<span class="sourceLineNo">378</span>                callables = new ArrayList&lt;XCallable&lt;?&gt;&gt;();<a name="line.378"></a>
+<span class="sourceLineNo">379</span>            }<a name="line.379"></a>
+<span class="sourceLineNo">380</span>            callables.add(callable);<a name="line.380"></a>
+<span class="sourceLineNo">381</span>            if (callables.size() == Services.get().getConf().getInt(CONF_CALLABLE_BATCH_SIZE, 10)) {<a name="line.381"></a>
+<span class="sourceLineNo">382</span>                boolean ret = Services.get().get(CallableQueueService.class).queueSerial(callables);<a name="line.382"></a>
+<span class="sourceLineNo">383</span>                if (ret == false) {<a name="line.383"></a>
+<span class="sourceLineNo">384</span>                    XLog.getLog(getClass()).warn(<a name="line.384"></a>
+<span class="sourceLineNo">385</span>                            "Unable to queue the callables commands for RecoveryService. "<a name="line.385"></a>
+<span class="sourceLineNo">386</span>                                    + "Most possibly command queue is full. Queue size is :"<a name="line.386"></a>
+<span class="sourceLineNo">387</span>                                    + Services.get().get(CallableQueueService.class).queueSize());<a name="line.387"></a>
+<span class="sourceLineNo">388</span>                }<a name="line.388"></a>
+<span class="sourceLineNo">389</span>                callables = new ArrayList&lt;XCallable&lt;?&gt;&gt;();<a name="line.389"></a>
+<span class="sourceLineNo">390</span>            }<a name="line.390"></a>
+<span class="sourceLineNo">391</span>        }<a name="line.391"></a>
+<span class="sourceLineNo">392</span><a name="line.392"></a>
+<span class="sourceLineNo">393</span>        /**<a name="line.393"></a>
+<span class="sourceLineNo">394</span>         * Adds callables to a list. If the number of callables in the list reaches {@link<a name="line.394"></a>
+<span class="sourceLineNo">395</span>         * RecoveryService#CONF_CALLABLE_BATCH_SIZE}, the entire batch is queued with the delay set to the maximum delay<a name="line.395"></a>
+<span class="sourceLineNo">396</span>         * of the callables in the list. The callables list and the delay is reset.<a name="line.396"></a>
+<span class="sourceLineNo">397</span>         *<a name="line.397"></a>
+<span class="sourceLineNo">398</span>         * @param callable the callable to queue.<a name="line.398"></a>
+<span class="sourceLineNo">399</span>         * @param delay the delay for the callable.<a name="line.399"></a>
+<span class="sourceLineNo">400</span>         */<a name="line.400"></a>
+<span class="sourceLineNo">401</span>        private void queueCallable(XCallable&lt;?&gt; callable, long delay) {<a name="line.401"></a>
+<span class="sourceLineNo">402</span>            if (delayedCallables == null) {<a name="line.402"></a>
+<span class="sourceLineNo">403</span>                delayedCallables = new ArrayList&lt;XCallable&lt;?&gt;&gt;();<a name="line.403"></a>
+<span class="sourceLineNo">404</span>            }<a name="line.404"></a>
+<span class="sourceLineNo">405</span>            this.delay = Math.max(this.delay, delay);<a name="line.405"></a>
+<span class="sourceLineNo">406</span>            delayedCallables.add(callable);<a name="line.406"></a>
+<span class="sourceLineNo">407</span>            if (delayedCallables.size() == Services.get().getConf().getInt(CONF_CALLABLE_BATCH_SIZE, 10)) {<a name="line.407"></a>
+<span class="sourceLineNo">408</span>                boolean ret = Services.get().get(CallableQueueService.class).queueSerial(delayedCallables, this.delay);<a name="line.408"></a>
+<span class="sourceLineNo">409</span>                if (ret == false) {<a name="line.409"></a>
+<span class="sourceLineNo">410</span>                    XLog.getLog(getClass()).warn("Unable to queue the delayedCallables commands for RecoveryService. "<a name="line.410"></a>
+<span class="sourceLineNo">411</span>                            + "Most possibly Callable queue is full. Queue size is :"<a name="line.411"></a>
+<span class="sourceLineNo">412</span>                            + Services.get().get(CallableQueueService.class).queueSize());<a name="line.412"></a>
+<span class="sourceLineNo">413</span>                }<a name="line.413"></a>
+<span class="sourceLineNo">414</span>                delayedCallables = new ArrayList&lt;XCallable&lt;?&gt;&gt;();<a name="line.414"></a>
+<span class="sourceLineNo">415</span>                this.delay = 0;<a name="line.415"></a>
+<span class="sourceLineNo">416</span>            }<a name="line.416"></a>
+<span class="sourceLineNo">417</span>        }<a name="line.417"></a>
+<span class="sourceLineNo">418</span>    }<a name="line.418"></a>
+<span class="sourceLineNo">419</span><a name="line.419"></a>
+<span class="sourceLineNo">420</span>    /**<a name="line.420"></a>
+<span class="sourceLineNo">421</span>     * Initializes the RecoveryService.<a name="line.421"></a>
+<span class="sourceLineNo">422</span>     *<a name="line.422"></a>
+<span class="sourceLineNo">423</span>     * @param services services instance.<a name="line.423"></a>
+<span class="sourceLineNo">424</span>     */<a name="line.424"></a>
+<span class="sourceLineNo">425</span>    @Override<a name="line.425"></a>
+<span class="sourceLineNo">426</span>    public void init(Services services) {<a name="line.426"></a>
+<span class="sourceLineNo">427</span>        Configuration conf = services.getConf();<a name="line.427"></a>
+<span class="sourceLineNo">428</span>        Runnable recoveryRunnable = new RecoveryRunnable(conf.getInt(CONF_WF_ACTIONS_OLDER_THAN, 120), conf.getInt(<a name="line.428"></a>
+<span class="sourceLineNo">429</span>                CONF_COORD_OLDER_THAN, 600),conf.getInt(CONF_BUNDLE_OLDER_THAN, 600));<a name="line.429"></a>
+<span class="sourceLineNo">430</span>        services.get(SchedulerService.class).schedule(recoveryRunnable, 10, getRecoveryServiceInterval(conf),<a name="line.430"></a>
+<span class="sourceLineNo">431</span>                                                      SchedulerService.Unit.SEC);<a name="line.431"></a>
+<span class="sourceLineNo">432</span>    }<a name="line.432"></a>
+<span class="sourceLineNo">433</span><a name="line.433"></a>
+<span class="sourceLineNo">434</span>    public int getRecoveryServiceInterval(Configuration conf){<a name="line.434"></a>
+<span class="sourceLineNo">435</span>        return conf.getInt(CONF_SERVICE_INTERVAL, 60);<a name="line.435"></a>
+<span class="sourceLineNo">436</span>    }<a name="line.436"></a>
+<span class="sourceLineNo">437</span><a name="line.437"></a>
+<span class="sourceLineNo">438</span>    /**<a name="line.438"></a>
+<span class="sourceLineNo">439</span>     * Destroy the Recovery Service.<a name="line.439"></a>
+<span class="sourceLineNo">440</span>     */<a name="line.440"></a>
+<span class="sourceLineNo">441</span>    @Override<a name="line.441"></a>
+<span class="sourceLineNo">442</span>    public void destroy() {<a name="line.442"></a>
+<span class="sourceLineNo">443</span>    }<a name="line.443"></a>
+<span class="sourceLineNo">444</span><a name="line.444"></a>
+<span class="sourceLineNo">445</span>    /**<a name="line.445"></a>
+<span class="sourceLineNo">446</span>     * Return the public interface for the Recovery Service.<a name="line.446"></a>
+<span class="sourceLineNo">447</span>     *<a name="line.447"></a>
+<span class="sourceLineNo">448</span>     * @return {@link RecoveryService}.<a name="line.448"></a>
+<span class="sourceLineNo">449</span>     */<a name="line.449"></a>
+<span class="sourceLineNo">450</span>    @Override<a name="line.450"></a>
+<span class="sourceLineNo">451</span>    public Class&lt;? extends Service&gt; getInterface() {<a name="line.451"></a>
+<span class="sourceLineNo">452</span>        return RecoveryService.class;<a name="line.452"></a>
+<span class="sourceLineNo">453</span>    }<a name="line.453"></a>
+<span class="sourceLineNo">454</span><a name="line.454"></a>
+<span class="sourceLineNo">455</span>    /**<a name="line.455"></a>
+<span class="sourceLineNo">456</span>     * Merge Bundle job config and the configuration from the coord job to pass<a name="line.456"></a>
+<span class="sourceLineNo">457</span>     * to Coord Engine<a name="line.457"></a>
+<span class="sourceLineNo">458</span>     *<a name="line.458"></a>
+<span class="sourceLineNo">459</span>     * @param coordElem the coordinator configuration<a name="line.459"></a>
+<span class="sourceLineNo">460</span>     * @return Configuration merged configuration<a name="line.460"></a>
+<span class="sourceLineNo">461</span>     * @throws CommandException thrown if failed to merge configuration<a name="line.461"></a>
+<span class="sourceLineNo">462</span>     */<a name="line.462"></a>
+<span class="sourceLineNo">463</span>    private static Configuration mergeConfig(Element coordElem,BundleJobBean bundleJob) throws CommandException {<a name="line.463"></a>
+<span class="sourceLineNo">464</span>        XLog.Info.get().clear();<a name="line.464"></a>
+<span class="sourceLineNo">465</span>        XLog log = XLog.getLog("RecoveryService");<a name="line.465"></a>
+<span class="sourceLineNo">466</span><a name="line.466"></a>
+<span class="sourceLineNo">467</span>        String jobConf = bundleJob.getConf();<a name="line.467"></a>
+<span class="sourceLineNo">468</span>        // Step 1: runConf = jobConf<a name="line.468"></a>
+<span class="sourceLineNo">469</span>        Configuration runConf = null;<a name="line.469"></a>
+<span class="sourceLineNo">470</span>        try {<a name="line.470"></a>
+<span class="sourceLineNo">471</span>            runConf = new XConfiguration(new StringReader(jobConf));<a name="line.471"></a>
+<span class="sourceLineNo">472</span>        }<a name="line.472"></a>
+<span class="sourceLineNo">473</span>        catch (IOException e1) {<a name="line.473"></a>
+<span class="sourceLineNo">474</span>            log.warn("Configuration parse error in:" + jobConf);<a name="line.474"></a>
+<span class="sourceLineNo">475</span>            throw new CommandException(ErrorCode.E1306, e1.getMessage(), e1);<a name="line.475"></a>
+<span class="sourceLineNo">476</span>        }<a name="line.476"></a>
+<span class="sourceLineNo">477</span>        // Step 2: Merge local properties into runConf<a name="line.477"></a>
+<span class="sourceLineNo">478</span>        // extract 'property' tags under 'configuration' block in the coordElem<a name="line.478"></a>
+<span class="sourceLineNo">479</span>        // convert Element to XConfiguration<a name="line.479"></a>
+<span class="sourceLineNo">480</span>        Element localConfigElement = coordElem.getChild("configuration", coordElem.getNamespace());<a name="line.480"></a>
+<span class="sourceLineNo">481</span><a name="line.481"></a>
+<span class="sourceLineNo">482</span>        if (localConfigElement != null) {<a name="line.482"></a>
+<span class="sourceLineNo">483</span>            String strConfig = XmlUtils.prettyPrint(localConfigElement).toString();<a name="line.483"></a>
+<span class="sourceLineNo">484</span>            Configuration localConf;<a name="line.484"></a>
+<span class="sourceLineNo">485</span>            try {<a name="line.485"></a>
+<span class="sourceLineNo">486</span>                localConf = new XConfiguration(new StringReader(strConfig));<a name="line.486"></a>
+<span class="sourceLineNo">487</span>            }<a name="line.487"></a>
+<span class="sourceLineNo">488</span>            catch (IOException e1) {<a name="line.488"></a>
+<span class="sourceLineNo">489</span>                log.warn("Configuration parse error in:" + strConfig);<a name="line.489"></a>
+<span class="sourceLineNo">490</span>                throw new CommandException(ErrorCode.E1307, e1.getMessage(), e1);<a name="line.490"></a>
+<span class="sourceLineNo">491</span>            }<a name="line.491"></a>
+<span class="sourceLineNo">492</span><a name="line.492"></a>
+<span class="sourceLineNo">493</span>            // copy configuration properties in the coordElem to the runConf<a name="line.493"></a>
+<span class="sourceLineNo">494</span>            XConfiguration.copy(localConf, runConf);<a name="line.494"></a>
+<span class="sourceLineNo">495</span>        }<a name="line.495"></a>
+<span class="sourceLineNo">496</span><a name="line.496"></a>
+<span class="sourceLineNo">497</span>        // Step 3: Extract value of 'app-path' in coordElem, save it as a<a name="line.497"></a>
+<span class="sourceLineNo">498</span>        // new property called 'oozie.coord.application.path', and normalize.<a name="line.498"></a>
+<span class="sourceLineNo">499</span>        String appPath = coordElem.getChild("app-path", coordElem.getNamespace()).getValue();<a name="line.499"></a>
+<span class="sourceLineNo">500</span>        runConf.set(OozieClient.COORDINATOR_APP_PATH, appPath);<a name="line.500"></a>
+<span class="sourceLineNo">501</span>        // Normalize coordinator appPath here;<a name="line.501"></a>
+<span class="sourceLineNo">502</span>        try {<a name="line.502"></a>
+<span class="sourceLineNo">503</span>            JobUtils.normalizeAppPath(runConf.get(OozieClient.USER_NAME), runConf.get(OozieClient.GROUP_NAME), runConf);<a name="line.503"></a>
+<span class="sourceLineNo">504</span>        }<a name="line.504"></a>
+<span class="sourceLineNo">505</span>        catch (IOException e) {<a name="line.505"></a>
+<span class="sourceLineNo">506</span>            throw new CommandException(ErrorCode.E1001, runConf.get(OozieClient.COORDINATOR_APP_PATH));<a name="line.506"></a>
+<span class="sourceLineNo">507</span>        }<a name="line.507"></a>
+<span class="sourceLineNo">508</span>        return runConf;<a name="line.508"></a>
+<span class="sourceLineNo">509</span>    }<a name="line.509"></a>
+<span class="sourceLineNo">510</span>}<a name="line.510"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

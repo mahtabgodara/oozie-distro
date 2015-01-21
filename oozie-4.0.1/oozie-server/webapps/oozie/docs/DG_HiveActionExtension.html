@@ -1,0 +1,517 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Oozie - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Oozie
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2015-01-20
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                                                <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <p></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<hr />
+<a name="Oozie_Hive_Action_Extension"></a>
+<div class="section"><h2> Oozie Hive Action Extension</h2>
+<p><ul><ul><li><a href="#Hive_Action">Hive Action</a>
+<ul><li><a href="#Hive_Default_and_Site_Configuration_Files">Hive Default and Site Configuration Files</a>
+</li>
+<li><a href="#Hive_Action_Logging">Hive Action Logging</a>
+</li>
+</ul>
+</li>
+<li><a href="#Appendix_Hive_XML-Schema">Appendix, Hive XML-Schema</a>
+<ul><li><a href="#AE.A_Appendix_A_Hive_XML-Schema">AE.A Appendix A, Hive XML-Schema</a>
+<ul><li><a href="#Hive_Action_Schema_Version_0.5">Hive Action Schema Version 0.5</a>
+</li>
+<li><a href="#Hive_Action_Schema_Version_0.4">Hive Action Schema Version 0.4</a>
+</li>
+<li><a href="#Hive_Action_Schema_Version_0.3">Hive Action Schema Version 0.3</a>
+</li>
+<li><a href="#Hive_Action_Schema_Version_0.2">Hive Action Schema Version 0.2</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</p>
+<p><a name="HiveAction"></a>
+</p>
+<a name="Hive_Action"></a>
+<div class="section"><h3>Hive Action</h3>
+<p>The <tt>hive</tt>
+ action runs a Hive job.</p>
+<p>The workflow job will wait until the Hive job completes before
+continuing to the next action.</p>
+<p>To run the Hive job, you have to configure the <tt>hive</tt>
+ action with the
+=job-tracker=, <tt>name-node</tt>
+ and Hive <tt>script</tt>
+ elements as
+well as the necessary parameters and configuration.</p>
+<p>A <tt>hive</tt>
+ action can be configured to create or delete HDFS directories
+before starting the Hive job.</p>
+<p>Hive configuration can be specified with a file, using the <tt>job-xml</tt>
+
+element, and inline, using the <tt>configuration</tt>
+ elements.</p>
+<p>Oozie EL expressions can be used in the inline configuration. Property
+values specified in the <tt>configuration</tt>
+ element override values specified
+in the <tt>job-xml</tt>
+ file.</p>
+<p>Note that Hadoop <tt>mapred.job.tracker</tt>
+ and <tt>fs.default.name</tt>
+ properties
+must not be present in the inline configuration.</p>
+<p>As with Hadoop <tt>map-reduce</tt>
+ jobs, it is possible to add files and
+archives in order to make them available to the Hive job. Refer to the
+[WorkflowFunctionalSpec#FilesAchives][Adding Files and Archives for the Job]
+section for more information about this feature.</p>
+<p>Oozie Hive action supports Hive scripts with parameter variables, their
+syntax is <tt>${VARIABLES}</tt>
+.</p>
+<p><b>Syntax:</b>
+</p>
+<p><pre>
+&lt;workflow-app name=&quot;[WF-DEF-NAME]&quot; xmlns=&quot;uri:oozie:workflow:0.1&quot;&gt;
+    ...
+    &lt;action name=&quot;[NODE-NAME]&quot;&gt;
+        &lt;hive xmlns=&quot;uri:oozie:hive-action:0.2&quot;&gt;
+            &lt;job-tracker&gt;[JOB-TRACKER]&lt;/job-tracker&gt;
+            &lt;name-node&gt;[NAME-NODE]&lt;/name-node&gt;
+            &lt;prepare&gt;
+               &lt;delete path=&quot;[PATH]&quot;/&gt;
+               ...
+               &lt;mkdir path=&quot;[PATH]&quot;/&gt;
+               ...
+            &lt;/prepare&gt;
+            &lt;job-xml&gt;[HIVE SETTINGS FILE]&lt;/job-xml&gt;
+            &lt;configuration&gt;
+                &lt;property&gt;
+                    &lt;name&gt;[PROPERTY-NAME]&lt;/name&gt;
+                    &lt;value&gt;[PROPERTY-VALUE]&lt;/value&gt;
+                &lt;/property&gt;
+                ...
+            &lt;/configuration&gt;
+            &lt;script&gt;[HIVE-SCRIPT]&lt;/script&gt;
+            &lt;param&gt;[PARAM-VALUE]&lt;/param&gt;
+                ...
+            &lt;param&gt;[PARAM-VALUE]&lt;/param&gt;
+            &lt;file&gt;[FILE-PATH]&lt;/file&gt;
+            ...
+            &lt;archive&gt;[FILE-PATH]&lt;/archive&gt;
+            ...
+        &lt;/hive&gt;
+        &lt;ok to=&quot;[NODE-NAME]&quot;/&gt;
+        &lt;error to=&quot;[NODE-NAME]&quot;/&gt;
+    &lt;/action&gt;
+    ...
+&lt;/workflow-app&gt;
+</pre></p>
+<p>The <tt>prepare</tt>
+ element, if present, indicates a list of paths to delete
+or create before starting the job. Specified paths must start with <tt><a href="./hdfs://HOST:PORT.html">hdfs://HOST:PORT</a>
+</tt>
+.</p>
+<p>The <tt>job-xml</tt>
+ element, if present, specifies a file containing configuration
+for the Hive job. As of schema 0.3, multiple <tt>job-xml</tt>
+ elements are allowed in order to 
+specify multiple <tt>job.xml</tt>
+ files.</p>
+<p>The <tt>configuration</tt>
+ element, if present, contains configuration
+properties that are passed to the Hive job.</p>
+<p>The <tt>script</tt>
+ element must contain the path of the Hive script to
+execute. The Hive script can be templatized with variables of the form
+=${VARIABLE}=. The values of these variables can then be specified
+using the <tt>params</tt>
+ element.</p>
+<p>The <tt>params</tt>
+ element, if present, contains parameters to be passed to
+the Hive script.</p>
+<p>All the above elements can be parameterized (templatized) using EL
+expressions.</p>
+<p><b>Example:</b>
+</p>
+<p><pre>
+&lt;workflow-app name=&quot;sample-wf&quot; xmlns=&quot;uri:oozie:workflow:0.1&quot;&gt;
+    ...
+    &lt;action name=&quot;myfirsthivejob&quot;&gt;
+        &lt;hive xmlns=&quot;uri:oozie:hive-action:0.2&quot;&gt;
+            &lt;job-traker&gt;foo:8021&lt;/job-tracker&gt;
+            &lt;name-node&gt;bar:8020&lt;/name-node&gt;
+            &lt;prepare&gt;
+                &lt;delete path=&quot;${jobOutput}&quot;/&gt;
+            &lt;/prepare&gt;
+            &lt;configuration&gt;
+                &lt;property&gt;
+                    &lt;name&gt;mapred.compress.map.output&lt;/name&gt;
+                    &lt;value&gt;true&lt;/value&gt;
+                &lt;/property&gt;
+            &lt;/configuration&gt;
+            &lt;script&gt;myscript.q&lt;/script&gt;
+            &lt;param&gt;InputDir=/home/tucu/input-data&lt;/param&gt;
+            &lt;param&gt;OutputDir=${jobOutput}&lt;/param&gt;
+        &lt;/hive&gt;
+        &lt;ok to=&quot;myotherjob&quot;/&gt;
+        &lt;error to=&quot;errorcleanup&quot;/&gt;
+    &lt;/action&gt;
+    ...
+&lt;/workflow-app&gt;
+</pre></p>
+<a name="Hive_Default_and_Site_Configuration_Files"></a>
+<div class="section"><h4>Hive Default and Site Configuration Files</h4>
+<p>Hive (as of Hive 0.8) ignores a <tt>hive-default.xml</tt>
+ file.  As a result, Oozie (as of Oozie 3.4) ignores the <tt>oozie.hive.defaults</tt>
+
+property that was previously required by earlier versions of Oozie for the Hive action.</p>
+<a name="Hive_Action_Logging"></a>
+</div>
+<div class="section"><h4>Hive Action Logging</h4>
+<p>Hive action logs are redirected to the Oozie Launcher map-reduce job task STDOUT/STDERR that runs Hive.</p>
+<p>From Oozie web-console, from the Hive action pop up using the 'Console URL' link, it is possible
+to navigate to the Oozie Launcher map-reduce job task logs via the Hadoop job-tracker web-console.</p>
+<p>The logging level of the Hive action can set in the Hive action configuration using the
+property <tt>oozie.hive.log.level</tt>
+. The default value is <tt>INFO</tt>
+.</p>
+<a name="Appendix_Hive_XML-Schema"></a>
+</div>
+</div>
+<div class="section"><h3>Appendix, Hive XML-Schema</h3>
+<a name="AE.A_Appendix_A_Hive_XML-Schema"></a>
+<div class="section"><h4>AE.A Appendix A, Hive XML-Schema</h4>
+<a name="Hive_Action_Schema_Version_0.5"></a>
+<div class="section"><h5>Hive Action Schema Version 0.5</h5>
+<p><pre>
+&lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+           xmlns:hive=&quot;uri:oozie:hive-action:0.5&quot; elementFormDefault=&quot;qualified&quot;
+           targetNamespace=&quot;uri:oozie:hive-action:0.5&quot;&gt;
+.
+    &lt;xs:element name=&quot;hive&quot; type=&quot;hive:ACTION&quot;/&gt;
+.
+    &lt;xs:complexType name=&quot;ACTION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;job-tracker&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;name-node&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;prepare&quot; type=&quot;hive:PREPARE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;job-xml&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;configuration&quot; type=&quot;hive:CONFIGURATION&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;script&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;param&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;argument&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;file&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;archive&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;CONFIGURATION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;property&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;unbounded&quot;&gt;
+                &lt;xs:complexType&gt;
+                    &lt;xs:sequence&gt;
+                        &lt;xs:element name=&quot;name&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;value&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;description&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                    &lt;/xs:sequence&gt;
+                &lt;/xs:complexType&gt;
+            &lt;/xs:element&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;PREPARE&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;delete&quot; type=&quot;hive:DELETE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;mkdir&quot; type=&quot;hive:MKDIR&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;DELETE&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;MKDIR&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+.
+&lt;/xs:schema&gt;
+</pre></p>
+<a name="Hive_Action_Schema_Version_0.4"></a>
+</div>
+<div class="section"><h5>Hive Action Schema Version 0.4</h5>
+<p><pre>
+&lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+           xmlns:hive=&quot;uri:oozie:hive-action:0.4&quot; elementFormDefault=&quot;qualified&quot;
+           targetNamespace=&quot;uri:oozie:hive-action:0.4&quot;&gt;
+.
+    &lt;xs:element name=&quot;hive&quot; type=&quot;hive:ACTION&quot;/&gt;
+.
+    &lt;xs:complexType name=&quot;ACTION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;job-tracker&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;name-node&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;prepare&quot; type=&quot;hive:PREPARE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;job-xml&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;configuration&quot; type=&quot;hive:CONFIGURATION&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;script&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;param&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;file&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;archive&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;CONFIGURATION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;property&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;unbounded&quot;&gt;
+                &lt;xs:complexType&gt;
+                    &lt;xs:sequence&gt;
+                        &lt;xs:element name=&quot;name&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;value&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;description&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                    &lt;/xs:sequence&gt;
+                &lt;/xs:complexType&gt;
+            &lt;/xs:element&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;PREPARE&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;delete&quot; type=&quot;hive:DELETE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;mkdir&quot; type=&quot;hive:MKDIR&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;DELETE&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;MKDIR&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+.
+&lt;/xs:schema&gt;
+</pre></p>
+<a name="Hive_Action_Schema_Version_0.3"></a>
+</div>
+<div class="section"><h5>Hive Action Schema Version 0.3</h5>
+<p><pre>
+&lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+           xmlns:hive=&quot;uri:oozie:hive-action:0.3&quot; elementFormDefault=&quot;qualified&quot;
+           targetNamespace=&quot;uri:oozie:hive-action:0.3&quot;&gt;
+.
+    &lt;xs:element name=&quot;hive&quot; type=&quot;hive:ACTION&quot;/&gt;
+.
+    &lt;xs:complexType name=&quot;ACTION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;job-tracker&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;name-node&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;prepare&quot; type=&quot;hive:PREPARE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;job-xml&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;configuration&quot; type=&quot;hive:CONFIGURATION&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;script&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;param&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;file&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;archive&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;CONFIGURATION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;property&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;unbounded&quot;&gt;
+                &lt;xs:complexType&gt;
+                    &lt;xs:sequence&gt;
+                        &lt;xs:element name=&quot;name&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;value&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;description&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                    &lt;/xs:sequence&gt;
+                &lt;/xs:complexType&gt;
+            &lt;/xs:element&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;PREPARE&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;delete&quot; type=&quot;hive:DELETE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;mkdir&quot; type=&quot;hive:MKDIR&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;DELETE&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;MKDIR&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+.
+&lt;/xs:schema&gt;
+</pre></p>
+<a name="Hive_Action_Schema_Version_0.2"></a>
+</div>
+<div class="section"><h5>Hive Action Schema Version 0.2</h5>
+<p><pre>
+&lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+           xmlns:hive=&quot;uri:oozie:hive-action:0.2&quot; elementFormDefault=&quot;qualified&quot;
+           targetNamespace=&quot;uri:oozie:hive-action:0.2&quot;&gt;
+.
+    &lt;xs:element name=&quot;hive&quot; type=&quot;hive:ACTION&quot;/&gt;
+.
+    &lt;xs:complexType name=&quot;ACTION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;job-tracker&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;name-node&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;prepare&quot; type=&quot;hive:PREPARE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;job-xml&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;configuration&quot; type=&quot;hive:CONFIGURATION&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;script&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+            &lt;xs:element name=&quot;param&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;file&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;archive&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;CONFIGURATION&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;property&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;unbounded&quot;&gt;
+                &lt;xs:complexType&gt;
+                    &lt;xs:sequence&gt;
+                        &lt;xs:element name=&quot;name&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;value&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                        &lt;xs:element name=&quot;description&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot; type=&quot;xs:string&quot;/&gt;
+                    &lt;/xs:sequence&gt;
+                &lt;/xs:complexType&gt;
+            &lt;/xs:element&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;PREPARE&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;delete&quot; type=&quot;hive:DELETE&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+            &lt;xs:element name=&quot;mkdir&quot; type=&quot;hive:MKDIR&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;DELETE&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+.
+    &lt;xs:complexType name=&quot;MKDIR&quot;&gt;
+        &lt;xs:attribute name=&quot;path&quot; type=&quot;xs:string&quot; use=&quot;required&quot;/&gt;
+    &lt;/xs:complexType&gt;
+.
+&lt;/xs:schema&gt;
+</pre></p>
+<p><a href="./index.html">::Go back to Oozie Documentation Index::</a>
+</p>
+<p></p>
+</div>
+</div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2015
+    
+          Apache Software Foundation
+          
+  
+
+  
+    
+  
+  
+    
+   - <a href="http://maven.apache.org/privacy-policy.html">Privacy Policy</a></div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

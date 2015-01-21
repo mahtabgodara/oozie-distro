@@ -1,0 +1,1283 @@
+2015-01-20 15:26:59,801  INFO oozieinstrumentation:539 - USER[-] GROUP[-] *********** Startup ***********
+2015-01-20 15:26:59,802  INFO oozieinstrumentation:539 - USER[-] GROUP[-] Java System Properties: 
+    java.vendor = Sun Microsystems Inc.
+    sun.java.launcher = SUN_STANDARD
+    catalina.base = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server
+    sun.management.compiler = HotSpot Client Compiler
+    oozie.home.dir = /home/hduser/softwares/oozie-dist/oozie-4.0.1
+    catalina.useNaming = true
+    os.name = Linux
+    sun.boot.class.path = /usr/lib/jvm/java-6-openjdk-i386/jre/lib/resources.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/rt.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/jsse.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/jce.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/charsets.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/jfr.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/netx.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/plugin.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/rhino.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/classes
+    java.util.logging.config.file = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/conf/logging.properties
+    oozie.https.keystore.pass = password
+    sun.desktop = gnome
+    java.vm.specification.vendor = Sun Microsystems Inc.
+    java.runtime.version = 1.6.0_32-b32
+    user.name = hduser
+    oozie.http.port = 11000
+    shared.loader = 
+    tomcat.util.buf.StringCache.byte.enabled = true
+    java.naming.factory.initial = org.apache.naming.java.javaURLContextFactory
+    user.language = en
+    sun.boot.library.path = /usr/lib/jvm/java-6-openjdk-i386/jre/lib/i386
+    oozie.config.dir = /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf
+    java.version = 1.6.0_32
+    java.util.logging.manager = org.apache.juli.ClassLoaderLogManager
+    user.timezone = Europe/Rome
+    sun.arch.data.model = 32
+    java.endorsed.dirs = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/endorsed
+    sun.cpu.isalist = 
+    sun.jnu.encoding = UTF-8
+    file.encoding.pkg = sun.io
+    package.access = sun.,org.apache.catalina.,org.apache.coyote.,org.apache.tomcat.,org.apache.jasper.,sun.beans.
+    file.separator = /
+    java.specification.name = Java Platform API Specification
+    java.class.version = 50.0
+    user.country = US
+    java.home = /usr/lib/jvm/java-6-openjdk-i386/jre
+    java.vm.info = mixed mode, sharing
+    os.version = 3.2.0-24-generic-pae
+    oozie.data.dir = /home/hduser/softwares/oozie-dist/oozie-4.0.1/data
+    path.separator = :
+    java.vm.version = 23.25-b01
+    oozie.log4j.file = oozie-log4j.properties
+    oozie.admin.port = 11001
+    java.awt.printerjob = sun.print.PSPrinterJob
+    sun.io.unicode.encoding = UnicodeLittle
+    package.definition = sun.,java.,org.apache.catalina.,org.apache.coyote.,org.apache.tomcat.,org.apache.jasper.
+    oozie.https.port = 11443
+    java.naming.factory.url.pkgs = org.apache.naming
+    user.home = /home/hduser
+    java.specification.vendor = Sun Microsystems Inc.
+    oozie.config.file = oozie-site.xml
+    java.library.path = 
+    java.vendor.url = http://java.sun.com/
+    java.vm.vendor = Sun Microsystems Inc.
+    oozie.log4j.reload = 10
+    common.loader = ${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar
+    oozie.base.url = http://ubuntu-VirtualBox:11000/oozie
+    java.runtime.name = OpenJDK Runtime Environment
+    sun.java.command = org.apache.catalina.startup.Bootstrap start
+    java.class.path = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/bin/bootstrap.jar
+    derby.stream.error.file = /home/hduser/softwares/oozie-dist/oozie-4.0.1/logs/derby.log
+    java.vm.specification.name = Java Virtual Machine Specification
+    java.vm.specification.version = 1.0
+    catalina.home = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server
+    sun.cpu.endian = little
+    sun.os.patch.level = unknown
+    java.io.tmpdir = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/temp
+    java.vendor.url.bug = http://java.sun.com/cgi-bin/bugreport.cgi
+    server.loader = 
+    oozie.https.keystore.file = /home/hduser/.keystore
+    os.arch = i386
+    java.awt.graphicsenv = sun.awt.X11GraphicsEnvironment
+    java.ext.dirs = /usr/lib/jvm/java-6-openjdk-i386/jre/lib/ext:/usr/java/packages/lib/ext
+    user.dir = /home/hduser/softwares/oozie-dist/oozie-4.0.1
+    line.separator = 
+
+    java.vm.name = OpenJDK Client VM
+    file.encoding = UTF-8
+    oozie.http.hostname = ubuntu-VirtualBox
+    java.specification.version = 1.6
+    oozie.log.dir = /home/hduser/softwares/oozie-dist/oozie-4.0.1/logs
+
+2015-01-20 15:26:59,803  INFO oozieinstrumentation:539 - USER[-] GROUP[-] OS Env: 
+    TERM = xterm
+    XDG_SESSION_PATH = /org/freedesktop/DisplayManager/Session0
+    SSH_AGENT_PID = 1646
+    JAVA_HOME = /usr/lib/jvm/java-6-openjdk-i386/
+    LESSCLOSE = /usr/bin/lesspipe %s %s
+    HIVE_HOME = /usr/local/hive
+    OOZIE_BASE_URL = http://ubuntu-VirtualBox:11000/oozie
+    SESSION_MANAGER = local/ubuntu-VirtualBox:@/tmp/.ICE-unix/1586,unix/ubuntu-VirtualBox:/tmp/.ICE-unix/1586
+    GNOME_DESKTOP_SESSION_ID = this-is-deprecated
+    OOZIE_LOG = /home/hduser/softwares/oozie-dist/oozie-4.0.1/logs
+    XDG_SESSION_COOKIE = bba863f9073fcea38172b7f600000008-1421760702.157069-2020595879
+    GDMSESSION = ubuntu-2d
+    MANDATORY_PATH = /usr/share/gconf/ubuntu-2d.mandatory.path
+    PWD = /home/hduser/softwares/oozie-dist/oozie-4.0.1
+    OOZIE_LOG4J_FILE = oozie-log4j.properties
+    CATALINA_OUT = /home/hduser/softwares/oozie-dist/oozie-4.0.1/logs/catalina.out
+    OOZIE_HTTP_PORT = 11000
+    CATALINA_BASE = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server
+    OOZIE_LOG4J_RELOAD = 10
+    HADOOP_COMMON_HOME = /usr/local/hadoop
+    OOZIE_CONFIG_FILE = oozie-site.xml
+    PATH = /usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/lib/jvm/java-6-openjdk-i386//bin:/usr/local/hadoop/bin:/usr/local/hive/bin:/usr/local/sqoop/bin:/usr/local/hive/bin:/usr/local/pig/bin
+    XDG_CURRENT_DESKTOP = Unity
+    XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu-2d:/etc/xdg
+    OOZIE_DATA = /home/hduser/softwares/oozie-dist/oozie-4.0.1/data
+    OOZIE_HOME = /home/hduser/softwares/oozie-dist/oozie-4.0.1
+    XAUTHORITY = /home/hduser/.Xauthority
+    CATALINA_PID = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/temp/oozie.pid
+    XDG_SEAT_PATH = /org/freedesktop/DisplayManager/Seat0
+    OOZIE_HTTP_HOSTNAME = ubuntu-VirtualBox
+    OOZIE_HTTPS_KEYSTORE_FILE = /home/hduser/.keystore
+    PIG_INSTALL = /usr/local/pig
+    GNOME_KEYRING_CONTROL = /tmp/keyring-7qmwIj
+    SHLVL = 1
+    SQOOP_HOME = /usr/local/sqoop
+    COLORTERM = gnome-terminal
+    OOZIE_HTTPS_KEYSTORE_PASS = password
+    PIG_CLASSPATH = /conf
+    XDG_DATA_DIRS = /usr/share/ubuntu-2d:/usr/share/gnome:/usr/local/share/:/usr/share/
+    LOGNAME = hduser
+    WINDOWID = 62914565
+    GPG_AGENT_INFO = /tmp/keyring-7qmwIj/gpg:0:1
+    SSH_AUTH_SOCK = /tmp/keyring-7qmwIj/ssh
+    LD_LIBRARY_PATH = /usr/lib/jvm/java-6-openjdk-i386/jre/lib/i386/client:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/i386:/usr/lib/jvm/java-6-openjdk-i386/jre/../lib/i386
+    DBUS_SESSION_BUS_ADDRESS = unix:abstract=/tmp/dbus-u7pIInUoID,guid=13e067df54cd77d5a2dbfb5a00000031
+    SHELL = /bin/bash
+    GNOME_KEYRING_PID = 1575
+    LANGUAGE = en_US.UTF-8
+    OOZIE_ADMIN_PORT = 11001
+    DESKTOP_SESSION = ubuntu-2d
+    OOZIE_HTTPS_PORT = 11443
+    DISPLAY = :0
+    LC_ALL = en_US.UTF-8
+    USER = hduser
+    UBUNTU_MENUPROXY = libappmenu.so
+    HOME = /home/hduser
+    OOZIE_CONFIG = /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf
+    LESSOPEN = | /usr/bin/lesspipe %s
+    CATALINA_OPTS =  -Xmx1024m -Dderby.stream.error.file=/home/hduser/softwares/oozie-dist/oozie-4.0.1/logs/derby.log -Doozie.home.dir=/home/hduser/softwares/oozie-dist/oozie-4.0.1 -Doozie.config.dir=/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf -Doozie.log.dir=/home/hduser/softwares/oozie-dist/oozie-4.0.1/logs -Doozie.data.dir=/home/hduser/softwares/oozie-dist/oozie-4.0.1/data -Doozie.config.file=oozie-site.xml -Doozie.log4j.file=oozie-log4j.properties -Doozie.log4j.reload=10 -Doozie.http.hostname=ubuntu-VirtualBox -Doozie.admin.port=11001 -Doozie.http.port=11000 -Doozie.https.port=11443 -Doozie.base.url=http://ubuntu-VirtualBox:11000/oozie -Doozie.https.keystore.file=/home/hduser/.keystore -Doozie.https.keystore.pass=password -Djava.library.path=
+    HADOOP_INSTALL = /usr/local/hadoop
+    DEFAULTS_PATH = /usr/share/gconf/ubuntu-2d.default.path
+    LS_COLORS = rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:
+    LANG = en_US.UTF-8
+    HADOOP_MAPRED_HOME = /usr/local/hadoop
+
+2015-01-20 15:28:19,932  INFO oozieinstrumentation:539 - USER[-] GROUP[-] *********** Startup ***********
+2015-01-20 15:28:19,933  INFO oozieinstrumentation:539 - USER[-] GROUP[-] Java System Properties: 
+    java.vendor = Sun Microsystems Inc.
+    sun.java.launcher = SUN_STANDARD
+    catalina.base = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server
+    sun.management.compiler = HotSpot Client Compiler
+    oozie.home.dir = /home/hduser/softwares/oozie-dist/oozie-4.0.1
+    catalina.useNaming = true
+    os.name = Linux
+    sun.boot.class.path = /usr/lib/jvm/java-6-openjdk-i386/jre/lib/resources.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/rt.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/jsse.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/jce.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/charsets.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/jfr.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/netx.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/plugin.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/rhino.jar:/usr/lib/jvm/java-6-openjdk-i386/jre/classes
+    java.util.logging.config.file = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/conf/logging.properties
+    oozie.https.keystore.pass = password
+    sun.desktop = gnome
+    java.vm.specification.vendor = Sun Microsystems Inc.
+    java.runtime.version = 1.6.0_32-b32
+    user.name = hduser
+    oozie.http.port = 11000
+    shared.loader = 
+    tomcat.util.buf.StringCache.byte.enabled = true
+    java.naming.factory.initial = org.apache.naming.java.javaURLContextFactory
+    user.language = en
+    sun.boot.library.path = /usr/lib/jvm/java-6-openjdk-i386/jre/lib/i386
+    oozie.config.dir = /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf
+    java.version = 1.6.0_32
+    java.util.logging.manager = org.apache.juli.ClassLoaderLogManager
+    user.timezone = Europe/Rome
+    sun.arch.data.model = 32
+    java.endorsed.dirs = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/endorsed
+    sun.cpu.isalist = 
+    sun.jnu.encoding = UTF-8
+    file.encoding.pkg = sun.io
+    package.access = sun.,org.apache.catalina.,org.apache.coyote.,org.apache.tomcat.,org.apache.jasper.,sun.beans.
+    file.separator = /
+    java.specification.name = Java Platform API Specification
+    java.class.version = 50.0
+    user.country = US
+    java.home = /usr/lib/jvm/java-6-openjdk-i386/jre
+    java.vm.info = mixed mode, sharing
+    os.version = 3.2.0-24-generic-pae
+    oozie.data.dir = /home/hduser/softwares/oozie-dist/oozie-4.0.1/data
+    path.separator = :
+    java.vm.version = 23.25-b01
+    oozie.log4j.file = oozie-log4j.properties
+    oozie.admin.port = 11001
+    java.awt.printerjob = sun.print.PSPrinterJob
+    sun.io.unicode.encoding = UnicodeLittle
+    package.definition = sun.,java.,org.apache.catalina.,org.apache.coyote.,org.apache.tomcat.,org.apache.jasper.
+    oozie.https.port = 11443
+    java.naming.factory.url.pkgs = org.apache.naming
+    user.home = /home/hduser
+    java.specification.vendor = Sun Microsystems Inc.
+    oozie.config.file = oozie-site.xml
+    java.library.path = 
+    java.vendor.url = http://java.sun.com/
+    java.vm.vendor = Sun Microsystems Inc.
+    oozie.log4j.reload = 10
+    common.loader = ${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar
+    oozie.base.url = http://ubuntu-VirtualBox:11000/oozie
+    java.runtime.name = OpenJDK Runtime Environment
+    sun.java.command = org.apache.catalina.startup.Bootstrap start
+    java.class.path = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/bin/bootstrap.jar
+    derby.stream.error.file = /home/hduser/softwares/oozie-dist/oozie-4.0.1/logs/derby.log
+    java.vm.specification.name = Java Virtual Machine Specification
+    java.vm.specification.version = 1.0
+    catalina.home = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server
+    sun.cpu.endian = little
+    sun.os.patch.level = unknown
+    java.io.tmpdir = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/temp
+    java.vendor.url.bug = http://java.sun.com/cgi-bin/bugreport.cgi
+    server.loader = 
+    oozie.https.keystore.file = /home/hduser/.keystore
+    os.arch = i386
+    java.awt.graphicsenv = sun.awt.X11GraphicsEnvironment
+    java.ext.dirs = /usr/lib/jvm/java-6-openjdk-i386/jre/lib/ext:/usr/java/packages/lib/ext
+    user.dir = /home/hduser/softwares/oozie-dist/oozie-4.0.1
+    line.separator = 
+
+    java.vm.name = OpenJDK Client VM
+    file.encoding = UTF-8
+    oozie.http.hostname = ubuntu-VirtualBox
+    java.specification.version = 1.6
+    oozie.log.dir = /home/hduser/softwares/oozie-dist/oozie-4.0.1/logs
+
+2015-01-20 15:28:19,934  INFO oozieinstrumentation:539 - USER[-] GROUP[-] OS Env: 
+    TERM = xterm
+    XDG_SESSION_PATH = /org/freedesktop/DisplayManager/Session0
+    SSH_AGENT_PID = 1646
+    JAVA_HOME = /usr/lib/jvm/java-6-openjdk-i386/
+    LESSCLOSE = /usr/bin/lesspipe %s %s
+    HIVE_HOME = /usr/local/hive
+    OOZIE_BASE_URL = http://ubuntu-VirtualBox:11000/oozie
+    SESSION_MANAGER = local/ubuntu-VirtualBox:@/tmp/.ICE-unix/1586,unix/ubuntu-VirtualBox:/tmp/.ICE-unix/1586
+    GNOME_DESKTOP_SESSION_ID = this-is-deprecated
+    OOZIE_LOG = /home/hduser/softwares/oozie-dist/oozie-4.0.1/logs
+    XDG_SESSION_COOKIE = bba863f9073fcea38172b7f600000008-1421760702.157069-2020595879
+    GDMSESSION = ubuntu-2d
+    MANDATORY_PATH = /usr/share/gconf/ubuntu-2d.mandatory.path
+    PWD = /home/hduser/softwares/oozie-dist/oozie-4.0.1
+    OOZIE_LOG4J_FILE = oozie-log4j.properties
+    CATALINA_OUT = /home/hduser/softwares/oozie-dist/oozie-4.0.1/logs/catalina.out
+    OOZIE_HTTP_PORT = 11000
+    CATALINA_BASE = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server
+    OOZIE_LOG4J_RELOAD = 10
+    HADOOP_COMMON_HOME = /usr/local/hadoop
+    OOZIE_CONFIG_FILE = oozie-site.xml
+    PATH = /usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/lib/jvm/java-6-openjdk-i386//bin:/usr/local/hadoop/bin:/usr/local/hive/bin:/usr/local/sqoop/bin:/usr/local/hive/bin:/usr/local/pig/bin
+    XDG_CURRENT_DESKTOP = Unity
+    XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu-2d:/etc/xdg
+    OOZIE_DATA = /home/hduser/softwares/oozie-dist/oozie-4.0.1/data
+    OOZIE_HOME = /home/hduser/softwares/oozie-dist/oozie-4.0.1
+    XAUTHORITY = /home/hduser/.Xauthority
+    CATALINA_PID = /home/hduser/softwares/oozie-dist/oozie-4.0.1/oozie-server/temp/oozie.pid
+    XDG_SEAT_PATH = /org/freedesktop/DisplayManager/Seat0
+    OOZIE_HTTP_HOSTNAME = ubuntu-VirtualBox
+    OOZIE_HTTPS_KEYSTORE_FILE = /home/hduser/.keystore
+    PIG_INSTALL = /usr/local/pig
+    GNOME_KEYRING_CONTROL = /tmp/keyring-7qmwIj
+    SHLVL = 1
+    SQOOP_HOME = /usr/local/sqoop
+    COLORTERM = gnome-terminal
+    OOZIE_HTTPS_KEYSTORE_PASS = password
+    PIG_CLASSPATH = /conf
+    XDG_DATA_DIRS = /usr/share/ubuntu-2d:/usr/share/gnome:/usr/local/share/:/usr/share/
+    LOGNAME = hduser
+    WINDOWID = 62914565
+    GPG_AGENT_INFO = /tmp/keyring-7qmwIj/gpg:0:1
+    SSH_AUTH_SOCK = /tmp/keyring-7qmwIj/ssh
+    LD_LIBRARY_PATH = /usr/lib/jvm/java-6-openjdk-i386/jre/lib/i386/client:/usr/lib/jvm/java-6-openjdk-i386/jre/lib/i386:/usr/lib/jvm/java-6-openjdk-i386/jre/../lib/i386
+    DBUS_SESSION_BUS_ADDRESS = unix:abstract=/tmp/dbus-u7pIInUoID,guid=13e067df54cd77d5a2dbfb5a00000031
+    SHELL = /bin/bash
+    GNOME_KEYRING_PID = 1575
+    LANGUAGE = en_US.UTF-8
+    OOZIE_ADMIN_PORT = 11001
+    DESKTOP_SESSION = ubuntu-2d
+    OOZIE_HTTPS_PORT = 11443
+    DISPLAY = :0
+    LC_ALL = en_US.UTF-8
+    USER = hduser
+    UBUNTU_MENUPROXY = libappmenu.so
+    HOME = /home/hduser
+    OOZIE_CONFIG = /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf
+    LESSOPEN = | /usr/bin/lesspipe %s
+    CATALINA_OPTS =  -Xmx1024m -Dderby.stream.error.file=/home/hduser/softwares/oozie-dist/oozie-4.0.1/logs/derby.log -Doozie.home.dir=/home/hduser/softwares/oozie-dist/oozie-4.0.1 -Doozie.config.dir=/home/hduser/softwares/oozie-dist/oozie-4.0.1/conf -Doozie.log.dir=/home/hduser/softwares/oozie-dist/oozie-4.0.1/logs -Doozie.data.dir=/home/hduser/softwares/oozie-dist/oozie-4.0.1/data -Doozie.config.file=oozie-site.xml -Doozie.log4j.file=oozie-log4j.properties -Doozie.log4j.reload=10 -Doozie.http.hostname=ubuntu-VirtualBox -Doozie.admin.port=11001 -Doozie.http.port=11000 -Doozie.https.port=11443 -Doozie.base.url=http://ubuntu-VirtualBox:11000/oozie -Doozie.https.keystore.file=/home/hduser/.keystore -Doozie.https.keystore.pass=password -Djava.library.path=
+    HADOOP_INSTALL = /usr/local/hadoop
+    DEFAULTS_PATH = /usr/share/gconf/ubuntu-2d.default.path
+    LS_COLORS = rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:
+    LANG = en_US.UTF-8
+    HADOOP_MAPRED_HOME = /usr/local/hadoop
+
+2015-01-20 15:29:19,946  INFO oozieinstrumentation:539 - USER[-] GROUP[-] 
+variables:
+  configuration:
+    config.dir: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf
+    config.file: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf/oozie-site.xml
+  jobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+  jvm:
+    free.memory: 9552736
+    max.memory: 1037959168
+    total.memory: 29212672
+  locks:
+    locks: 0
+  logging:
+    config.file: oozie-log4j.properties
+    from.classpath: false
+    log.over.web-service: true
+    reload.interval: 10
+  oozie:
+    version: 4.0.1
+  windowjobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+samplers:
+  callablequeue:
+    queue.size: 0.0
+    threads.active: 0.0
+  webservices:
+    callback: 0.0
+    requests: 0.0
+    sla: 0.0
+    v0admin: 0.0
+    v0job: 0.0
+    v0jobs: 0.0
+    v1admin: 0.0
+    v1job: 0.0
+    v1jobs: 0.0
+    v2admin: 0.0
+    v2job: 0.0
+    v2sla: 0.0
+    version: 0.0
+counters:
+  callablequeue:
+    executed: 1
+    queued: 1
+  commands:
+    purge.executions: 1
+  jpa:
+    BundleActionsGetWaitingOlderJPAExecutor: 1
+    BundleJobsGetForPurgeJPAExecutor: 1
+    BundleJobsGetNeedStartJPAExecutor: 1
+    BundleJobsGetPausedJPAExecutor: 1
+    BundleJobsGetRunningOrPendingJPAExecutor: 1
+    BundleJobsGetUnpausedJPAExecutor: 1
+    CoordActionsGetForRecoveryJPAExecutor: 1
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: 1
+    CoordActionsRunningGetJPAExecutor: 1
+    CoordJobsGetForPurgeJPAExecutor: 1
+    CoordJobsGetPausedJPAExecutor: 1
+    CoordJobsGetPendingJPAExecutor: 1
+    CoordJobsGetUnpausedJPAExecutor: 1
+    CoordJobsToBeMaterializedJPAExecutor: 1
+    WorkflowActionsGetPendingJPAExecutor: 1
+    WorkflowActionsRunningGetJPAExecutor: 1
+    WorkflowJobsGetForPurgeJPAExecutor: 1
+  webservices:
+    requests: 2
+    v2admin: 1
+    v2admin-GET: 1
+    version: 1
+    version-GET: 1
+timers:
+  callablequeue:
+    time.in.queue: ticks[1] totalAvg[3] ownAvg[3]
+  commands:
+    purge.call: ticks[1] totalAvg[503] ownAvg[503]
+    purge.execute: ticks[1] totalAvg[0] ownAvg[0]
+  jpa:
+    BundleActionsGetWaitingOlderJPAExecutor: ticks[1] totalAvg[10] ownAvg[10]
+    BundleJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[60] ownAvg[60]
+    BundleJobsGetNeedStartJPAExecutor: ticks[1] totalAvg[86] ownAvg[86]
+    BundleJobsGetPausedJPAExecutor: ticks[1] totalAvg[30] ownAvg[30]
+    BundleJobsGetRunningOrPendingJPAExecutor: ticks[1] totalAvg[85] ownAvg[85]
+    BundleJobsGetUnpausedJPAExecutor: ticks[1] totalAvg[400] ownAvg[400]
+    CoordActionsGetForRecoveryJPAExecutor: ticks[1] totalAvg[213] ownAvg[213]
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: ticks[1] totalAvg[71] ownAvg[71]
+    CoordActionsRunningGetJPAExecutor: ticks[1] totalAvg[117] ownAvg[117]
+    CoordJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[167] ownAvg[167]
+    CoordJobsGetPausedJPAExecutor: ticks[1] totalAvg[10] ownAvg[10]
+    CoordJobsGetPendingJPAExecutor: ticks[1] totalAvg[400] ownAvg[400]
+    CoordJobsGetUnpausedJPAExecutor: ticks[1] totalAvg[39] ownAvg[39]
+    CoordJobsToBeMaterializedJPAExecutor: ticks[1] totalAvg[416] ownAvg[416]
+    WorkflowActionsGetPendingJPAExecutor: ticks[1] totalAvg[292] ownAvg[292]
+    WorkflowActionsRunningGetJPAExecutor: ticks[1] totalAvg[288] ownAvg[288]
+    WorkflowJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[270] ownAvg[270]
+  webservices:
+    v2admin: ticks[1] totalAvg[0] ownAvg[0]
+    v2admin-GET: ticks[1] totalAvg[0] ownAvg[0]
+    version: ticks[1] totalAvg[4] ownAvg[4]
+    version-GET: ticks[1] totalAvg[4] ownAvg[4]
+
+2015-01-20 15:30:19,948  INFO oozieinstrumentation:539 - USER[-] GROUP[-] 
+variables:
+  configuration:
+    config.dir: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf
+    config.file: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf/oozie-site.xml
+  jobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+  jvm:
+    free.memory: 14560872
+    max.memory: 1037959168
+    total.memory: 29212672
+  locks:
+    locks: 0
+  logging:
+    config.file: oozie-log4j.properties
+    from.classpath: false
+    log.over.web-service: true
+    reload.interval: 10
+  oozie:
+    version: 4.0.1
+  windowjobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+samplers:
+  callablequeue:
+    queue.size: 0.0
+    threads.active: 0.0
+  webservices:
+    callback: 0.0
+    requests: 0.0
+    sla: 0.0
+    v0admin: 0.0
+    v0job: 0.0
+    v0jobs: 0.0
+    v1admin: 0.0
+    v1job: 0.0
+    v1jobs: 0.0
+    v2admin: 0.0
+    v2job: 0.0
+    v2sla: 0.0
+    version: 0.0
+counters:
+  callablequeue:
+    executed: 1
+    queued: 1
+  commands:
+    purge.executions: 1
+  jpa:
+    BundleActionsGetByLastModifiedTimeJPAExecutor: 1
+    BundleActionsGetWaitingOlderJPAExecutor: 2
+    BundleJobsGetForPurgeJPAExecutor: 1
+    BundleJobsGetNeedStartJPAExecutor: 2
+    BundleJobsGetPausedJPAExecutor: 2
+    BundleJobsGetRunningOrPendingJPAExecutor: 1
+    BundleJobsGetUnpausedJPAExecutor: 2
+    CoordActionsGetByLastModifiedTimeJPAExecutor: 1
+    CoordActionsGetForRecoveryJPAExecutor: 2
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: 2
+    CoordActionsRunningGetJPAExecutor: 2
+    CoordJobsGetChangedJPAExecutor: 1
+    CoordJobsGetForPurgeJPAExecutor: 1
+    CoordJobsGetPausedJPAExecutor: 2
+    CoordJobsGetPendingJPAExecutor: 1
+    CoordJobsGetUnpausedJPAExecutor: 2
+    CoordJobsToBeMaterializedJPAExecutor: 1
+    WorkflowActionsGetPendingJPAExecutor: 2
+    WorkflowActionsRunningGetJPAExecutor: 2
+    WorkflowJobsGetForPurgeJPAExecutor: 1
+  webservices:
+    requests: 2
+    v2admin: 1
+    v2admin-GET: 1
+    version: 1
+    version-GET: 1
+timers:
+  callablequeue:
+    time.in.queue: ticks[1] totalAvg[3] ownAvg[3]
+  commands:
+    purge.call: ticks[1] totalAvg[503] ownAvg[503]
+    purge.execute: ticks[1] totalAvg[0] ownAvg[0]
+  db:
+    getWorkflowCountWithStatus: ticks[6] totalAvg[8] ownAvg[8]
+    getWorkflowCountWithStatusInLastNSecs: ticks[6] totalAvg[4] ownAvg[4]
+  jpa:
+    BundleActionsGetByLastModifiedTimeJPAExecutor: ticks[1] totalAvg[7] ownAvg[7]
+    BundleActionsGetWaitingOlderJPAExecutor: ticks[2] totalAvg[6] ownAvg[6]
+    BundleJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[60] ownAvg[60]
+    BundleJobsGetNeedStartJPAExecutor: ticks[2] totalAvg[43] ownAvg[43]
+    BundleJobsGetPausedJPAExecutor: ticks[2] totalAvg[15] ownAvg[15]
+    BundleJobsGetRunningOrPendingJPAExecutor: ticks[1] totalAvg[85] ownAvg[85]
+    BundleJobsGetUnpausedJPAExecutor: ticks[2] totalAvg[201] ownAvg[201]
+    CoordActionsGetByLastModifiedTimeJPAExecutor: ticks[1] totalAvg[12] ownAvg[12]
+    CoordActionsGetForRecoveryJPAExecutor: ticks[2] totalAvg[107] ownAvg[107]
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: ticks[2] totalAvg[36] ownAvg[36]
+    CoordActionsRunningGetJPAExecutor: ticks[2] totalAvg[59] ownAvg[59]
+    CoordJobsGetChangedJPAExecutor: ticks[1] totalAvg[11] ownAvg[11]
+    CoordJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[167] ownAvg[167]
+    CoordJobsGetPausedJPAExecutor: ticks[2] totalAvg[5] ownAvg[5]
+    CoordJobsGetPendingJPAExecutor: ticks[1] totalAvg[400] ownAvg[400]
+    CoordJobsGetUnpausedJPAExecutor: ticks[2] totalAvg[22] ownAvg[22]
+    CoordJobsToBeMaterializedJPAExecutor: ticks[1] totalAvg[416] ownAvg[416]
+    WorkflowActionsGetPendingJPAExecutor: ticks[2] totalAvg[146] ownAvg[146]
+    WorkflowActionsRunningGetJPAExecutor: ticks[2] totalAvg[145] ownAvg[145]
+    WorkflowJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[270] ownAvg[270]
+  webservices:
+    v2admin: ticks[1] totalAvg[0] ownAvg[0]
+    v2admin-GET: ticks[1] totalAvg[0] ownAvg[0]
+    version: ticks[1] totalAvg[4] ownAvg[4]
+    version-GET: ticks[1] totalAvg[4] ownAvg[4]
+
+2015-01-20 15:31:19,951  INFO oozieinstrumentation:539 - USER[-] GROUP[-] 
+variables:
+  configuration:
+    config.dir: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf
+    config.file: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf/oozie-site.xml
+  jobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+  jvm:
+    free.memory: 14734368
+    max.memory: 1037959168
+    total.memory: 29212672
+  locks:
+    locks: 0
+  logging:
+    config.file: oozie-log4j.properties
+    from.classpath: false
+    log.over.web-service: true
+    reload.interval: 10
+  oozie:
+    version: 4.0.1
+  windowjobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+samplers:
+  callablequeue:
+    queue.size: 0.0
+    threads.active: 0.0
+  webservices:
+    callback: 0.0
+    requests: 0.0
+    sla: 0.0
+    v0admin: 0.0
+    v0job: 0.0
+    v0jobs: 0.0
+    v1admin: 0.0
+    v1job: 0.0
+    v1jobs: 0.0
+    v2admin: 0.0
+    v2job: 0.0
+    v2sla: 0.0
+    version: 0.0
+counters:
+  callablequeue:
+    executed: 1
+    queued: 1
+  commands:
+    purge.executions: 1
+  jpa:
+    BundleActionsGetByLastModifiedTimeJPAExecutor: 2
+    BundleActionsGetWaitingOlderJPAExecutor: 3
+    BundleJobsGetForPurgeJPAExecutor: 1
+    BundleJobsGetNeedStartJPAExecutor: 3
+    BundleJobsGetPausedJPAExecutor: 3
+    BundleJobsGetRunningOrPendingJPAExecutor: 1
+    BundleJobsGetUnpausedJPAExecutor: 3
+    CoordActionsGetByLastModifiedTimeJPAExecutor: 2
+    CoordActionsGetForRecoveryJPAExecutor: 3
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: 3
+    CoordActionsRunningGetJPAExecutor: 3
+    CoordJobsGetChangedJPAExecutor: 2
+    CoordJobsGetForPurgeJPAExecutor: 1
+    CoordJobsGetPausedJPAExecutor: 3
+    CoordJobsGetPendingJPAExecutor: 1
+    CoordJobsGetUnpausedJPAExecutor: 3
+    CoordJobsToBeMaterializedJPAExecutor: 1
+    WorkflowActionsGetPendingJPAExecutor: 3
+    WorkflowActionsRunningGetJPAExecutor: 3
+    WorkflowJobsGetForPurgeJPAExecutor: 1
+  webservices:
+    requests: 2
+    v2admin: 1
+    v2admin-GET: 1
+    version: 1
+    version-GET: 1
+timers:
+  callablequeue:
+    time.in.queue: ticks[1] totalAvg[3] ownAvg[3]
+  commands:
+    purge.call: ticks[1] totalAvg[503] ownAvg[503]
+    purge.execute: ticks[1] totalAvg[0] ownAvg[0]
+  db:
+    getWorkflowCountWithStatus: ticks[6] totalAvg[8] ownAvg[8]
+    getWorkflowCountWithStatusInLastNSecs: ticks[6] totalAvg[4] ownAvg[4]
+  jpa:
+    BundleActionsGetByLastModifiedTimeJPAExecutor: ticks[2] totalAvg[4] ownAvg[4]
+    BundleActionsGetWaitingOlderJPAExecutor: ticks[3] totalAvg[7] ownAvg[7]
+    BundleJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[60] ownAvg[60]
+    BundleJobsGetNeedStartJPAExecutor: ticks[3] totalAvg[32] ownAvg[32]
+    BundleJobsGetPausedJPAExecutor: ticks[3] totalAvg[10] ownAvg[10]
+    BundleJobsGetRunningOrPendingJPAExecutor: ticks[1] totalAvg[85] ownAvg[85]
+    BundleJobsGetUnpausedJPAExecutor: ticks[3] totalAvg[136] ownAvg[136]
+    CoordActionsGetByLastModifiedTimeJPAExecutor: ticks[2] totalAvg[8] ownAvg[8]
+    CoordActionsGetForRecoveryJPAExecutor: ticks[3] totalAvg[72] ownAvg[72]
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: ticks[3] totalAvg[24] ownAvg[24]
+    CoordActionsRunningGetJPAExecutor: ticks[3] totalAvg[40] ownAvg[40]
+    CoordJobsGetChangedJPAExecutor: ticks[2] totalAvg[6] ownAvg[6]
+    CoordJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[167] ownAvg[167]
+    CoordJobsGetPausedJPAExecutor: ticks[3] totalAvg[4] ownAvg[4]
+    CoordJobsGetPendingJPAExecutor: ticks[1] totalAvg[400] ownAvg[400]
+    CoordJobsGetUnpausedJPAExecutor: ticks[3] totalAvg[14] ownAvg[14]
+    CoordJobsToBeMaterializedJPAExecutor: ticks[1] totalAvg[416] ownAvg[416]
+    WorkflowActionsGetPendingJPAExecutor: ticks[3] totalAvg[101] ownAvg[101]
+    WorkflowActionsRunningGetJPAExecutor: ticks[3] totalAvg[97] ownAvg[97]
+    WorkflowJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[270] ownAvg[270]
+  webservices:
+    v2admin: ticks[1] totalAvg[0] ownAvg[0]
+    v2admin-GET: ticks[1] totalAvg[0] ownAvg[0]
+    version: ticks[1] totalAvg[4] ownAvg[4]
+    version-GET: ticks[1] totalAvg[4] ownAvg[4]
+
+2015-01-20 15:32:19,955  INFO oozieinstrumentation:539 - USER[-] GROUP[-] 
+variables:
+  configuration:
+    config.dir: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf
+    config.file: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf/oozie-site.xml
+  jobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+  jvm:
+    free.memory: 14875960
+    max.memory: 1037959168
+    total.memory: 29212672
+  locks:
+    locks: 0
+  logging:
+    config.file: oozie-log4j.properties
+    from.classpath: false
+    log.over.web-service: true
+    reload.interval: 10
+  oozie:
+    version: 4.0.1
+  windowjobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+samplers:
+  callablequeue:
+    queue.size: 0.0
+    threads.active: 0.0
+  webservices:
+    callback: 0.0
+    requests: 0.0
+    sla: 0.0
+    v0admin: 0.0
+    v0job: 0.0
+    v0jobs: 0.0
+    v1admin: 0.0
+    v1job: 0.0
+    v1jobs: 0.0
+    v2admin: 0.0
+    v2job: 0.0
+    v2sla: 0.0
+    version: 0.0
+counters:
+  callablequeue:
+    executed: 1
+    queued: 1
+  commands:
+    purge.executions: 1
+  jpa:
+    BundleActionsGetByLastModifiedTimeJPAExecutor: 3
+    BundleActionsGetWaitingOlderJPAExecutor: 4
+    BundleJobsGetForPurgeJPAExecutor: 1
+    BundleJobsGetNeedStartJPAExecutor: 4
+    BundleJobsGetPausedJPAExecutor: 4
+    BundleJobsGetRunningOrPendingJPAExecutor: 1
+    BundleJobsGetUnpausedJPAExecutor: 4
+    CoordActionsGetByLastModifiedTimeJPAExecutor: 3
+    CoordActionsGetForRecoveryJPAExecutor: 4
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: 4
+    CoordActionsRunningGetJPAExecutor: 4
+    CoordJobsGetChangedJPAExecutor: 3
+    CoordJobsGetForPurgeJPAExecutor: 1
+    CoordJobsGetPausedJPAExecutor: 4
+    CoordJobsGetPendingJPAExecutor: 1
+    CoordJobsGetUnpausedJPAExecutor: 4
+    CoordJobsToBeMaterializedJPAExecutor: 1
+    WorkflowActionsGetPendingJPAExecutor: 4
+    WorkflowActionsRunningGetJPAExecutor: 4
+    WorkflowJobsGetForPurgeJPAExecutor: 1
+  webservices:
+    requests: 2
+    v2admin: 1
+    v2admin-GET: 1
+    version: 1
+    version-GET: 1
+timers:
+  callablequeue:
+    time.in.queue: ticks[1] totalAvg[3] ownAvg[3]
+  commands:
+    purge.call: ticks[1] totalAvg[503] ownAvg[503]
+    purge.execute: ticks[1] totalAvg[0] ownAvg[0]
+  db:
+    getWorkflowCountWithStatus: ticks[6] totalAvg[8] ownAvg[8]
+    getWorkflowCountWithStatusInLastNSecs: ticks[6] totalAvg[4] ownAvg[4]
+  jpa:
+    BundleActionsGetByLastModifiedTimeJPAExecutor: ticks[3] totalAvg[3] ownAvg[3]
+    BundleActionsGetWaitingOlderJPAExecutor: ticks[4] totalAvg[5] ownAvg[5]
+    BundleJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[60] ownAvg[60]
+    BundleJobsGetNeedStartJPAExecutor: ticks[4] totalAvg[24] ownAvg[24]
+    BundleJobsGetPausedJPAExecutor: ticks[4] totalAvg[9] ownAvg[9]
+    BundleJobsGetRunningOrPendingJPAExecutor: ticks[1] totalAvg[85] ownAvg[85]
+    BundleJobsGetUnpausedJPAExecutor: ticks[4] totalAvg[102] ownAvg[102]
+    CoordActionsGetByLastModifiedTimeJPAExecutor: ticks[3] totalAvg[5] ownAvg[5]
+    CoordActionsGetForRecoveryJPAExecutor: ticks[4] totalAvg[54] ownAvg[54]
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: ticks[4] totalAvg[18] ownAvg[18]
+    CoordActionsRunningGetJPAExecutor: ticks[4] totalAvg[30] ownAvg[30]
+    CoordJobsGetChangedJPAExecutor: ticks[3] totalAvg[4] ownAvg[4]
+    CoordJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[167] ownAvg[167]
+    CoordJobsGetPausedJPAExecutor: ticks[4] totalAvg[3] ownAvg[3]
+    CoordJobsGetPendingJPAExecutor: ticks[1] totalAvg[400] ownAvg[400]
+    CoordJobsGetUnpausedJPAExecutor: ticks[4] totalAvg[11] ownAvg[11]
+    CoordJobsToBeMaterializedJPAExecutor: ticks[1] totalAvg[416] ownAvg[416]
+    WorkflowActionsGetPendingJPAExecutor: ticks[4] totalAvg[77] ownAvg[77]
+    WorkflowActionsRunningGetJPAExecutor: ticks[4] totalAvg[73] ownAvg[73]
+    WorkflowJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[270] ownAvg[270]
+  webservices:
+    v2admin: ticks[1] totalAvg[0] ownAvg[0]
+    v2admin-GET: ticks[1] totalAvg[0] ownAvg[0]
+    version: ticks[1] totalAvg[4] ownAvg[4]
+    version-GET: ticks[1] totalAvg[4] ownAvg[4]
+
+2015-01-20 15:33:19,958  INFO oozieinstrumentation:539 - USER[-] GROUP[-] 
+variables:
+  configuration:
+    config.dir: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf
+    config.file: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf/oozie-site.xml
+  jobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+  jvm:
+    free.memory: 14953456
+    max.memory: 1037959168
+    total.memory: 29212672
+  locks:
+    locks: 0
+  logging:
+    config.file: oozie-log4j.properties
+    from.classpath: false
+    log.over.web-service: true
+    reload.interval: 10
+  oozie:
+    version: 4.0.1
+  windowjobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+samplers:
+  callablequeue:
+    queue.size: 0.0
+    threads.active: 0.0
+  webservices:
+    callback: 0.0
+    requests: 0.0
+    sla: 0.0
+    v0admin: 0.0
+    v0job: 0.0
+    v0jobs: 0.0
+    v1admin: 0.0
+    v1job: 0.0
+    v1jobs: 0.0
+    v2admin: 0.0
+    v2job: 0.0
+    v2sla: 0.0
+    version: 0.0
+counters:
+  callablequeue:
+    executed: 1
+    queued: 1
+  commands:
+    purge.executions: 1
+  jpa:
+    BundleActionsGetByLastModifiedTimeJPAExecutor: 4
+    BundleActionsGetWaitingOlderJPAExecutor: 5
+    BundleJobsGetForPurgeJPAExecutor: 1
+    BundleJobsGetNeedStartJPAExecutor: 5
+    BundleJobsGetPausedJPAExecutor: 5
+    BundleJobsGetRunningOrPendingJPAExecutor: 1
+    BundleJobsGetUnpausedJPAExecutor: 5
+    CoordActionsGetByLastModifiedTimeJPAExecutor: 4
+    CoordActionsGetForRecoveryJPAExecutor: 5
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: 5
+    CoordActionsRunningGetJPAExecutor: 5
+    CoordJobsGetChangedJPAExecutor: 4
+    CoordJobsGetForPurgeJPAExecutor: 1
+    CoordJobsGetPausedJPAExecutor: 5
+    CoordJobsGetPendingJPAExecutor: 1
+    CoordJobsGetUnpausedJPAExecutor: 5
+    CoordJobsToBeMaterializedJPAExecutor: 1
+    WorkflowActionsGetPendingJPAExecutor: 5
+    WorkflowActionsRunningGetJPAExecutor: 5
+    WorkflowJobsGetForPurgeJPAExecutor: 1
+  webservices:
+    requests: 2
+    v2admin: 1
+    v2admin-GET: 1
+    version: 1
+    version-GET: 1
+timers:
+  callablequeue:
+    time.in.queue: ticks[1] totalAvg[3] ownAvg[3]
+  commands:
+    purge.call: ticks[1] totalAvg[503] ownAvg[503]
+    purge.execute: ticks[1] totalAvg[0] ownAvg[0]
+  db:
+    getWorkflowCountWithStatus: ticks[6] totalAvg[8] ownAvg[8]
+    getWorkflowCountWithStatusInLastNSecs: ticks[6] totalAvg[4] ownAvg[4]
+  jpa:
+    BundleActionsGetByLastModifiedTimeJPAExecutor: ticks[4] totalAvg[2] ownAvg[2]
+    BundleActionsGetWaitingOlderJPAExecutor: ticks[5] totalAvg[4] ownAvg[4]
+    BundleJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[60] ownAvg[60]
+    BundleJobsGetNeedStartJPAExecutor: ticks[5] totalAvg[20] ownAvg[20]
+    BundleJobsGetPausedJPAExecutor: ticks[5] totalAvg[7] ownAvg[7]
+    BundleJobsGetRunningOrPendingJPAExecutor: ticks[1] totalAvg[85] ownAvg[85]
+    BundleJobsGetUnpausedJPAExecutor: ticks[5] totalAvg[82] ownAvg[82]
+    CoordActionsGetByLastModifiedTimeJPAExecutor: ticks[4] totalAvg[4] ownAvg[4]
+    CoordActionsGetForRecoveryJPAExecutor: ticks[5] totalAvg[43] ownAvg[43]
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: ticks[5] totalAvg[15] ownAvg[15]
+    CoordActionsRunningGetJPAExecutor: ticks[5] totalAvg[24] ownAvg[24]
+    CoordJobsGetChangedJPAExecutor: ticks[4] totalAvg[3] ownAvg[3]
+    CoordJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[167] ownAvg[167]
+    CoordJobsGetPausedJPAExecutor: ticks[5] totalAvg[2] ownAvg[2]
+    CoordJobsGetPendingJPAExecutor: ticks[1] totalAvg[400] ownAvg[400]
+    CoordJobsGetUnpausedJPAExecutor: ticks[5] totalAvg[9] ownAvg[9]
+    CoordJobsToBeMaterializedJPAExecutor: ticks[1] totalAvg[416] ownAvg[416]
+    WorkflowActionsGetPendingJPAExecutor: ticks[5] totalAvg[62] ownAvg[62]
+    WorkflowActionsRunningGetJPAExecutor: ticks[5] totalAvg[58] ownAvg[58]
+    WorkflowJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[270] ownAvg[270]
+  webservices:
+    v2admin: ticks[1] totalAvg[0] ownAvg[0]
+    v2admin-GET: ticks[1] totalAvg[0] ownAvg[0]
+    version: ticks[1] totalAvg[4] ownAvg[4]
+    version-GET: ticks[1] totalAvg[4] ownAvg[4]
+
+2015-01-20 15:34:19,971  INFO oozieinstrumentation:539 - USER[-] GROUP[-] 
+variables:
+  configuration:
+    config.dir: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf
+    config.file: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf/oozie-site.xml
+  jobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+  jvm:
+    free.memory: 17576112
+    max.memory: 1037959168
+    total.memory: 36462592
+  locks:
+    locks: 0
+  logging:
+    config.file: oozie-log4j.properties
+    from.classpath: false
+    log.over.web-service: true
+    reload.interval: 10
+  oozie:
+    version: 4.0.1
+  windowjobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 0
+    SUCCEEDED: 0
+    SUSPENDED: 0
+samplers:
+  callablequeue:
+    queue.size: 0.0
+    threads.active: 0.016666666666666666
+  webservices:
+    callback: 0.0
+    requests: 0.016666666666666666
+    sla: 0.0
+    v0admin: 0.0
+    v0job: 0.0
+    v0jobs: 0.0
+    v1admin: 0.0
+    v1job: 0.0
+    v1jobs: 0.016666666666666666
+    v2admin: 0.0
+    v2job: 0.0
+    v2sla: 0.0
+    version: 0.0
+counters:
+  action.executors:
+    :START:#action.end: 1
+    :START:#action.start: 1
+    map-reduce#action.check: 1
+    map-reduce#action.start: 1
+  callablequeue:
+    executed: 10
+    queued: 12
+  commands:
+    action.check.executions: 1
+    action.end.executions: 1
+    action.notification.executions: 2
+    action.start.executions: 2
+    callback.executions: 1
+    job.notification.executions: 1
+    purge.executions: 1
+    signal.executions: 1
+    start.executions: 1
+    submit.executions: 1
+  jobs:
+    start: 1
+    submit: 1
+  jpa:
+    BulkUpdateInsertJPAExecutor: 7
+    BundleActionsGetByLastModifiedTimeJPAExecutor: 5
+    BundleActionsGetWaitingOlderJPAExecutor: 6
+    BundleJobsGetForPurgeJPAExecutor: 1
+    BundleJobsGetNeedStartJPAExecutor: 6
+    BundleJobsGetPausedJPAExecutor: 6
+    BundleJobsGetRunningOrPendingJPAExecutor: 1
+    BundleJobsGetUnpausedJPAExecutor: 6
+    CoordActionsGetByLastModifiedTimeJPAExecutor: 5
+    CoordActionsGetForRecoveryJPAExecutor: 6
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: 6
+    CoordActionsRunningGetJPAExecutor: 6
+    CoordJobsGetChangedJPAExecutor: 5
+    CoordJobsGetForPurgeJPAExecutor: 1
+    CoordJobsGetPausedJPAExecutor: 6
+    CoordJobsGetPendingJPAExecutor: 1
+    CoordJobsGetUnpausedJPAExecutor: 6
+    CoordJobsToBeMaterializedJPAExecutor: 2
+    WorkflowActionGetJPAExecutor: 8
+    WorkflowActionsGetPendingJPAExecutor: 6
+    WorkflowActionsRunningGetJPAExecutor: 6
+    WorkflowJobGetJPAExecutor: 7
+    WorkflowJobsGetForPurgeJPAExecutor: 1
+  webservices:
+    callback: 1
+    callback-GET: 1
+    requests: 5
+    v1jobs: 1
+    v1jobs-POST: 1
+    v2admin: 1
+    v2admin-GET: 1
+    version: 2
+    version-GET: 2
+timers:
+  action.executors:
+    :START:#action.end: ticks[1] totalAvg[0] ownAvg[0]
+    :START:#action.start: ticks[1] totalAvg[0] ownAvg[0]
+    map-reduce#action.check: ticks[1] totalAvg[113] ownAvg[113]
+    map-reduce#action.start: ticks[1] totalAvg[730] ownAvg[730]
+  callablequeue:
+    time.in.queue: ticks[8] totalAvg[0] ownAvg[0]
+  commands:
+    action.check.acquireLock: ticks[1] totalAvg[0] ownAvg[0]
+    action.check.call: ticks[1] totalAvg[178] ownAvg[178]
+    action.check.execute: ticks[1] totalAvg[158] ownAvg[158]
+    action.end.acquireLock: ticks[1] totalAvg[0] ownAvg[0]
+    action.end.call: ticks[1] totalAvg[46] ownAvg[46]
+    action.end.execute: ticks[1] totalAvg[40] ownAvg[40]
+    action.notification.call: ticks[2] totalAvg[0] ownAvg[0]
+    action.notification.execute: ticks[2] totalAvg[0] ownAvg[0]
+    action.start.acquireLock: ticks[2] totalAvg[0] ownAvg[0]
+    action.start.call: ticks[2] totalAvg[441] ownAvg[441]
+    action.start.execute: ticks[2] totalAvg[430] ownAvg[430]
+    callback.call: ticks[1] totalAvg[8] ownAvg[8]
+    callback.execute: ticks[1] totalAvg[0] ownAvg[0]
+    job.notification.call: ticks[1] totalAvg[0] ownAvg[0]
+    job.notification.execute: ticks[1] totalAvg[0] ownAvg[0]
+    purge.call: ticks[1] totalAvg[503] ownAvg[503]
+    purge.execute: ticks[1] totalAvg[0] ownAvg[0]
+    signal.acquireLock: ticks[1] totalAvg[0] ownAvg[0]
+    signal.call: ticks[1] totalAvg[36] ownAvg[36]
+    signal.execute: ticks[1] totalAvg[33] ownAvg[33]
+    start.acquireLock: ticks[1] totalAvg[0] ownAvg[0]
+    start.call: ticks[1] totalAvg[84] ownAvg[84]
+    start.execute: ticks[1] totalAvg[49] ownAvg[49]
+    submit.call: ticks[1] totalAvg[273] ownAvg[273]
+    submit.execute: ticks[1] totalAvg[273] ownAvg[273]
+  db:
+    getWorkflowCountWithStatus: ticks[6] totalAvg[8] ownAvg[8]
+    getWorkflowCountWithStatusInLastNSecs: ticks[6] totalAvg[4] ownAvg[4]
+  jpa:
+    BulkUpdateInsertJPAExecutor: ticks[7] totalAvg[40] ownAvg[40]
+    BundleActionsGetByLastModifiedTimeJPAExecutor: ticks[5] totalAvg[2] ownAvg[2]
+    BundleActionsGetWaitingOlderJPAExecutor: ticks[6] totalAvg[3] ownAvg[3]
+    BundleJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[60] ownAvg[60]
+    BundleJobsGetNeedStartJPAExecutor: ticks[6] totalAvg[17] ownAvg[17]
+    BundleJobsGetPausedJPAExecutor: ticks[6] totalAvg[6] ownAvg[6]
+    BundleJobsGetRunningOrPendingJPAExecutor: ticks[1] totalAvg[85] ownAvg[85]
+    BundleJobsGetUnpausedJPAExecutor: ticks[6] totalAvg[68] ownAvg[68]
+    CoordActionsGetByLastModifiedTimeJPAExecutor: ticks[5] totalAvg[3] ownAvg[3]
+    CoordActionsGetForRecoveryJPAExecutor: ticks[6] totalAvg[36] ownAvg[36]
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: ticks[6] totalAvg[12] ownAvg[12]
+    CoordActionsRunningGetJPAExecutor: ticks[6] totalAvg[20] ownAvg[20]
+    CoordJobsGetChangedJPAExecutor: ticks[5] totalAvg[3] ownAvg[3]
+    CoordJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[167] ownAvg[167]
+    CoordJobsGetPausedJPAExecutor: ticks[6] totalAvg[2] ownAvg[2]
+    CoordJobsGetPendingJPAExecutor: ticks[1] totalAvg[400] ownAvg[400]
+    CoordJobsGetUnpausedJPAExecutor: ticks[6] totalAvg[7] ownAvg[7]
+    CoordJobsToBeMaterializedJPAExecutor: ticks[2] totalAvg[208] ownAvg[208]
+    WorkflowActionGetJPAExecutor: ticks[8] totalAvg[4] ownAvg[4]
+    WorkflowActionsGetPendingJPAExecutor: ticks[6] totalAvg[52] ownAvg[52]
+    WorkflowActionsRunningGetJPAExecutor: ticks[6] totalAvg[49] ownAvg[49]
+    WorkflowJobGetJPAExecutor: ticks[7] totalAvg[8] ownAvg[8]
+    WorkflowJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[270] ownAvg[270]
+  webservices:
+    callback: ticks[1] totalAvg[4] ownAvg[4]
+    callback-GET: ticks[1] totalAvg[4] ownAvg[4]
+    v1jobs: ticks[1] totalAvg[541] ownAvg[1]
+    v1jobs-POST: ticks[1] totalAvg[541] ownAvg[1]
+    v2admin: ticks[1] totalAvg[0] ownAvg[0]
+    v2admin-GET: ticks[1] totalAvg[0] ownAvg[0]
+    version: ticks[2] totalAvg[2] ownAvg[2]
+    version-GET: ticks[2] totalAvg[2] ownAvg[2]
+
+2015-01-20 15:35:19,983  INFO oozieinstrumentation:539 - USER[-] GROUP[-] 
+variables:
+  configuration:
+    config.dir: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf
+    config.file: /home/hduser/softwares/oozie-dist/oozie-4.0.1/conf/oozie-site.xml
+  jobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 1
+    SUCCEEDED: 0
+    SUSPENDED: 0
+  jvm:
+    free.memory: 17064488
+    max.memory: 1037959168
+    total.memory: 42602496
+  locks:
+    locks: 0
+  logging:
+    config.file: oozie-log4j.properties
+    from.classpath: false
+    log.over.web-service: true
+    reload.interval: 10
+  oozie:
+    version: 4.0.1
+  windowjobstatus:
+    FAILED: 0
+    KILLED: 0
+    PREP: 0
+    RUNNING: 1
+    SUCCEEDED: 0
+    SUSPENDED: 0
+samplers:
+  callablequeue:
+    queue.size: 0.0
+    threads.active: 0.0
+  webservices:
+    callback: 0.0
+    requests: 0.05
+    sla: 0.0
+    v0admin: 0.0
+    v0job: 0.0
+    v0jobs: 0.0
+    v1admin: 0.0
+    v1job: 0.0
+    v1jobs: 0.0
+    v2admin: 0.016666666666666666
+    v2job: 0.03333333333333333
+    v2sla: 0.0
+    version: 0.0
+counters:
+  action.executors:
+    :END:#action.end: 1
+    :END:#action.start: 1
+    :START:#action.end: 1
+    :START:#action.start: 1
+    map-reduce#action.check: 2
+    map-reduce#action.end: 1
+    map-reduce#action.start: 1
+  callablequeue:
+    executed: 20
+    queued: 24
+  commands:
+    action.check.executions: 2
+    action.end.executions: 3
+    action.notification.executions: 4
+    action.start.executions: 3
+    bundle.job.info.executions: 1
+    callback.executions: 2
+    coord-action-update.executions: 1
+    coord-action-update.preconditionfailed: 1
+    coord.job.info.executions: 1
+    definition.executions: 1
+    job.info.executions: 4
+    job.notification.executions: 2
+    purge.executions: 1
+    signal.executions: 3
+    start.executions: 1
+    submit.executions: 1
+    wf_end.executions: 1
+  jobs:
+    start: 1
+    submit: 1
+    succeeded: 1
+  jpa:
+    BulkUpdateInsertJPAExecutor: 13
+    BundleActionsGetByLastModifiedTimeJPAExecutor: 6
+    BundleActionsGetWaitingOlderJPAExecutor: 7
+    BundleJobInfoGetJPAExecutor: 1
+    BundleJobsGetForPurgeJPAExecutor: 1
+    BundleJobsGetNeedStartJPAExecutor: 7
+    BundleJobsGetPausedJPAExecutor: 7
+    BundleJobsGetRunningOrPendingJPAExecutor: 1
+    BundleJobsGetUnpausedJPAExecutor: 7
+    CoordActionGetForExternalIdJPAExecutor: 1
+    CoordActionsGetByLastModifiedTimeJPAExecutor: 6
+    CoordActionsGetForRecoveryJPAExecutor: 7
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: 7
+    CoordActionsRunningGetJPAExecutor: 7
+    CoordInfoGetJPAExecutor: 1
+    CoordJobsGetChangedJPAExecutor: 6
+    CoordJobsGetForPurgeJPAExecutor: 1
+    CoordJobsGetPausedJPAExecutor: 7
+    CoordJobsGetPendingJPAExecutor: 1
+    CoordJobsGetUnpausedJPAExecutor: 7
+    CoordJobsToBeMaterializedJPAExecutor: 2
+    WorkflowActionGetJPAExecutor: 17
+    WorkflowActionSubsetGetJPAExecutor: 3
+    WorkflowActionsGetPendingJPAExecutor: 7
+    WorkflowActionsRunningGetJPAExecutor: 7
+    WorkflowInfoWithActionsSubsetGetJPAExecutor: 3
+    WorkflowJobGetJPAExecutor: 18
+    WorkflowJobsGetForPurgeJPAExecutor: 1
+    WorkflowsJobGetJPAExecutor: 1
+  webservices:
+    callback: 2
+    callback-GET: 2
+    requests: 19
+    v1jobs: 4
+    v1jobs-GET: 3
+    v1jobs-POST: 1
+    v2admin: 6
+    v2admin-GET: 6
+    v2job: 3
+    v2job-GET: 3
+    version: 4
+    version-GET: 4
+timers:
+  action.executors:
+    :END:#action.end: ticks[1] totalAvg[0] ownAvg[0]
+    :END:#action.start: ticks[1] totalAvg[0] ownAvg[0]
+    :START:#action.end: ticks[1] totalAvg[0] ownAvg[0]
+    :START:#action.start: ticks[1] totalAvg[0] ownAvg[0]
+    map-reduce#action.check: ticks[2] totalAvg[75] ownAvg[75]
+    map-reduce#action.end: ticks[1] totalAvg[32] ownAvg[32]
+    map-reduce#action.start: ticks[1] totalAvg[730] ownAvg[730]
+  callablequeue:
+    time.in.queue: ticks[16] totalAvg[0] ownAvg[0]
+  commands:
+    action.check.acquireLock: ticks[2] totalAvg[0] ownAvg[0]
+    action.check.call: ticks[2] totalAvg[130] ownAvg[130]
+    action.check.execute: ticks[2] totalAvg[108] ownAvg[108]
+    action.end.acquireLock: ticks[3] totalAvg[0] ownAvg[0]
+    action.end.call: ticks[3] totalAvg[38] ownAvg[38]
+    action.end.execute: ticks[3] totalAvg[32] ownAvg[32]
+    action.notification.call: ticks[4] totalAvg[0] ownAvg[0]
+    action.notification.execute: ticks[4] totalAvg[0] ownAvg[0]
+    action.start.acquireLock: ticks[3] totalAvg[0] ownAvg[0]
+    action.start.call: ticks[3] totalAvg[299] ownAvg[299]
+    action.start.execute: ticks[3] totalAvg[290] ownAvg[290]
+    bundle.job.info.call: ticks[1] totalAvg[208] ownAvg[208]
+    bundle.job.info.execute: ticks[1] totalAvg[208] ownAvg[208]
+    callback.call: ticks[2] totalAvg[14] ownAvg[14]
+    callback.execute: ticks[2] totalAvg[0] ownAvg[0]
+    coord-action-update.call: ticks[1] totalAvg[18] ownAvg[18]
+    coord.job.info.call: ticks[1] totalAvg[211] ownAvg[211]
+    coord.job.info.execute: ticks[1] totalAvg[211] ownAvg[211]
+    definition.call: ticks[1] totalAvg[3] ownAvg[3]
+    definition.execute: ticks[1] totalAvg[1] ownAvg[1]
+    job.info.call: ticks[4] totalAvg[66] ownAvg[66]
+    job.info.execute: ticks[4] totalAvg[66] ownAvg[66]
+    job.notification.call: ticks[2] totalAvg[0] ownAvg[0]
+    job.notification.execute: ticks[2] totalAvg[0] ownAvg[0]
+    purge.call: ticks[1] totalAvg[503] ownAvg[503]
+    purge.execute: ticks[1] totalAvg[0] ownAvg[0]
+    signal.acquireLock: ticks[3] totalAvg[0] ownAvg[0]
+    signal.call: ticks[3] totalAvg[46] ownAvg[46]
+    signal.execute: ticks[3] totalAvg[41] ownAvg[41]
+    start.acquireLock: ticks[1] totalAvg[0] ownAvg[0]
+    start.call: ticks[1] totalAvg[84] ownAvg[84]
+    start.execute: ticks[1] totalAvg[49] ownAvg[49]
+    submit.call: ticks[1] totalAvg[273] ownAvg[273]
+    submit.execute: ticks[1] totalAvg[273] ownAvg[273]
+    wf_end.call: ticks[1] totalAvg[16] ownAvg[16]
+    wf_end.execute: ticks[1] totalAvg[16] ownAvg[16]
+  db:
+    getWorkflowCountWithStatus: ticks[12] totalAvg[4] ownAvg[4]
+    getWorkflowCountWithStatusInLastNSecs: ticks[12] totalAvg[3] ownAvg[3]
+  jpa:
+    BulkUpdateInsertJPAExecutor: ticks[13] totalAvg[28] ownAvg[28]
+    BundleActionsGetByLastModifiedTimeJPAExecutor: ticks[6] totalAvg[1] ownAvg[1]
+    BundleActionsGetWaitingOlderJPAExecutor: ticks[7] totalAvg[3] ownAvg[3]
+    BundleJobInfoGetJPAExecutor: ticks[1] totalAvg[206] ownAvg[206]
+    BundleJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[60] ownAvg[60]
+    BundleJobsGetNeedStartJPAExecutor: ticks[7] totalAvg[14] ownAvg[14]
+    BundleJobsGetPausedJPAExecutor: ticks[7] totalAvg[5] ownAvg[5]
+    BundleJobsGetRunningOrPendingJPAExecutor: ticks[1] totalAvg[85] ownAvg[85]
+    BundleJobsGetUnpausedJPAExecutor: ticks[7] totalAvg[59] ownAvg[59]
+    CoordActionGetForExternalIdJPAExecutor: ticks[1] totalAvg[17] ownAvg[17]
+    CoordActionsGetByLastModifiedTimeJPAExecutor: ticks[6] totalAvg[3] ownAvg[3]
+    CoordActionsGetForRecoveryJPAExecutor: ticks[7] totalAvg[31] ownAvg[31]
+    CoordActionsGetReadyGroupbyJobIDJPAExecutor: ticks[7] totalAvg[11] ownAvg[11]
+    CoordActionsRunningGetJPAExecutor: ticks[7] totalAvg[17] ownAvg[17]
+    CoordInfoGetJPAExecutor: ticks[1] totalAvg[208] ownAvg[208]
+    CoordJobsGetChangedJPAExecutor: ticks[6] totalAvg[3] ownAvg[3]
+    CoordJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[167] ownAvg[167]
+    CoordJobsGetPausedJPAExecutor: ticks[7] totalAvg[2] ownAvg[2]
+    CoordJobsGetPendingJPAExecutor: ticks[1] totalAvg[400] ownAvg[400]
+    CoordJobsGetUnpausedJPAExecutor: ticks[7] totalAvg[6] ownAvg[6]
+    CoordJobsToBeMaterializedJPAExecutor: ticks[2] totalAvg[208] ownAvg[208]
+    WorkflowActionGetJPAExecutor: ticks[17] totalAvg[3] ownAvg[3]
+    WorkflowActionSubsetGetJPAExecutor: ticks[3] totalAvg[10] ownAvg[10]
+    WorkflowActionsGetPendingJPAExecutor: ticks[7] totalAvg[44] ownAvg[44]
+    WorkflowActionsRunningGetJPAExecutor: ticks[7] totalAvg[42] ownAvg[42]
+    WorkflowInfoWithActionsSubsetGetJPAExecutor: ticks[3] totalAvg[25] ownAvg[25]
+    WorkflowJobGetJPAExecutor: ticks[18] totalAvg[7] ownAvg[7]
+    WorkflowJobsGetForPurgeJPAExecutor: ticks[1] totalAvg[270] ownAvg[270]
+    WorkflowsJobGetJPAExecutor: ticks[1] totalAvg[185] ownAvg[185]
+  webservices:
+    callback: ticks[2] totalAvg[4] ownAvg[4]
+    callback-GET: ticks[2] totalAvg[4] ownAvg[4]
+    v1jobs: ticks[4] totalAvg[306] ownAvg[0]
+    v1jobs-GET: ticks[3] totalAvg[228] ownAvg[0]
+    v1jobs-POST: ticks[1] totalAvg[541] ownAvg[1]
+    v2admin: ticks[6] totalAvg[247] ownAvg[247]
+    v2admin-GET: ticks[6] totalAvg[247] ownAvg[247]
+    v2job: ticks[3] totalAvg[390] ownAvg[2]
+    v2job-GET: ticks[3] totalAvg[390] ownAvg[2]
+    version: ticks[4] totalAvg[1] ownAvg[1]
+    version-GET: ticks[4] totalAvg[1] ownAvg[1]
+

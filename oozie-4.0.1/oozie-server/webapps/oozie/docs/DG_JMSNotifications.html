@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Oozie - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Oozie
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2015-01-20
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                                                <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <p><noauolink></p>
+<p><a href="./index.html">::Go back o Oozie Documentation Index::</a>
+</p>
+<a name="JMS_Notifications"></a>
+<div class="section"><h2> JMS Notifications</h2>
+<p><ul><ul><li><a href="#Overview">Overview</a>
+</li>
+<li><a href="#Oozie_Server_Configuration">Oozie Server Configuration</a>
+</li>
+<li><a href="#Consuming_Notifications">Consuming Notifications</a>
+<ul><li><a href="#Notification_types">Notification types</a>
+</li>
+<li><a href="#JMS_Topic">JMS Topic</a>
+</li>
+<li><a href="#JMS_Message_Format">JMS Message Format</a>
+</li>
+<li><a href="#JMS_Client">JMS Client</a>
+<ul><li><a href="#Example">Example</a>
+</li>
+<li><a href="#Applying_Selectors">Applying Selectors</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</p>
+<a name="Overview"></a>
+<div class="section"><h3>Overview</h3>
+<p>Since Oozie 4.0, Oozie supports publishing notifications to a JMS Provider for job status changes and SLA met and miss
+events. This provides an alternative to polling Oozie for Job or SLA related information and getting events as they
+happen without any delay. Clients can be written to consume these notifications and integrate with different monitoring
+and alerting systems.</p>
+<a name="Oozie_Server_Configuration"></a>
+</div>
+<div class="section"><h3>Oozie Server Configuration</h3>
+<p>Refer to <a href="./AG_Install.html#Notifications_Configuration">Notifications Configuration</a>
+ section of <a href="./AG_Install.html">Oozie Install</a>
+
+documentation for the Oozie server side configuration required to support publishing notifications to a JMS Provider.
+The JNDI properties for the JMS provider, the topics to publish to and the notification types to publish (Job and/or SLA)
+need to be configured.</p>
+<a name="Consuming_Notifications"></a>
+</div>
+<div class="section"><h3>Consuming Notifications</h3>
+<a name="Notification_types"></a>
+<div class="section"><h4>Notification types</h4>
+<p>Job and SLA notifications are published to the configured JMS Provider on the configured topics.</p>
+<p>Job status change notifications include job start, success, failure, suspended, etc. Currently only workflow job and
+coordinator action status change notifications are published.</p>
+<p>SLA notifications include START_MET, END_MET, DURATION_MET, START_MISS, END_MISS, DURATION_MISS events and are published
+for a workflow job, workflow action or coordinator action for which SLA information is configured in the job xml. Refer
+to <a href="./DG_SLAMonitoring.html#Configuring_SLA_in_Applications">SLA Configuration</a>
+ for information on configuring SLA for a workflow or
+coordinator.</p>
+<a name="JMS_Topic"></a>
+</div>
+<div class="section"><h4>JMS Topic</h4>
+<p>Consumers interested in notification on events will require to know the JNDI properties to connect to the JMS provider.
+They will also need to know the JMS topic on which notifications for a particular job are published.</p>
+<p>Oozie Client provides the following APIs :
+<pre>
+public JMSConnectionInfo getJMSConnectionInfo()
+public String getJMSTopicName(String jobId)
+</pre></p>
+<p>The JMSConnectionInfo exposes 3 methods:</p>
+<p><pre>
+Properties getJNDIProperties();
+String getTopicPattern(AppType appType);
+String getTopicPrefix();
+</pre></p>
+<p>The topic is obtained by concatenating topic prefix and the substituted value for topic pattern. The topic pattern
+can be a constant value like workflow or coordinator which the administrator has configured or ${username}.
+If ${username}, it has to be substitued with the name of the user who has submitted the job. Administrators can chose
+to publish messages to topics containing user names to avoid having one topic containing all messages and all users having
+to apply selectors to filter the message they are interested in.</p>
+<p>The getJMSTopicName API can be used if the job id is already known and will give the exact topic name to which the
+notifications for that job are published.</p>
+<a name="JMS_Message_Format"></a>
+</div>
+<div class="section"><h4>JMS Message Format</h4>
+<p>JMS messages published are <tt>javax.jms.TextMessage</tt>
+. The body contains JSON and the header contains multiple properties
+that can be used as selectors. The header properties are not repeated in the body of the message to keep the messages
+small.</p>
+<p><b>Message Header:</b> <br/>
+The different header properties are:<ul><li>msgType - Value can be JOB or SLA.</li>
+<li>user - The user who submitted the job.</li>
+<li>appName - Application name of the job.</li>
+<li>appType - Type of the job. One of WORKFLOW_JOB, WORKFLOW_ACTION, COORDINATOR_ACTION</li>
+<li>slaStatus - Applicable only to SLA messages. Value is one of NOT_STARTED, IN_PROCESS, MET, MISS</li>
+<li>eventStatus - It takes one of the following values- START_MET, START_MISS, DURATION_MET, DURATION_MISS, END_MET, END_MISS for SLA notifications. It can take any of the following values- WAITING, STARTED, SUCCESS, SUSPEND, FAILURE for job notifications. Note that event status is different from the Job status. It is included in the header to provide better filtering. Below is the mapping of event status to the actual status of workflow job or coordinator action.</li>
+</ul>
+</p>
+<p>WAITING = When a Coordinator Action is waiting for input dependency</p>
+<p>STARTED = When the Workflow Job or Coordinator Action is in RUNNING state</p>
+<p>SUCCESS = When the Workflow Job or Coordinator Action is in SUCCEEDED state</p>
+<p>SUSPEND = When the Workflow Job or Coordinator Action is in SUSPENDED state</p>
+<p>FAILURE = When the Workflow Job or Coordinator Action is in terminal state other than SUCCEEDED.</p>
+<p><b>Message Body for Job Notifications:</b> <br/>
+    Sample JSON response for different job and sla events as below.</p>
+<p><pre>
+Workflow Job in RUNNING state:
+{&quot;status&quot;:&quot;RUNNING&quot;,&quot;id&quot;:&quot;0000042-130618221729631-oozie-oozi-W&quot;,&quot;startTime&quot;:1342915200000}
+</pre></p>
+<p><pre>
+Workflow Job in FAILED state:
+{&quot;status&quot;:&quot;FAILED&quot;,&quot;errorCode&quot;:&quot;EL_ERROR&quot;,&quot;errorMessage&quot;:&quot;variable [dummyvalue] cannot be resolved&quot;,
+&quot;id&quot;:&quot;0000042-130618221729631-oozie-oozi-W&quot;,&quot;startTime&quot;:1342915200000,&quot;endTime&quot;:1366672183543}
+</pre></p>
+<p><pre>
+Workflow Job in SUCCEEDED state:
+{&quot;status&quot;:&quot;SUCCEEDED&quot;,&quot;id&quot;:&quot;0000039-130618221729631-oozie-oozi-W&quot;,&quot;startTime&quot;:1342915200000,
+&quot;parentId&quot;:&quot;0000025-130618221729631-oozie-oozi-C@1&quot;,&quot;endTime&quot;:1366676224154}
+</pre></p>
+<p><pre>
+Workflow Job in SUSPENDED state:
+{&quot;status&quot;:&quot;SUSPENDED&quot;,&quot;id&quot;:&quot;0000039-130618221729631-oozie-oozi-W&quot;,&quot;startTime&quot;:1342915200000,
+&quot;parentId&quot;:&quot;0000025-130618221729631-oozie-oozi-C@1&quot;}
+</pre></p>
+<p><pre>
+Coordinator Action in WAITING state:
+{&quot;status&quot;:&quot;WAITING&quot;,&quot;nominalTime&quot;:1310342400000,&quot;missingDependency&quot;:&quot;hdfs://gsbl90107.blue.com:8020/user/john/dir1/file1&quot;,
+&quot;id&quot;:&quot;0000025-130618221729631-oozie-oozi-C@1&quot;,&quot;startTime&quot;:1342915200000,&quot;parentId&quot;:&quot;0000025-130618221729631-oozie-oozi-C&quot;}
+</pre></p>
+<p><pre>
+Coordinator Action in RUNNING state:
+{&quot;status&quot;:&quot;RUNNING&quot;,&quot;nominalTime&quot;:1310342400000,&quot;id&quot;:&quot;0000025-130618221729631-oozie-oozi-C@1&quot;,
+&quot;startTime&quot;:1342915200000,&quot;parentId&quot;:&quot;0000025-130618221729631-oozie-oozi-C&quot;}
+</pre></p>
+<p><pre>
+Coordinator Action in SUCCEEDED state:
+{&quot;status&quot;:&quot;SUCCEEDED&quot;,&quot;nominalTime&quot;:1310342400000,&quot;id&quot;:&quot;0000025-130618221729631-oozie-oozi-C@1&quot;,
+&quot;startTime&quot;:1342915200000,&quot;parentId&quot;:&quot;0000025-130618221729631-oozie-oozi-C&quot;,&quot;endTime&quot;:1366677082799}
+</pre></p>
+<p><pre>
+Coordinator Action in FAILED state:
+{&quot;status&quot;:&quot;FAILED&quot;,&quot;errorCode&quot;:&quot;E0101&quot;,&quot;errorMessage&quot;:&quot;dummyError&quot;,&quot;nominalTime&quot;:1310342400000,
+&quot;id&quot;:&quot;0000025-130618221729631-oozie-oozi-C@1&quot;,&quot;startTime&quot;:1342915200000,
+&quot;parentId&quot;:&quot;0000025-130618221729631-oozie-oozi-C&quot;,&quot;endTime&quot;:1366677140818}
+</pre></p>
+<p><b>Message Body for SLA Notifications:</b> <br/></p>
+<p><pre>
+Workflow Job in sla END_MISS state:
+{&quot;id&quot;:&quot;0000000-000000000000001-oozie-wrkf-C@1&quot;,&quot;parentId&quot;:&quot;0000000-000000000000001-oozie-wrkf-C&quot;,
+&quot;expectedStartTime&quot;:1356998400000,&quot;notificationMessage&quot;:&quot;notification of start miss&quot;,&quot;actualStartTime&quot;:1357002000000,
+&quot;expectedDuration&quot;:-1, &quot;actualDuration&quot;:3600,&quot;expectedEndTime&quot;:1356998400000,&quot;actualEndTime&quot;:1357002000000}
+</pre></p>
+<a name="JMS_Client"></a>
+</div>
+<div class="section"><h4>JMS Client</h4>
+<p>Oozie provides a helper class JMSMessagingUtils for consumers to deserialize the JMS messages back to Java objects.
+The below method getEventMessage() expects a sub type of EventMessage.
+There are different implementations of EventMessage - WorkflowJobMessage, CoordinatorActionMessage and SLAMessage.</p>
+<p><pre>
+&lt;T extends EventMessage&gt; T JMSMessagingUtils.getEventMessage(Message jmsMessage)
+</pre></p>
+<a name="Example"></a>
+<div class="section"><h5>Example</h5>
+<p>Below is a sample code to consume notifications.</p>
+<p>First, create the Oozie client and retrieve the JNDI properties to make a connection to the JMS server.
+<pre>
+   OozieClient oc = new OozieClient(&quot;http://localhost:11000/oozie&quot;);
+   JMSConnectionInfo jmsInfo = oc.getJMSConnectionInfo();
+   Properties jndiProperties = jmsInfo.getJNDIProperties();
+   Context jndiContext = new InitialContext(jndiProperties);
+   String connectionFactoryName = (String) jndiContext.getEnvironment().get(&quot;connectionFactoryNames&quot;);
+   ConnectionFactory connectionFactory = (ConnectionFactory);
+   jndiContext.lookup(connectionFactoryName);
+   Connection connection = connectionFactory.createConnection();
+   Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+   String topicPrefix = jmsInfo.getTopicPrefix();
+   String topicPattern = jmsInfo.getTopicPattern(AppType.WORKFLOW_JOB);
+   // Following code checks if the topic pattern is
+   //'username', then the topic name is set to the actual user submitting the job
+   String topicName = null;
+   if (topicPattern.equals(&quot;${username}&quot;)) {
+       topicName = &quot;john&quot;;
+   }
+   Destination topic = session.createTopic(topicPrefix+topicName);
+   MessageConsumer consumer = session.createConsumer(topic);
+   consumer.setMessageListener(this);
+   connection.start();
+</pre></p>
+<p>To start receiving messages, the JMS <a href="http://docs.oracle.com/javaee/6/api/javax/jms/MessageListener.html" class="externalLink">MessageListener</a>
+
+interface needs to be implemented. Also, its onMessage() method  needs to be implemented.
+This method will be called whenever a message is available on the JMS bus.</p>
+<p><pre>
+    public void onMessage(Message m) {
+       if (message.getStringProperty(JMSHeaderConsants.MSG_TYPE).equals(MessageType.SLA.name()){
+          SLAMessage slaMessage = JMSMessagingUtils.getEventMessage(message);
+          // Further processing
+       }
+       else if (message.getStringProperty(JMSHeaderConsants.APP_TYPE).equals(AppType.WORKFLOW_JOB.name()){
+          WorkflowJobMessage wfJobMessage = JMSMessagingUtils.getEventMessage(message);
+          // Further processing
+       }
+    }
+</pre></p>
+<a name="Applying_Selectors"></a>
+</div>
+<div class="section"><h5>Applying Selectors</h5>
+<p>Below is a sample ActiveMQ text message header properties section.
+<pre>
+ActiveMQTextMessage
+{properties <tt> {appName = map-reduce-wf, msgType</tt>
+JOB, appType=WORKFLOW_JOB, user=john, msgFormat=json, eventStatus=STARTED} ...}
+</pre></p>
+<p>On the header properties, consumers can apply JMS selectors to filter messages from JMS provider.
+They are listed at <a href="../docs/client/apidocs/org/apache/oozie/client/event/jms/JMSHeaderConstants.html">JMSHeaderConstants</a>
+</p>
+<p>Sample use of selector to filter events related to Job which have failed and has a particular app-name</p>
+<p><pre>
+String selector=JMSHeaderConstants.EVENT_STATUS + &quot;='FAILURE' AND &quot; + JMSHeaderConstants.APP_NAME + &quot;='app-name'&quot;;
+MessageConsumer consumer = session.createConsumer(topic, selector);
+</pre></p>
+</div>
+</div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2015
+    
+          Apache Software Foundation
+          
+  
+
+  
+    
+  
+  
+    
+   - <a href="http://maven.apache.org/privacy-policy.html">Privacy Policy</a></div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>
